@@ -25,7 +25,7 @@ IDENTITY_VAULT_PEPPER = "PUBLIC_IDENTITY_CREDIT_PEPPER_REDACTED_DFARS_252_227_70
 
 class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     """
-    WP-7 / CLIN 0033 v7.3 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
+    WP-7 / CLIN 0033 v7.4 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
       1. 42 Atomic Application Fields (Strictly 1 single response per box; zero pipe-concatenated fields)
          covering Legal Identity, Vital Stats, Physical Description, Job/I-9/Clearance, Government IDs,
          Next of Kin (NOK), In Case of Emergency (ICE), 3-Modal Biometrics, and Financial/Asset Locks.
@@ -316,13 +316,20 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         },
     }
 
+    FACILITY_ZONE_TO_ROSTER_KEY: Dict[str, str] = {
+        "ZONE 01 // Executive Command & TOC Core (Muster Alpha-1)": "EMP-001 // JEFFERY HUMPHREY (Founder, CEO & Principal Sovereign Architect)",
+        "ZONE 02 // Watch Floor & 60Hz Microgrid Operations (Muster Alpha-1)": "EMP-002 // CAPT. MARCUS VANCE (Senior Watch Officer -- Shift Alpha)",
+        "ZONE 03 // 36.75ns SiC MOSFET & 480V Hardware Lab (Muster Charlie-2)": "EMP-003 // DR. SARAH LIN (Lead SiC MOSFET & SCADA Integration Engineer)",
+        "ZONE 04 // East Airfield Apron, UAS & Title 61 GIS (Muster Delta-3)": "EMP-004 // CALEB ROSS (UAS Flight Operator & Civil GIS Specialist)",
+    }
+
     SITE_MUSTER_AND_BUNKER_SUMMARY: List[Dict[str, str]] = [
         {
             "Facility_Zone": "ZONE 01 // Executive Command & TOC Core",
             "Primary_Muster_Point": "MUSTER ALPHA-1 (North Helipad Gate 1)",
             "Secondary_Muster_Point": "MUSTER BRAVO-1 (West Silo Access Road)",
             "Shelter_In_Place_Bunker": "VAULT BUNKER B1-COMMAND (Sub-Level Faraday Core)",
-            "Nearest_AED_And_Trauma_Kit": "AED & Level-1 Trauma Kit #01 (Command Corridor 10m E)",
+            "Nearest_AED_And_Trauma_Kit": "AED & Trauma Kit #01 (Command Corridor 10m East)",
             "Evacuation_Route_And_Channel": "Route Red-Alpha (Stairwell 1) // Radio Ch. 1",
         },
         {
@@ -338,7 +345,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "Primary_Muster_Point": "MUSTER CHARLIE-2 (South Power Lab Assembly Pad)",
             "Secondary_Muster_Point": "MUSTER ALPHA-1 (North Helipad Gate 1)",
             "Shelter_In_Place_Bunker": "VAULT BUNKER B2-LAB (Reinforced Substation Vault)",
-            "Nearest_AED_And_Trauma_Kit": "High-Voltage AED & Non-Latex Trauma Kit #03 (Lab Exit)",
+            "Nearest_AED_And_Trauma_Kit": "High-Voltage AED & Trauma Kit #03 (Lab Exit)",
             "Evacuation_Route_And_Channel": "Route Yellow-Charlie (High-Bay Door 3) // Radio Ch. 1",
         },
         {
@@ -346,18 +353,63 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "Primary_Muster_Point": "MUSTER DELTA-3 (East Airfield Apron Perimeter)",
             "Secondary_Muster_Point": "MUSTER BRAVO-1 (West Silo Access Road)",
             "Shelter_In_Place_Bunker": "VAULT BUNKER B3-HANGAR (Reinforced Hangar Culvert)",
-            "Nearest_AED_And_Trauma_Kit": "Field Trauma & Burn Kit #04 + Mobile AED (UAS Bay 1)",
+            "Nearest_AED_And_Trauma_Kit": "Field Trauma Kit #04 & Mobile AED (UAS Bay 1)",
             "Evacuation_Route_And_Channel": "Route Green-Delta (Flight Service Rd) // Radio Ch. 1",
         },
     ]
 
-    def get_public_emergency_muster_and_sops(self, roster_key: str) -> Dict[str, Any]:
+    def get_public_emergency_muster_and_sops(self, zone_or_roster_key: str) -> Dict[str, Any]:
         """
         Returns non-personal, OSHA 29 CFR 1910.38 facility Muster Points, Shelter-in-Place
-        Bunkers, AED/Trauma Kit locations, and 5-Step Emergency Evacuation Procedures for
-        immediate front-screen display (Zero login required; zero personal PII/PHI exposed).
+        Bunkers, AED/Trauma Kit locations, whole-word KPI labels, and 5-Step Emergency
+        Evacuation Procedures for immediate front-screen display (Zero login required).
         """
-        card = self.get_instant_emergency_triage_card(roster_key)
+        mapped_key = self.FACILITY_ZONE_TO_ROSTER_KEY.get(zone_or_roster_key, zone_or_roster_key)
+        card = self.get_instant_emergency_triage_card(mapped_key)
+        emp_id = card["employee_id"]
+        kpi_short_map = {
+            "EMP-001": {
+                "p_title": "MUSTER ALPHA-1",
+                "p_sub": "North Helipad Perimeter (Gate 1)",
+                "s_title": "MUSTER BRAVO-1",
+                "s_sub": "West Silo Access Road Staging",
+                "b_title": "VAULT BUNKER B1-COMMAND",
+                "b_sub": "Sub-Level Faraday & Tornado Core",
+                "a_title": "AED & Trauma Kit #01",
+                "a_sub": "Command Corridor (10m East)",
+            },
+            "EMP-002": {
+                "p_title": "MUSTER ALPHA-1",
+                "p_sub": "North Helipad Roll-Call Station",
+                "s_title": "MUSTER BRAVO-1",
+                "s_sub": "West Silo Access Road Staging",
+                "b_title": "VAULT BUNKER B1-WATCH",
+                "b_sub": "TOC Sub-Floor Storm & Blast Core",
+                "a_title": "AED & Trauma Kit #02",
+                "a_sub": "Watch Desk Wall (With EpiPen)",
+            },
+            "EMP-003": {
+                "p_title": "MUSTER CHARLIE-2",
+                "p_sub": "South Power Lab Assembly Pad",
+                "s_title": "MUSTER ALPHA-1",
+                "s_sub": "North Helipad Perimeter (Gate 1)",
+                "b_title": "VAULT BUNKER B2-LAB",
+                "b_sub": "Reinforced Substation Storm Vault",
+                "a_title": "AED & Trauma Kit #03",
+                "a_sub": "SiC Lab Exit (Non-Latex & Locker B4)",
+            },
+            "EMP-004": {
+                "p_title": "MUSTER DELTA-3",
+                "p_sub": "East Airfield Apron Perimeter",
+                "s_title": "MUSTER BRAVO-1",
+                "s_sub": "West Silo Access Road Staging",
+                "b_title": "VAULT BUNKER B3-HANGAR",
+                "b_sub": "Reinforced Hangar Concrete Culvert",
+                "a_title": "AED & Trauma Kit #04",
+                "a_sub": "UAS Command Trailer (Bay 1)",
+            },
+        }
+        ks = kpi_short_map.get(emp_id, kpi_short_map["EMP-001"])
         return {
             "department_zone": card["department"],
             "primary_muster_point": card["primary_muster_point"],
@@ -366,6 +418,14 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "nearest_aed_trauma_kit": card["nearest_aed_trauma_kit"],
             "evacuation_route_and_warden": card["evacuation_route_and_warden"],
             "emergency_procedures_rows": card["emergency_procedures_rows"],
+            "primary_muster_title": ks["p_title"],
+            "primary_muster_sub": ks["p_sub"],
+            "secondary_muster_title": ks["s_title"],
+            "secondary_muster_sub": ks["s_sub"],
+            "bunker_title": ks["b_title"],
+            "bunker_sub": ks["b_sub"],
+            "aed_kit_title": ks["a_title"],
+            "aed_kit_sub": ks["a_sub"],
         }
 
     def get_instant_emergency_triage_card(self, roster_key: str) -> Dict[str, Any]:
@@ -1082,7 +1142,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
             title="60-Field Atomic Personnel Dossier, NOK/ICE, Promotion Shortlist, & Credit Shield",
-            version="7.3.0",
+            version="7.4.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,
@@ -1949,7 +2009,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "# HUMPHREY VIRTUAL FARMS LLC // WP-7: 42-FIELD PERSONNEL ONBOARDING, NOK/ICE, PROOF-OF-IDENTITY, & CREDIT SHIELD",
             "**Entity:** Humphrey Virtual Farms LLC (`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`)",
             "**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect",
-            f"**Plug-In Module:** `CLIN 0033 v7.3 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
+            f"**Plug-In Module:** `CLIN 0033 v7.4 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
             f"**Host Ebony Baseline Merkle Root:** `{FROZEN_EBONY_MERKLE_ROOT}`",
             "",
             "---",

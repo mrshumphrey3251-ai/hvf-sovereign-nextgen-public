@@ -285,13 +285,13 @@ def render_nextgen_dashboard() -> None:
         )
 
     with tabs[7]:
-        st.markdown("### `WP-7` / `CLIN 0033 v7.3`: Front-Screen OSHA Muster Points & Emergency Procedures + HIPAA-Gated 60-Field Dossier, Medical/ICE Triage, & Credit Shield")
+        st.markdown("### `WP-7` / `CLIN 0033 v7.4`: Front-Screen OSHA Muster Points & Emergency Procedures + HIPAA-Gated 60-Field Dossier, Medical/ICE Triage, & Credit Shield")
 
         # =====================================================================
         # SECTION 1 (ALWAYS VISIBLE ON FRONT SCREEN -- NO LOGIN REQUIRED):
         # 1A. COMPANY COMMAND / 911 DISPATCH DESKS
         # 1B. SITE MUSTER POINTS, SHELTER BUNKERS, AED/TRAUMA KITS & 5-STEP SOPs
-        #     (Zero personal employee PII or HIPAA medical PHI exposed here!)
+        #     (Selected by Facility Zone -- Zero personal employee PII/PHI!)
         # =====================================================================
         st.markdown("#### 1A. Official Company Command & 911 Emergency Dispatch Desks (Always Accessible -- No Login Required)")
         st.dataframe(e33.COMPANY_EMERGENCY_CONTACTS, width="stretch", hide_index=True)
@@ -299,27 +299,28 @@ def render_nextgen_dashboard() -> None:
         st.markdown("#### 1B. Site-Wide Primary & Secondary Muster Points, Shelter-in-Place Bunkers, AED/Trauma Kits, & 5-Step Emergency Procedures (`OSHA 29 CFR 1910.38` -- No Login Required)")
         st.dataframe(e33.SITE_MUSTER_AND_BUNKER_SUMMARY, width="stretch", hide_index=True)
 
-        roster_options = list(e33.PERSONNEL_EMERGENCY_ROSTER.keys())
-        sel_person_key = st.selectbox(
-            "Select Facility Zone / Duty Station to View Immediate 5-Step Emergency Evacuation & Muster SOP (And Select Dossier for Gate Authentication Below):",
-            options=roster_options,
+        zone_options = list(e33.FACILITY_ZONE_TO_ROSTER_KEY.keys())
+        sel_zone_key = st.selectbox(
+            "Select Facility Operational Zone to View Immediate 5-Step Emergency Evacuation & Muster SOP (No Login Required):",
+            options=zone_options,
             index=0,
-            key="ng_c33_roster_sel",
+            key="ng_c33_zone_sel",
         )
-        pub_muster = e33.get_public_emergency_muster_and_sops(sel_person_key)
+        pub_muster = e33.get_public_emergency_muster_and_sops(sel_zone_key)
 
         m1, m2, m3, m4 = st.columns(4)
-        m1.metric("Primary Muster Point", pub_muster["primary_muster_point"].split("//")[0].strip(), pub_muster["primary_muster_point"].split("//")[-1].strip()[:32])
-        m2.metric("Secondary Muster Point", pub_muster["secondary_muster_point"].split("//")[0].strip(), pub_muster["secondary_muster_point"].split("//")[-1].strip()[:32])
-        m3.metric("Shelter-in-Place Bunker", pub_muster["shelter_in_place_bunker"].split("//")[0].strip(), pub_muster["shelter_in_place_bunker"].split("//")[-1].strip()[:32])
-        m4.metric("Nearest AED & Trauma Kit", pub_muster["nearest_aed_trauma_kit"].split("//")[0].strip(), pub_muster["nearest_aed_trauma_kit"].split("//")[-1].strip()[:32])
+        m1.metric("Primary Muster Point", pub_muster["primary_muster_title"], pub_muster["primary_muster_sub"])
+        m2.metric("Secondary Muster Point", pub_muster["secondary_muster_title"], pub_muster["secondary_muster_sub"])
+        m3.metric("Shelter-in-Place Bunker", pub_muster["bunker_title"], pub_muster["bunker_sub"])
+        m4.metric("Nearest AED & Trauma Kit", pub_muster["aed_kit_title"], pub_muster["aed_kit_sub"])
 
         front_muster_banner = nl.join([
-            f"[MUSTER ZONE]      : {pub_muster['department_zone']}",
-            f"[PRIMARY MUSTER]   : {pub_muster['primary_muster_point']} | Secondary: {pub_muster['secondary_muster_point']}",
-            f"[SHELTER BUNKER]   : {pub_muster['shelter_in_place_bunker']}",
-            f"[NEAREST AED/KIT]  : {pub_muster['nearest_aed_trauma_kit']}",
-            f"[EVACUATION ROUTE] : {pub_muster['evacuation_route_and_warden']}",
+            "=== HVF OSHA 29 CFR 1910.38 FRONT-SCREEN EMERGENCY MUSTER & EVACUATION DISPATCH ===",
+            f"[01] FACILITY MUSTER ZONE : {pub_muster['department_zone']}",
+            f"[02] PRIMARY MUSTER POINT : {pub_muster['primary_muster_point']} | Secondary: {pub_muster['secondary_muster_point']}",
+            f"[03] SHELTER BUNKER VAULT : {pub_muster['shelter_in_place_bunker']}",
+            f"[04] NEAREST AED / TRAUMA : {pub_muster['nearest_aed_trauma_kit']}",
+            f"[05] EVACUATION ROUTE     : {pub_muster['evacuation_route_and_warden']}",
         ])
         st.code(front_muster_banner, language="text")
         st.dataframe(pub_muster["emergency_procedures_rows"], width="stretch", hide_index=True)
@@ -334,6 +335,13 @@ def render_nextgen_dashboard() -> None:
         st.markdown("#### 2. Sovereign User Agreement, HIPAA/ADA Medical Confidentiality Charter, & Compartment Authorization Gate")
         st.info(e33.USER_AGREEMENT_TEXT)
 
+        roster_options = list(e33.PERSONNEL_EMERGENCY_ROSTER.keys())
+        sel_person_key = st.selectbox(
+            "Select Personnel Dossier to Authenticate & Unseal Behind Gate (All Personal PII & Medical PHI Locked Until Gate Opens):",
+            options=roster_options,
+            index=0,
+            key="ng_c33_roster_sel",
+        )
         person_obj = e33.PERSONNEL_EMERGENCY_ROSTER[sel_person_key]
         emp_id_code = person_obj["employee_id"]
         emp_pin_val = person_obj["employee_pin"]
@@ -372,7 +380,7 @@ def render_nextgen_dashboard() -> None:
             value=default_pin_hint,
             key=dyn_key_id,
         )
-        freeze_toggle = g3.checkbox("Credit/Loan Freeze ON", value=True, key="ng_c33_frz_v73")
+        freeze_toggle = g3.checkbox("Credit/Loan Freeze ON", value=True, key="ng_c33_frz_v74")
 
         gate_res = e33.open_compartment_gate(
             roster_key=sel_person_key,
@@ -412,6 +420,7 @@ def render_nextgen_dashboard() -> None:
             e4.metric("Employee Direct Phone", triage["direct_phone"], triage["role_short"])
 
             triage_card_text = nl.join([
+                "=== HVF AUTHENTICATED HIPAA 45 CFR 164.502 EMERGENCY MEDICAL & ICE PACKET ===",
                 f"[01] AUTHENTICATED SUBJECT    : {triage['employee_id']} -- {triage['full_name']} ({triage['department']})",
                 f"[02] BLOOD TYPE & ALLERGIES   : {triage['blood_type_clean']} // ALLERGIES: {triage['allergies_detailed']}",
                 f"[03] MEDICAL HISTORY & RX     : {triage['medical_history_detailed']}",
