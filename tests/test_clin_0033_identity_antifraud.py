@@ -17,7 +17,7 @@ def run_clin_0033_tests() -> None:
     shield = SovereignIdentityAntiFraudShield()
     manifest = reg.register(shield)
     assert manifest.clin_number == "CLIN 0033"
-    assert manifest.version == "7.0.0"
+    assert manifest.version == "7.1.0"
     assert manifest.per_node_annual_gov_usd == 95000
     assert manifest.compatible_host_merkle_root == FROZEN_EBONY_MERKLE_ROOT
 
@@ -123,13 +123,16 @@ def run_clin_0033_tests() -> None:
         out_dir=artifacts_dir,
     )
     assert locked_gate["gate_open"] is False
+    assert locked_gate["emergency_medical_ice_card"] is None, "CRITICAL HIPAA VIOLATION: Medical/ICE card must be None when gate is locked!"
 
     for rk in roster_keys:
         p_pin = shield.PERSONNEL_EMERGENCY_ROSTER[rk]["employee_pin"]
         g_emp = shield.open_compartment_gate(rk, "EMPLOYEE", True, p_pin, artifacts_dir)
         assert g_emp["gate_open"] is True and g_emp["credit_report"] is not None and g_emp["employer_personnel_notes"] is None
+        assert g_emp["emergency_medical_ice_card"] is not None and "medical_history_detailed" in g_emp["emergency_medical_ice_card"]
         g_empr = shield.open_compartment_gate(rk, "EMPLOYER", True, "EMPLOYER-MASTER-1AHA8", artifacts_dir)
         assert g_empr["gate_open"] is True and g_empr["credit_report"] is None and g_empr["employer_personnel_notes"] is not None
+        assert g_empr["emergency_medical_ice_card"] is not None and "allergies_detailed" in g_empr["emergency_medical_ice_card"]
 
     added_note = shield.append_employer_personnel_note(
         db_path=db_file,
@@ -151,6 +154,7 @@ def run_clin_0033_tests() -> None:
             "worm_identity_profile_revisions",
             "worm_employer_personnel_notes",
             "worm_promotion_evaluation_board",
+            "worm_hipaa_emergency_triage_log",
         ):
             try:
                 cur.execute(f"DELETE FROM {tbl}")

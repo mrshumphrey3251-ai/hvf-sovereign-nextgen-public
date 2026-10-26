@@ -178,15 +178,19 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     # GATE, & DUAL-COMPARTMENT PRIVACY WALL (EMPLOYEE vs. EMPLOYER)
     # =========================================================================
     USER_AGREEMENT_TEXT: str = (
-        "SOVEREIGN IDENTITY & DUAL-COMPARTMENT PRIVACY CHARTER (FCRA 15 U.S.C. 1681 / PRIVACY ACT OF 1974): "
-        "(1) EMERGENCY TRIAGE: Company command contacts and employee Next-of-Kin (NOK) / In-Case-of-Emergency (ICE) "
-        "vital response data are immediately accessible on the front triage panel so zero seconds are lost during a medical or site emergency. "
-        "(2) EMPLOYEE PERSONAL COMPARTMENT PRIVACY: Personal credit bureau inquiries, personal loans, personal bank/deed locks, and dark-web PII monitors "
-        "are the exclusive property of the individual employee. The Employer is strictly blocked from viewing Employee financial or credit telemetry. "
-        "(3) EMPLOYER INTERNAL COMPARTMENT SECURITY: Internal security clearance adjudication, I-9 E-Verify audit seals, watch-floor bitmask assignments, "
-        "and internal HR vetting ledgers are restricted strictly to the Employer / Commanding Authority. "
-        "(4) UNALTERABLE PROOF OF IDENTITY: Once an onboarding identity record is sealed, input boxes are removed and the record enters an unalterable "
-        "state requiring cryptographic authorization for any modification."
+        "SOVEREIGN IDENTITY, HIPAA/ADA MEDICAL CONFIDENTIALITY, & DUAL-COMPARTMENT PRIVACY CHARTER "
+        "(HIPAA 45 CFR 164.502 / ADA 42 U.S.C. 12112(d)(3)(B) / FCRA 15 U.S.C. 1681 / PRIVACY ACT OF 1974): "
+        "(1) 100% GATE-LOCKED PHI & PII: To comply with federal HIPAA and ADA medical confidentiality mandates, zero personal "
+        "employee information, blood types, allergies, medical history, or Next-of-Kin (NOK) / ICE contacts are displayed on "
+        "the unauthenticated screen. All personal and medical data is strictly locked behind this cryptographic gate. "
+        "(2) AUTHENTICATED HR & EMERGENCY MEDICAL/ICE ACCESS: Once authenticated through the gate, both the Employee and "
+        "authorized HR / Emergency Command Personnel have immediate access to the employee's Blood Type, Drug/Environmental "
+        "Allergies, Medical History & Medications, Primary Physician, and NOK/ICE Emergency Contacts (logged to an immutable "
+        "HIPAA WORM audit table). "
+        "(3) EMPLOYEE FINANCIAL PRIVACY WALL: Personal credit bureau inquiries, personal loans, and personal bank/deed locks "
+        "are the exclusive property of the Employee. The Employer/HR is 100% blocked from viewing Employee credit or loans. "
+        "(4) EMPLOYER INTERNAL COMPARTMENT: Internal security clearance adjudication, I-9 E-Verify seals, employer personnel "
+        "notes, and promotion board evaluations are restricted strictly to the Employer / HR Authority."
     )
 
     COMPANY_EMERGENCY_CONTACTS: List[Dict[str, str]] = [
@@ -322,6 +326,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         blood_clean = parts[0].replace("_POSITIVE", "+ (Positive)").replace("_NEGATIVE", "- (Negative)")
         med_clean = parts[1].replace("_", " ").title() if len(parts) > 1 else "Verified Clean"
 
+        emp_id = person["employee_id"]
         role_short_map = {
             "EMP-001": "Founder, CEO & Sovereign Architect",
             "EMP-002": "Senior Tactical Watch Officer",
@@ -340,7 +345,24 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "EMP-003": "Grace Lin (Sister / Secondary ICE)",
             "EMP-004": "Thomas Ross (Father / Secondary ICE)",
         }
-        emp_id = person["employee_id"]
+        allergies_map = {
+            "EMP-001": "No Known Drug or Food Allergies (NKDA)",
+            "EMP-002": "SEVERE PENICILLIN ALLERGY -- Administer Epinephrine Auto-Injector (EpiPen in Watch Desk Kit #2)",
+            "EMP-003": "Sulfonamide Antibiotics & Latex Sensitivity -- Use Non-Latex Trauma Gloves",
+            "EMP-004": "No Known Drug Allergies (NKDA) -- Seasonal Pollen Sensitivity Only",
+        }
+        med_history_map = {
+            "EMP-001": "Clear Annual Executive Flight/Duty Physical (2026); Tetanus Current; 0 Chronic Conditions; 0 Daily Rx.",
+            "EMP-002": "Prior Resolved R-Knee Arthroscopy (2021); Carries Epinephrine 0.3mg Auto-Injector; Cleared High-Stress Watch Duty.",
+            "EMP-003": "Mild Exercise-Induced Bronchospasm (Albuterol HFA Inhaler in Lab Locker B4); Cleared High-Voltage 480V/SiC Bench Duty.",
+            "EMP-004": "FAA Class-2 Flight Medical Certified (2026); 20/15 Corrected Vision; 0 Surgical History; 0 Daily Medications.",
+        }
+        physician_hospital_map = {
+            "EMP-001": "OU Health Level-1 Trauma Center (OKC) // Executive Physician Direct: 405-555-0801",
+            "EMP-002": "Tinker AFB 72nd Medical Group / INTEGRIS Baptist Medical Center // Dr. R. Vance: 405-555-0212",
+            "EMP-003": "Norman Regional HealthPlex Trauma Center // Pulmonary Specialist: 405-555-0833",
+            "EMP-004": "INTEGRIS Health Edmond Hospital // FAA Aviation Medical Examiner: 405-555-0844",
+        }
         return {
             "employee_id": emp_id,
             "full_name": person["full_name"],
@@ -361,7 +383,54 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "blood_type_and_medical": raw_med,
             "blood_type_clean": blood_clean,
             "medical_alert_clean": med_clean,
+            "allergies_detailed": allergies_map.get(emp_id, med_clean),
+            "medical_history_detailed": med_history_map.get(emp_id, "Cleared for Full Duty"),
+            "physician_and_hospital": physician_hospital_map.get(emp_id, "Regional Level-1 Trauma Center"),
         }
+
+    def record_hipaa_emergency_triage_access(
+        self,
+        db_path: pathlib.Path,
+        employee_id: str,
+        employee_name: str,
+        accessor_role: str,
+        access_purpose: str = "AUTHORIZED_GATE_MEDICAL_AND_ICE_READINESS_VIEW",
+    ) -> Dict[str, Any]:
+        self.init_worm_sqlite_ledger(db_path)
+        conn = sqlite3.connect(str(db_path), timeout=30.0)
+        try:
+            cur = conn.cursor()
+            last_row = cur.execute(
+                "SELECT triage_log_id, worm_hipaa_sha256 FROM worm_hipaa_emergency_triage_log ORDER BY triage_log_id DESC LIMIT 1"
+            ).fetchone()
+            prev_hash = last_row[1] if last_row else ("0" * 64)
+            log_sha = hmac.new(
+                IDENTITY_VAULT_PEPPER.encode("utf-8"),
+                f"{prev_hash}|{employee_id}|{employee_name}|{accessor_role}|{access_purpose}|{FROZEN_EBONY_MERKLE_ROOT}".encode("utf-8"),
+                hashlib.sha256,
+            ).hexdigest()
+            cur.execute(
+                """
+                INSERT OR IGNORE INTO worm_hipaa_emergency_triage_log (
+                    employee_id, employee_name, accessor_role, access_purpose,
+                    hipaa_statutory_basis, previous_log_hash, worm_hipaa_sha256
+                ) VALUES (?,?,?,?,?,?,?)
+                """,
+                (
+                    employee_id,
+                    employee_name,
+                    accessor_role,
+                    access_purpose,
+                    "HIPAA_45_CFR_164_502_AND_ADA_CONFIDENTIAL_MEDICAL_GATE",
+                    prev_hash,
+                    log_sha,
+                ),
+            )
+            conn.commit()
+            cnt = cur.execute("SELECT COUNT(*) FROM worm_hipaa_emergency_triage_log").fetchone()[0]
+        finally:
+            conn.close()
+        return {"hipaa_triage_logs_count": cnt, "worm_hipaa_sha256": log_sha}
 
     def seed_default_employer_notes(self, db_path: pathlib.Path) -> None:
         self.init_worm_sqlite_ledger(db_path)
@@ -694,26 +763,34 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         access_key_or_pin: str,
         out_dir: pathlib.Path,
         credit_freeze_locked: bool = True,
+        emergency_purpose: str = "AUTHORIZED_HIPAA_MEDICAL_AND_ICE_ACCESS",
     ) -> Dict[str, Any]:
         """
-        Enforces strict Dual-Compartment Privacy Separation:
-          - If user_agreement_accepted is False -> GATE_LOCKED_AGREEMENT_REQUIRED
-          - If viewer_role == "EMPLOYEE":
-              Verifies Employee Personal PIN.
-              Opens Employee Personal Credit/Loan Shield, 60-Field Proof-of-Identity, & NOK/ICE.
-              BLOCKS Employer Internal HR/Clearance records (employer_internal_records = None).
-          - If viewer_role == "EMPLOYER":
-              Verifies Employer Master Key.
-              Opens Employer Proof-of-Identity (35 non-credit onboarding fields) & Employer Internal HR/Clearance records.
-              BLOCKS Employee Personal Credit/Loan & Personal Bank/Deed Financial Compartment (credit_report = None).
+        Enforces strict HIPAA / ADA / Privacy Act Gate Locking & Dual-Compartment Separation:
+          - If user_agreement_accepted is False or PIN/Key is invalid -> GATE_LOCKED:
+              * emergency_medical_ice_card = None (Zero PHI or personal PII exposed on locked screen!)
+              * credit_report = None
+              * employer_internal_records = None
+              * proof_of_id_rows = None
+          - If viewer_role == "EMPLOYEE" (Valid Employee PIN):
+              * Unseals emergency_medical_ice_card (Blood Type, Allergies, Medical History, Physician, NOK/ICE)
+              * Unseals Employee Personal Credit/Loan Shield & 60-Field Dossier
+              * BLOCKS Employer Internal HR/Clearance records & Employer Notes
+          - If viewer_role == "EMPLOYER" (Valid Employer/HR Master Key):
+              * Unseals emergency_medical_ice_card for HR / Emergency Triage (Blood Type, Allergies, Medical History, Physician, NOK/ICE)
+                and logs the access to worm_hipaa_emergency_triage_log
+              * Unseals Employer Proof-of-Identity, Internal HR Records, Employer Notes, & Promotion Shortlist
+              * BLOCKS Employee Personal Credit/Loans & Personal Bank/Deed Accounts
         """
         if not user_agreement_accepted:
             return {
                 "gate_open": False,
-                "gate_status": "GATE_LOCKED_USER_AGREEMENT_AND_AUTHORIZATION_REQUIRED",
+                "gate_status": "GATE_LOCKED_HIPAA_AND_USER_AGREEMENT_AUTHORIZATION_REQUIRED",
                 "viewer_role": viewer_role,
+                "emergency_medical_ice_card": None,
                 "credit_report": None,
                 "employer_internal_records": None,
+                "employer_personnel_notes": None,
                 "proof_of_id_rows": None,
             }
 
@@ -761,6 +838,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 "f60_company_eval_rating": str(cand_m["company_eval_rating"]),
             })
         app_eval = self.evaluate_atomic_42_application(person_overrides)
+        db_file = out_dir / "wp7_identity_credit_worm_ledger.db"
 
         if viewer_role == "EMPLOYEE":
             if access_key_or_pin.strip() != expected_emp_pin:
@@ -768,23 +846,35 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     "gate_open": False,
                     "gate_status": "GATE_DENIED_INVALID_EMPLOYEE_PERSONAL_PIN",
                     "viewer_role": "EMPLOYEE",
+                    "emergency_medical_ice_card": None,
                     "credit_report": None,
                     "employer_internal_records": None,
+                    "employer_personnel_notes": None,
                     "proof_of_id_rows": None,
                 }
+            med_ice = self.get_instant_emergency_triage_card(roster_key)
+            hipaa_log = self.record_hipaa_emergency_triage_access(
+                db_path=db_file,
+                employee_id=person["employee_id"],
+                employee_name=person["full_name"],
+                accessor_role="EMPLOYEE_SELF_VAULT_ACCESS",
+                access_purpose=emergency_purpose,
+            )
             cred = self.evaluate_credit_and_loan_activity(credit_freeze_locked=credit_freeze_locked)
             return {
                 "gate_open": True,
                 "gate_status": "EMPLOYEE_PERSONAL_SOVEREIGN_VAULT_OPEN",
                 "viewer_role": "EMPLOYEE",
                 "privacy_notice": (
-                    "EMPLOYEE PERSONAL COMPARTMENT ACTIVE: You have full visibility into your 7-Channel Credit Bureau, "
-                    "Loan, Deed, & SIM-Swap Shield and your 60-Field Proof-of-Identity. Your Employer is strictly blocked "
+                    "EMPLOYEE PERSONAL COMPARTMENT ACTIVE: Your Medical History, Allergies, Blood Type, NOK/ICE Contacts, "
+                    "60-Field Dossier, and 7-Channel Credit/Loan Shield are unsealed. Your Employer/HR is strictly blocked "
                     "from viewing your personal credit or loan telemetry."
                 ),
+                "emergency_medical_ice_card": med_ice,
+                "hipaa_audit_seal": hipaa_log["worm_hipaa_sha256"],
                 "credit_report": cred,
-                "employer_internal_records": None,  # Strictly hidden from employee
-                "employer_personnel_notes": None,   # Strictly hidden from employee
+                "employer_internal_records": None,
+                "employer_personnel_notes": None,
                 "proof_of_id_rows": app_eval["attribute_rows"],
                 "composite_seal": app_eval["composite_42field_application_seal"],
             }
@@ -793,30 +883,42 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             if access_key_or_pin.strip() != expected_employer_key:
                 return {
                     "gate_open": False,
-                    "gate_status": "GATE_DENIED_INVALID_EMPLOYER_MASTER_KEY",
+                    "gate_status": "GATE_DENIED_INVALID_EMPLOYER_HR_MASTER_KEY",
                     "viewer_role": "EMPLOYER",
+                    "emergency_medical_ice_card": None,
                     "credit_report": None,
                     "employer_internal_records": None,
+                    "employer_personnel_notes": None,
                     "proof_of_id_rows": None,
                 }
-            # Filter out personal financial/asset lock rows (f39..f42) from employer proof-of-ID view
+            med_ice = self.get_instant_emergency_triage_card(roster_key)
+            hipaa_log = self.record_hipaa_emergency_triage_access(
+                db_path=db_file,
+                employee_id=person["employee_id"],
+                employee_name=person["full_name"],
+                accessor_role="EMPLOYER_HR_EMERGENCY_AND_VETTING_AUTHORITY",
+                access_purpose=emergency_purpose,
+            )
             employer_allowed_rows = [
                 r for r in app_eval["attribute_rows"]
                 if not r["Field_ID"].startswith(("F39_", "F40_", "F41_", "F42_"))
             ]
             return {
                 "gate_open": True,
-                "gate_status": "EMPLOYER_INTERNAL_HR_AND_PROOF_OF_IDENTITY_VAULT_OPEN",
+                "gate_status": "EMPLOYER_HR_AND_EMERGENCY_MEDICAL_ICE_VAULT_OPEN",
                 "viewer_role": "EMPLOYER",
                 "privacy_notice": (
-                    "EMPLOYER INTERNAL COMPARTMENT ACTIVE: Displaying unalterable Employee Digital Proof-of-Identity, "
-                    "I-9/Clearance Vetting, and Internal Employer HR Records. [PRIVACY WALL ENFORCED: Employee Personal "
-                    "Credit Bureaus, Personal Loans, and Personal Financial Accounts Are Strictly Hidden From Employer View]."
+                    "EMPLOYER / HR COMPARTMENT ACTIVE: Unsealed Employee Emergency Medical History, Allergies, Blood Type, "
+                    "Primary Physician, & NOK/ICE Triage Packet (Logged to HIPAA WORM Audit Table), plus Unalterable 60-Field "
+                    "Proof-of-Identity, Employer Notes, & Promotion Shortlist. [PRIVACY WALL ENFORCED: Employee Personal "
+                    "Credit Bureaus, Personal Loans, and Personal Financial Accounts Remain 100% Blocked]."
                 ),
-                "credit_report": None,  # Strictly blocked from employer view!
+                "emergency_medical_ice_card": med_ice,
+                "hipaa_audit_seal": hipaa_log["worm_hipaa_sha256"],
+                "credit_report": None,
                 "employer_internal_records": person["employer_internal_records"],
                 "employer_personnel_notes": self.get_employer_personnel_notes(
-                    out_dir / "wp7_identity_credit_worm_ledger.db",
+                    db_file,
                     employee_id=person["employee_id"],
                 ),
                 "proof_of_id_rows": employer_allowed_rows,
@@ -825,10 +927,12 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
 
         return {
             "gate_open": False,
-            "gate_status": "GATE_LOCKED_SELECT_VALID_ROLE",
+            "gate_status": "GATE_LOCKED_HIPAA_PROTECTED_SELECT_ROLE_TO_UNSEAL",
             "viewer_role": viewer_role,
+            "emergency_medical_ice_card": None,
             "credit_report": None,
             "employer_internal_records": None,
+            "employer_personnel_notes": None,
             "proof_of_id_rows": None,
         }
 
@@ -837,7 +941,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
             title="60-Field Atomic Personnel Dossier, NOK/ICE, Promotion Shortlist, & Credit Shield",
-            version="7.0.0",
+            version="7.1.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,
@@ -1408,10 +1512,36 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: DELETE PROHIBITED ON worm_promotion_evaluation_board');
                 END;
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS worm_hipaa_emergency_triage_log (
+                    triage_log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    employee_id TEXT NOT NULL,
+                    employee_name TEXT NOT NULL,
+                    accessor_role TEXT NOT NULL,
+                    access_purpose TEXT NOT NULL,
+                    hipaa_statutory_basis TEXT NOT NULL,
+                    previous_log_hash TEXT NOT NULL,
+                    worm_hipaa_sha256 TEXT NOT NULL UNIQUE
+                )
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_hipaa_no_update
+                BEFORE UPDATE ON worm_hipaa_emergency_triage_log
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: UPDATE PROHIBITED ON worm_hipaa_emergency_triage_log');
+                END;
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_hipaa_no_delete
+                BEFORE DELETE ON worm_hipaa_emergency_triage_log
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: DELETE PROHIBITED ON worm_hipaa_emergency_triage_log');
+                END;
+            """)
             conn.commit()
         finally:
             conn.close()
-        return {"db_path": str(db_path), "worm_triggers_active": 10}
+        return {"db_path": str(db_path), "worm_triggers_active": 12}
 
     def commit_profile_update_revision(
         self,
@@ -1569,7 +1699,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "worm_id_access_rows": id_cnt,
             "worm_credit_intercept_rows": cr_cnt,
             "worm_profile_revision_rows": rv_cnt,
-            "worm_triggers_active": 8,
+            "worm_triggers_active": 12,
         }
 
     def generate_wp7_antifraud_dossier(
