@@ -310,11 +310,13 @@ def render_nextgen_dashboard() -> None:
         e4.metric("Blood Type & Medical Alert", triage["blood_type_clean"], triage["medical_alert_clean"])
 
         st.code(
-            f"INSTANT EMERGENCY TRIAGE CARD // {triage['employee_id']} -- {triage['full_name']} ({triage['department']}){nl}"
-            f"  * Employee Direct Contact : {triage['direct_phone']} | Email: {triage['email']}{nl}"
-            f"  * Next of Kin (NOK)       : {triage['nok_full_name']} ({triage['nok_relationship']}) | Phone: {triage['nok_phone']} | Address: {triage['nok_address']}{nl}"
-            f"  * In Case of Emergency    : {triage['ice_full_name']} ({triage['ice_relationship']}) | Direct Phone: {triage['ice_phone']}{nl}"
-            f"  * Medical / Blood Alert   : {triage['blood_type_and_medical']}",
+            "\n".join([
+                f"INSTANT EMERGENCY TRIAGE CARD // {triage['employee_id']} -- {triage['full_name']} ({triage['department']})",
+                f"  - Employee Direct Contact : {triage['direct_phone']} | Email: {triage['email']}",
+                f"  - Next of Kin (NOK)       : {triage['nok_full_name']} ({triage['nok_relationship']}) | Phone: {triage['nok_phone']} | Address: {triage['nok_address']}",
+                f"  - In Case of Emergency    : {triage['ice_full_name']} ({triage['ice_relationship']}) | Direct Phone: {triage['ice_phone']}",
+                f"  - Medical / Blood Alert   : {triage['blood_type_and_medical']}",
+            ]),
             language="text",
         )
 
@@ -410,6 +412,48 @@ def render_nextgen_dashboard() -> None:
 
             st.markdown("#### 1. Employer-Only Internal Security Clearance, I-9 E-Verify, & Watch-Floor RBAC Records (Hidden From Employee View)")
             st.dataframe(gate_res["employer_internal_records"], width="stretch", hide_index=True)
+
+            st.markdown(f"#### 1B. Official Employer Personnel File Notes for `{triage['employee_id']} // {triage['full_name']}` (WORM SQLite ? Hidden From Employee)")
+            n_col1, n_col2, n_col3 = st.columns([2, 2, 3])
+            note_auth = n_col1.text_input(
+                "Note Author / Commanding Authority:",
+                value="JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)",
+                key="ng_c33_note_auth",
+            )
+            note_cat = n_col2.selectbox(
+                "Personnel File Note Category:",
+                options=[
+                    "PERFORMANCE_COMM_AND_PROMOTION",
+                    "SECURITY_CLEARANCE_AND_VETTING_NOTE",
+                    "SAFETY_INTERLOCK_QUALIFICATION",
+                    "SHIFT_INCIDENT_OR_COUNSELING_RECORD",
+                    "CONTRACT_CLIN_ASSIGNMENT_MEMO",
+                ],
+                index=0,
+                key="ng_c33_note_cat",
+            )
+            note_txt = n_col3.text_input(
+                "Enter Confidential Employer Note to Seal into Employee File:",
+                value=f"Verified annual sovereign security & operational readiness review for {triage['full_name']}.",
+                key="ng_c33_note_txt",
+            )
+            if st.button("Seal & Append Official Employer Note to Employee File (WORM SQLite)", type="primary", key="ng_c33_add_note_btn"):
+                db_f = artifacts_dir / "wp7_identity_credit_worm_ledger.db"
+                added_n = e33.append_employer_personnel_note(
+                    db_path=db_f,
+                    employee_id=triage["employee_id"],
+                    employee_name=triage["full_name"],
+                    author_authority=note_auth,
+                    note_category=note_cat,
+                    confidential_note_text=note_txt,
+                )
+                gate_res["employer_personnel_notes"] = e33.get_employer_personnel_notes(db_f, employee_id=triage["employee_id"])
+                st.success(
+                    f"**Employer Note Sealed to `{triage['employee_id']}` File!** WORM Note SHA-256: `{added_n['worm_note_sha256'][:24]}...` "
+                    f"(Total Notes for `{triage['employee_id']}`: `{added_n['total_notes_for_employee']}`)"
+                )
+
+            st.dataframe(gate_res["employer_personnel_notes"], width="stretch", hide_index=True)
 
             vault_state = e33.load_or_init_vault_lock_state(artifacts_dir)
             is_locked = bool(vault_state.get("is_locked", True))

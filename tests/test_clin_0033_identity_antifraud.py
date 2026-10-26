@@ -16,7 +16,7 @@ def run_clin_0033_tests() -> None:
     shield = SovereignIdentityAntiFraudShield()
     manifest = reg.register(shield)
     assert manifest.clin_number == "CLIN 0033"
-    assert manifest.version == "6.0.0"
+    assert manifest.version == "6.2.0"
     assert manifest.per_node_annual_gov_usd == 95000
     assert manifest.compatible_host_merkle_root == FROZEN_EBONY_MERKLE_ROOT
 
@@ -92,7 +92,7 @@ def run_clin_0033_tests() -> None:
     conn = sqlite3.connect(str(db_file))
     try:
         cur = conn.cursor()
-        for tbl in ("worm_id_access_log", "worm_credit_loan_intercept_log", "worm_identity_profile_revisions"):
+        for tbl in ("worm_id_access_log", "worm_credit_loan_intercept_log", "worm_identity_profile_revisions", "worm_employer_personnel_notes"):
             try:
                 cur.execute(f"DELETE FROM {tbl}")
                 raise AssertionError(f"WORM DELETE trigger failed on {tbl}")

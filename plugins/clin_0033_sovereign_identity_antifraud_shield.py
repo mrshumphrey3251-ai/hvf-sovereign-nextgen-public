@@ -324,6 +324,137 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "medical_alert_clean": med_clean,
         }
 
+    def seed_default_employer_notes(self, db_path: pathlib.Path) -> None:
+        self.init_worm_sqlite_ledger(db_path)
+        conn = sqlite3.connect(str(db_path))
+        try:
+            cnt = conn.cursor().execute("SELECT COUNT(*) FROM worm_employer_personnel_notes").fetchone()[0]
+        finally:
+            conn.close()
+        if cnt == 0:
+            defaults = [
+                ("EMP-001", "JEFFERY SOVEREIGN HUMPHREY", "HVF BOARD & SECURITY AUTHORITY", "EXECUTIVE_COMMENDATION_AND_CLEARANCE", "Principal Sovereign Architect of Project Ebony (631 modules) & Next-Gen Forge (WP-1..8). Level-5 Command Authority verified."),
+                ("EMP-002", "MARCUS ALEXANDER VANCE", "JEFFERY HUMPHREY (CEO)", "WATCH_FLOOR_QUALIFICATION", "Qualified on 60Hz Microgrid Islanding Relay (CLIN 0003) and Watch-Floor Bitmask 0x1F shift handover protocols."),
+                ("EMP-003", "SARAH MEI LIN", "JEFFERY HUMPHREY (CEO)", "HARDWARE_BENCH_CERTIFICATION", "Certified custodian for 36.75ns SiC MOSFET solid-state breaker board (CLIN 0028) and IPC-6012 Class-3 assembly."),
+                ("EMP-004", "CALEB JACKSON ROSS", "JEFFERY HUMPHREY (CEO)", "FIELD_SURVEY_AUTHORIZATION", "Cleared for air-gapped UAS Louhaichi GLI flights and Oklahoma Title 61 (5% retainage) boundary surveys."),
+            ]
+            for eid, ename, auth, cat, txt in defaults:
+                self.append_employer_personnel_note(
+                    db_path=db_path,
+                    employee_id=eid,
+                    employee_name=ename,
+                    author_authority=auth,
+                    note_category=cat,
+                    confidential_note_text=txt,
+                )
+
+    def append_employer_personnel_note(
+        self,
+        db_path: pathlib.Path,
+        employee_id: str,
+        employee_name: str,
+        author_authority: str,
+        note_category: str,
+        confidential_note_text: str,
+    ) -> Dict[str, Any]:
+        self.init_worm_sqlite_ledger(db_path)
+        clean_text = confidential_note_text.strip()
+        assert len(clean_text) >= 3, "Employer personnel note text must be at least 3 characters"
+        conn = sqlite3.connect(str(db_path))
+        try:
+            cur = conn.cursor()
+            last_row = cur.execute(
+                "SELECT note_id, worm_note_sha256 FROM worm_employer_personnel_notes ORDER BY note_id DESC LIMIT 1"
+            ).fetchone()
+            prev_hash = last_row[1] if last_row else ("0" * 64)
+            next_id = (last_row[0] + 1) if last_row else 1
+
+            note_sha = hmac.new(
+                IDENTITY_VAULT_PEPPER.encode("utf-8"),
+                f"{prev_hash}|{employee_id.strip()}|{employee_name.strip()}|{author_authority.strip()}|{note_category.strip()}|{clean_text}|{FROZEN_EBONY_MERKLE_ROOT}".encode("utf-8"),
+                hashlib.sha256,
+            ).hexdigest()
+
+            cur.execute(
+                """
+                INSERT OR IGNORE INTO worm_employer_personnel_notes (
+                    employee_id, employee_name, author_authority, note_category,
+                    confidential_note_text, previous_note_hash, worm_note_sha256
+                ) VALUES (?,?,?,?,?,?,?)
+                """,
+                (
+                    employee_id.strip(),
+                    employee_name.strip(),
+                    author_authority.strip(),
+                    note_category.strip(),
+                    clean_text,
+                    prev_hash,
+                    note_sha,
+                ),
+            )
+            conn.commit()
+            total_emp_notes = cur.execute(
+                "SELECT COUNT(*) FROM worm_employer_personnel_notes WHERE employee_id = ?",
+                (employee_id.strip(),),
+            ).fetchone()[0]
+        finally:
+            conn.close()
+        return {
+            "note_sequence": next_id,
+            "employee_id": employee_id.strip(),
+            "employee_name": employee_name.strip(),
+            "author_authority": author_authority.strip(),
+            "note_category": note_category.strip(),
+            "confidential_note_text": clean_text,
+            "total_notes_for_employee": total_emp_notes,
+            "worm_note_sha256": note_sha,
+        }
+
+    def get_employer_personnel_notes(
+        self,
+        db_path: pathlib.Path,
+        employee_id: str | None = None,
+    ) -> List[Dict[str, str]]:
+        self.seed_default_employer_notes(db_path)
+        conn = sqlite3.connect(str(db_path))
+        try:
+            cur = conn.cursor()
+            if employee_id:
+                rows = cur.execute(
+                    """
+                    SELECT note_id, employee_id, employee_name, author_authority,
+                           note_category, confidential_note_text, previous_note_hash, worm_note_sha256
+                    FROM worm_employer_personnel_notes
+                    WHERE employee_id = ?
+                    ORDER BY note_id DESC
+                    """,
+                    (employee_id.strip(),),
+                ).fetchall()
+            else:
+                rows = cur.execute(
+                    """
+                    SELECT note_id, employee_id, employee_name, author_authority,
+                           note_category, confidential_note_text, previous_note_hash, worm_note_sha256
+                    FROM worm_employer_personnel_notes
+                    ORDER BY note_id DESC
+                    """
+                ).fetchall()
+        finally:
+            conn.close()
+        return [
+            {
+                "Note_ID": f"NOTE #{r[0]:03d}",
+                "Employee_ID": r[1],
+                "Employee_Name": r[2],
+                "Author_Authority": r[3],
+                "Category": r[4],
+                "Confidential_Employer_Note": r[5],
+                "Prev_Note_Hash": r[6][:14] + "...",
+                "WORM_Note_SHA256": r[7][:18] + "...",
+            }
+            for r in rows
+        ]
+
     def open_compartment_gate(
         self,
         roster_key: str,
@@ -407,6 +538,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 ),
                 "credit_report": cred,
                 "employer_internal_records": None,  # Strictly hidden from employee
+                "employer_personnel_notes": None,   # Strictly hidden from employee
                 "proof_of_id_rows": app_eval["attribute_rows"],
                 "composite_seal": app_eval["composite_42field_application_seal"],
             }
@@ -437,6 +569,10 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 ),
                 "credit_report": None,  # Strictly blocked from employer view!
                 "employer_internal_records": person["employer_internal_records"],
+                "employer_personnel_notes": self.get_employer_personnel_notes(
+                    out_dir / "wp7_identity_credit_worm_ledger.db",
+                    employee_id=person["employee_id"],
+                ),
                 "proof_of_id_rows": employer_allowed_rows,
                 "composite_seal": app_eval["composite_42field_application_seal"],
             }
@@ -455,7 +591,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
             title="42-Field Atomic Personnel Application, NOK/ICE, Proof-of-Identity Lock, & Credit Shield",
-            version="6.0.0",
+            version="6.2.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,
@@ -972,10 +1108,36 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: DELETE PROHIBITED ON worm_identity_profile_revisions');
                 END;
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS worm_employer_personnel_notes (
+                    note_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    employee_id TEXT NOT NULL,
+                    employee_name TEXT NOT NULL,
+                    author_authority TEXT NOT NULL,
+                    note_category TEXT NOT NULL,
+                    confidential_note_text TEXT NOT NULL,
+                    previous_note_hash TEXT NOT NULL,
+                    worm_note_sha256 TEXT NOT NULL UNIQUE
+                )
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_emp_notes_no_update
+                BEFORE UPDATE ON worm_employer_personnel_notes
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: UPDATE PROHIBITED ON worm_employer_personnel_notes');
+                END;
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_emp_notes_no_delete
+                BEFORE DELETE ON worm_employer_personnel_notes
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: DELETE PROHIBITED ON worm_employer_personnel_notes');
+                END;
+            """)
             conn.commit()
         finally:
             conn.close()
-        return {"db_path": str(db_path), "worm_triggers_active": 6}
+        return {"db_path": str(db_path), "worm_triggers_active": 8}
 
     def commit_profile_update_revision(
         self,
@@ -1133,7 +1295,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "worm_id_access_rows": id_cnt,
             "worm_credit_intercept_rows": cr_cnt,
             "worm_profile_revision_rows": rv_cnt,
-            "worm_triggers_active": 6,
+            "worm_triggers_active": 8,
         }
 
     def generate_wp7_antifraud_dossier(
