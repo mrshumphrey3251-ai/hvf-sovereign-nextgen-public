@@ -16,7 +16,7 @@ def run_clin_0033_tests() -> None:
     shield = SovereignIdentityAntiFraudShield()
     manifest = reg.register(shield)
     assert manifest.clin_number == "CLIN 0033"
-    assert manifest.version == "5.0.0"
+    assert manifest.version == "6.0.0"
     assert manifest.per_node_annual_gov_usd == 95000
     assert manifest.compatible_host_merkle_root == FROZEN_EBONY_MERKLE_ROOT
 
@@ -97,6 +97,50 @@ def run_clin_0033_tests() -> None:
                 assert "WORM_IMMUTABILITY_VIOLATION" in str(exc)
     finally:
         conn.close()
+
+
+
+    # 5. Verify Stage 13r (v6.0) Zero-Second Emergency Triage & Dual-Compartment Privacy Wall
+    roster_keys = list(shield.PERSONNEL_EMERGENCY_ROSTER.keys())
+    assert len(roster_keys) >= 4
+    ice_card = shield.get_instant_emergency_triage_card(roster_keys[0])
+    assert "nok_phone" in ice_card and "ice_phone" in ice_card and "blood_type_and_medical" in ice_card
+
+    # Gate must remain locked if User Agreement is not accepted
+    locked_gate = shield.open_compartment_gate(
+        roster_key=roster_keys[0],
+        viewer_role="EMPLOYEE",
+        user_agreement_accepted=False,
+        access_key_or_pin="EMP-PIN-1AHA8-001",
+        out_dir=artifacts_dir,
+    )
+    assert locked_gate["gate_open"] is False
+    assert locked_gate["credit_report"] is None
+    assert locked_gate["employer_internal_records"] is None
+
+    # Employee Gate opens Credit/Loan Shield & Proof-of-ID, but BLOCKS Employer Internal Records
+    emp_gate = shield.open_compartment_gate(
+        roster_key=roster_keys[0],
+        viewer_role="EMPLOYEE",
+        user_agreement_accepted=True,
+        access_key_or_pin="EMP-PIN-1AHA8-001",
+        out_dir=artifacts_dir,
+    )
+    assert emp_gate["gate_open"] is True
+    assert emp_gate["credit_report"] is not None
+    assert emp_gate["employer_internal_records"] is None, "CRITICAL: Employee must not see Employer Internal HR records"
+
+    # Employer Gate opens Proof-of-ID & Internal HR Records, but BLOCKS Employee Personal Credit/Loans
+    empr_gate = shield.open_compartment_gate(
+        roster_key=roster_keys[0],
+        viewer_role="EMPLOYER",
+        user_agreement_accepted=True,
+        access_key_or_pin="EMPLOYER-MASTER-1AHA8",
+        out_dir=artifacts_dir,
+    )
+    assert empr_gate["gate_open"] is True
+    assert empr_gate["employer_internal_records"] is not None
+    assert empr_gate["credit_report"] is None, "CRITICAL: Employer must NEVER see Employee personal credit or loans"
 
 
 if __name__ == "__main__":

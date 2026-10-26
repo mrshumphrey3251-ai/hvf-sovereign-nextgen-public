@@ -133,12 +133,279 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         "f42_mobile_sim_imei": "359881090044112",
     }
 
+
+    # =========================================================================
+    # STAGE 13R (v6.0): ZERO-SECOND EMERGENCY ICE TRIAGE ROSTER, USER AGREEMENT
+    # GATE, & DUAL-COMPARTMENT PRIVACY WALL (EMPLOYEE vs. EMPLOYER)
+    # =========================================================================
+    USER_AGREEMENT_TEXT: str = (
+        "SOVEREIGN IDENTITY & DUAL-COMPARTMENT PRIVACY CHARTER (FCRA 15 U.S.C. 1681 / PRIVACY ACT OF 1974): "
+        "(1) EMERGENCY TRIAGE: Company command contacts and employee Next-of-Kin (NOK) / In-Case-of-Emergency (ICE) "
+        "vital response data are immediately accessible on the front triage panel so zero seconds are lost during a medical or site emergency. "
+        "(2) EMPLOYEE PERSONAL COMPARTMENT PRIVACY: Personal credit bureau inquiries, personal loans, personal bank/deed locks, and dark-web PII monitors "
+        "are the exclusive property of the individual employee. The Employer is strictly blocked from viewing Employee financial or credit telemetry. "
+        "(3) EMPLOYER INTERNAL COMPARTMENT SECURITY: Internal security clearance adjudication, I-9 E-Verify audit seals, watch-floor bitmask assignments, "
+        "and internal HR vetting ledgers are restricted strictly to the Employer / Commanding Authority. "
+        "(4) UNALTERABLE PROOF OF IDENTITY: Once an onboarding identity record is sealed, input boxes are removed and the record enters an unalterable "
+        "state requiring cryptographic authorization for any modification."
+    )
+
+    COMPANY_EMERGENCY_CONTACTS: List[Dict[str, str]] = [
+        {
+            "Unit": "1. HVF Sovereign Command Watch Desk (24/7 Primary)",
+            "Authority": "Jeffery Humphrey ? Founder, CEO, & Principal Sovereign Architect",
+            "Direct_Line": "405-555-0100 (Priority Channel 1)",
+            "Email_Dispatch": "humphreyvirtualfarm@gmail.com",
+            "Location_Enclave": "Oklahoma City HQ // CAGE: 1AHA8 | UEI: S1M4ENLHTDH5",
+        },
+        {
+            "Unit": "2. Site Physical Security & 36.75ns Safety Interlock Officer",
+            "Authority": "HVF Tactical Watch Officer on Duty",
+            "Direct_Line": "405-555-0111 (Emergency Guillotine & Medical Dispatch)",
+            "Email_Dispatch": "watchfloor-sos@hvf-sovereign.local",
+            "Location_Enclave": "TOC Enclave Alpha // Port 8501 & Port 8502",
+        },
+        {
+            "Unit": "3. Facility Medical, Trauma, & Fire Rapid Response",
+            "Authority": "Base / Regional EMS & Trauma Coordinator",
+            "Direct_Line": "911 / Base Medical Direct 405-555-0911",
+            "Email_Dispatch": "ems-triage@hvf-sovereign.local",
+            "Location_Enclave": "Emergency Gate 1 // Helipad & Ambulance Bay",
+        },
+    ]
+
+    PERSONNEL_EMERGENCY_ROSTER: Dict[str, Dict[str, Any]] = {
+        "EMP-001 // JEFFERY HUMPHREY (CEO & Principal Sovereign Architect)": {
+            "employee_id": "EMP-001",
+            "full_name": "JEFFERY SOVEREIGN HUMPHREY",
+            "role_title": "Founder, CEO, & Principal Sovereign Architect",
+            "department": "HVF Executive Command (CAGE 1AHA8)",
+            "direct_phone": "405-555-0199",
+            "email": "humphreyvirtualfarm@gmail.com",
+            "nok_full_name": "MRS. HUMPHREY (Designated Primary Spouse / NOK)",
+            "nok_relationship": "SPOUSE_PRIMARY_BENEFICIARY",
+            "nok_phone": "405-555-0188",
+            "nok_address": "100 Sovereign Command Pkwy, Oklahoma City, OK 73102",
+            "ice_full_name": "HVF Tactical Watch Officer Desk",
+            "ice_relationship": "SECONDARY_EMERGENCY_COMMAND_CONTACT",
+            "ice_phone": "405-555-0177",
+            "blood_type_and_medical": "O_POSITIVE // NO_KNOWN_DRUG_ALLERGIES",
+            "employee_pin": "EMP-PIN-1AHA8-001",
+            "employer_internal_records": [
+                {"Internal_Record_Field": "1. Security Clearance & Adjudication Tier", "Employer_Sealed_Value": "LEVEL_5_SOVEREIGN_COMMANDER (SCI/SAP Vetted)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "2. Form I-9 & E-Verify Federal Case Seal", "Employer_Sealed_Value": "I9-VERIFIED-1AHA8-CASE-2026-0001 (ACTIVE)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "3. Watch-Floor Bitwise RBAC Authority Mask", "Employer_Sealed_Value": "0xFF (FULL_COMMAND_AND_WORM_SEAL_AUTHORITY)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "4. Insider Threat & Polygraph/Background Audit", "Employer_Sealed_Value": "ZERO_ADVERSE_FINDINGS // CONTINUOUS_EVAL_PASS", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "5. Internal Executive Draw & Contract Bucket Code", "Employer_Sealed_Value": "BUCKET-2 (35.0% CEO & SME Compensation Allocation)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+            ],
+        },
+        "EMP-002 // CAPT. MARCUS VANCE (Senior Tactical Watch Officer)": {
+            "employee_id": "EMP-002",
+            "full_name": "MARCUS ALEXANDER VANCE",
+            "role_title": "Senior Tactical Watch Officer (Shift Alpha)",
+            "department": "TOC Watch Floor & 60Hz Microgrid Operations",
+            "direct_phone": "405-555-0210",
+            "email": "m.vance@hvf-sovereign.local",
+            "nok_full_name": "ELENA VANCE",
+            "nok_relationship": "SPOUSE",
+            "nok_phone": "405-555-0211",
+            "nok_address": "4420 Midwest Blvd, Midwest City, OK 73110",
+            "ice_full_name": "DR. ROBERT VANCE",
+            "ice_relationship": "BROTHER / PHYSICIAN CONTACT",
+            "ice_phone": "405-555-0212",
+            "blood_type_and_medical": "A_POSITIVE // PENICILLIN_ALLERGY_CARRY_EPIPEN",
+            "employee_pin": "EMP-PIN-VANCE-002",
+            "employer_internal_records": [
+                {"Internal_Record_Field": "1. Security Clearance & Adjudication Tier", "Employer_Sealed_Value": "SECRET // DOD_RMF_WATCH_OFFICER_CLEARED", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "2. Form I-9 & E-Verify Federal Case Seal", "Employer_Sealed_Value": "I9-VERIFIED-1AHA8-CASE-2026-0002 (ACTIVE)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "3. Watch-Floor Bitwise RBAC Authority Mask", "Employer_Sealed_Value": "0x1F (WATCH_OFFICER_CONTACTOR_AND_SHIFT_SIGN)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "4. Insider Threat & Background Vetting Audit", "Employer_Sealed_Value": "PASSED_ANNUAL_NIST_800_53_PERSONNEL_SCREEN", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "5. Internal Labor CLIN Billing Allocation", "Employer_Sealed_Value": "BUCKET-3 (15.0% TRL 8/9 Site Integration Pool)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+            ],
+        },
+        "EMP-003 // DR. SARAH LIN (Lead SiC Power Electronics & PLC Engineer)": {
+            "employee_id": "EMP-003",
+            "full_name": "SARAH MEI LIN",
+            "role_title": "Lead 36.75ns SiC MOSFET & SCADA Integration Engineer",
+            "department": "Hardware Interlock & J1939 CAN-Bus Lab",
+            "direct_phone": "405-555-0310",
+            "email": "s.lin@hvf-sovereign.local",
+            "nok_full_name": "DAVID LIN",
+            "nok_relationship": "FATHER",
+            "nok_phone": "405-555-0311",
+            "nok_address": "812 Crimson Oak Dr, Norman, OK 73072",
+            "ice_full_name": "GRACE LIN",
+            "ice_relationship": "SISTER",
+            "ice_phone": "405-555-0312",
+            "blood_type_and_medical": "B_NEGATIVE // ASTHMA_INHALER_IN_LAB_LOCKER_B4",
+            "employee_pin": "EMP-PIN-LIN-003",
+            "employer_internal_records": [
+                {"Internal_Record_Field": "1. Security Clearance & Adjudication Tier", "Employer_Sealed_Value": "SECRET // DFARS_252_227_7018_HARDWARE_CUSTODIAN", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "2. Form I-9 & E-Verify Federal Case Seal", "Employer_Sealed_Value": "I9-VERIFIED-1AHA8-CASE-2026-0003 (ACTIVE)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "3. Watch-Floor Bitwise RBAC Authority Mask", "Employer_Sealed_Value": "0x1F (HARDWARE_BENCH_AND_SCADA_REGISTER_SIGN)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "4. Insider Threat & Background Vetting Audit", "Employer_Sealed_Value": "PASSED_IPC_6012_CLASS_3_AND_IT_VETTING", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "5. Internal Labor CLIN Billing Allocation", "Employer_Sealed_Value": "BUCKET-1 (18.0% Hardware Setup & Calibration Pool)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+            ],
+        },
+        "EMP-004 // CALEB ROSS (UAS Optical GLI & OK Title 61 Survey Specialist)": {
+            "employee_id": "EMP-004",
+            "full_name": "CALEB JACKSON ROSS",
+            "role_title": "UAS Flight Operator & Civil GIS Boundary Specialist",
+            "department": "Aerial Multispectral & Title 61 Civil Works Division",
+            "direct_phone": "405-555-0410",
+            "email": "c.ross@hvf-sovereign.local",
+            "nok_full_name": "HANNAH ROSS",
+            "nok_relationship": "SPOUSE",
+            "nok_phone": "405-555-0411",
+            "nok_address": "1904 Prairie Wind Rd, Edmond, OK 73003",
+            "ice_full_name": "THOMAS ROSS",
+            "ice_relationship": "FATHER",
+            "ice_phone": "405-555-0412",
+            "blood_type_and_medical": "AB_POSITIVE // NO_KNOWN_ALLERGIES",
+            "employee_pin": "EMP-PIN-ROSS-004",
+            "employer_internal_records": [
+                {"Internal_Record_Field": "1. Security Clearance & Adjudication Tier", "Employer_Sealed_Value": "PUBLIC_TRUST // FAA_PART_107_AND_TITLE_61_BONDED", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "2. Form I-9 & E-Verify Federal Case Seal", "Employer_Sealed_Value": "I9-VERIFIED-1AHA8-CASE-2026-0004 (ACTIVE)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "3. Watch-Floor Bitwise RBAC Authority Mask", "Employer_Sealed_Value": "0x03 (OBSERVER_AND_GIS_TELEMETRY_INGEST)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "4. Insider Threat & Background Vetting Audit", "Employer_Sealed_Value": "PASSED_FIELD_OPERATIONS_VETTING", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+                {"Internal_Record_Field": "5. Internal Labor CLIN Billing Allocation", "Employer_Sealed_Value": "BUCKET-3 (15.0% TRL 8/9 Site Integration Pool)", "Employee_Visibility": "HIDDEN_INTERNAL_EMPLOYER_ONLY"},
+            ],
+        },
+    }
+
+    def get_instant_emergency_triage_card(self, roster_key: str) -> Dict[str, str]:
+        person = self.PERSONNEL_EMERGENCY_ROSTER.get(
+            roster_key,
+            next(iter(self.PERSONNEL_EMERGENCY_ROSTER.values())),
+        )
+        return {
+            "employee_id": person["employee_id"],
+            "full_name": person["full_name"],
+            "role_title": person["role_title"],
+            "department": person["department"],
+            "direct_phone": person["direct_phone"],
+            "email": person["email"],
+            "nok_full_name": person["nok_full_name"],
+            "nok_relationship": person["nok_relationship"],
+            "nok_phone": person["nok_phone"],
+            "nok_address": person["nok_address"],
+            "ice_full_name": person["ice_full_name"],
+            "ice_relationship": person["ice_relationship"],
+            "ice_phone": person["ice_phone"],
+            "blood_type_and_medical": person["blood_type_and_medical"],
+        }
+
+    def open_compartment_gate(
+        self,
+        roster_key: str,
+        viewer_role: str,
+        user_agreement_accepted: bool,
+        access_key_or_pin: str,
+        out_dir: pathlib.Path,
+        credit_freeze_locked: bool = True,
+    ) -> Dict[str, Any]:
+        """
+        Enforces strict Dual-Compartment Privacy Separation:
+          - If user_agreement_accepted is False -> GATE_LOCKED_AGREEMENT_REQUIRED
+          - If viewer_role == "EMPLOYEE":
+              Verifies Employee Personal PIN.
+              Opens Employee Personal Credit/Loan Shield, 42-Field Proof-of-Identity, & NOK/ICE.
+              BLOCKS Employer Internal HR/Clearance records (employer_internal_records = None).
+          - If viewer_role == "EMPLOYER":
+              Verifies Employer Master Key.
+              Opens Employer Proof-of-Identity (35 non-credit onboarding fields) & Employer Internal HR/Clearance records.
+              BLOCKS Employee Personal Credit/Loan & Personal Bank/Deed Financial Compartment (credit_report = None).
+        """
+        if not user_agreement_accepted:
+            return {
+                "gate_open": False,
+                "gate_status": "GATE_LOCKED_USER_AGREEMENT_AND_AUTHORIZATION_REQUIRED",
+                "viewer_role": viewer_role,
+                "credit_report": None,
+                "employer_internal_records": None,
+                "proof_of_id_rows": None,
+            }
+
+        person = self.PERSONNEL_EMERGENCY_ROSTER.get(
+            roster_key,
+            next(iter(self.PERSONNEL_EMERGENCY_ROSTER.values())),
+        )
+        expected_emp_pin = person["employee_pin"]
+        expected_employer_key = "EMPLOYER-MASTER-1AHA8"
+
+        app_eval = self.evaluate_atomic_42_application()
+
+        if viewer_role == "EMPLOYEE":
+            if access_key_or_pin.strip() != expected_emp_pin:
+                return {
+                    "gate_open": False,
+                    "gate_status": "GATE_DENIED_INVALID_EMPLOYEE_PERSONAL_PIN",
+                    "viewer_role": "EMPLOYEE",
+                    "credit_report": None,
+                    "employer_internal_records": None,
+                    "proof_of_id_rows": None,
+                }
+            cred = self.evaluate_credit_and_loan_activity(credit_freeze_locked=credit_freeze_locked)
+            return {
+                "gate_open": True,
+                "gate_status": "EMPLOYEE_PERSONAL_SOVEREIGN_VAULT_OPEN",
+                "viewer_role": "EMPLOYEE",
+                "privacy_notice": (
+                    "EMPLOYEE PERSONAL COMPARTMENT ACTIVE: You have full visibility into your 7-Channel Credit Bureau, "
+                    "Loan, Deed, & SIM-Swap Shield and your 42-Field Proof-of-Identity. Your Employer is strictly blocked "
+                    "from viewing your personal credit or loan telemetry."
+                ),
+                "credit_report": cred,
+                "employer_internal_records": None,  # Strictly hidden from employee
+                "proof_of_id_rows": app_eval["attribute_rows"],
+                "composite_seal": app_eval["composite_42field_application_seal"],
+            }
+
+        if viewer_role == "EMPLOYER":
+            if access_key_or_pin.strip() != expected_employer_key:
+                return {
+                    "gate_open": False,
+                    "gate_status": "GATE_DENIED_INVALID_EMPLOYER_MASTER_KEY",
+                    "viewer_role": "EMPLOYER",
+                    "credit_report": None,
+                    "employer_internal_records": None,
+                    "proof_of_id_rows": None,
+                }
+            # Filter out personal financial/asset lock rows (f39..f42) from employer proof-of-ID view
+            employer_allowed_rows = [
+                r for r in app_eval["attribute_rows"]
+                if not r["Field_ID"].startswith(("F39_", "F40_", "F41_", "F42_"))
+            ]
+            return {
+                "gate_open": True,
+                "gate_status": "EMPLOYER_INTERNAL_HR_AND_PROOF_OF_IDENTITY_VAULT_OPEN",
+                "viewer_role": "EMPLOYER",
+                "privacy_notice": (
+                    "EMPLOYER INTERNAL COMPARTMENT ACTIVE: Displaying unalterable Employee Digital Proof-of-Identity, "
+                    "I-9/Clearance Vetting, and Internal Employer HR Records. [PRIVACY WALL ENFORCED: Employee Personal "
+                    "Credit Bureaus, Personal Loans, and Personal Financial Accounts Are Strictly Hidden From Employer View]."
+                ),
+                "credit_report": None,  # Strictly blocked from employer view!
+                "employer_internal_records": person["employer_internal_records"],
+                "proof_of_id_rows": employer_allowed_rows,
+                "composite_seal": app_eval["composite_42field_application_seal"],
+            }
+
+        return {
+            "gate_open": False,
+            "gate_status": "GATE_LOCKED_SELECT_VALID_ROLE",
+            "viewer_role": viewer_role,
+            "credit_report": None,
+            "employer_internal_records": None,
+            "proof_of_id_rows": None,
+        }
+
     def __init__(self) -> None:
         super().__init__(
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
             title="42-Field Atomic Personnel Application, NOK/ICE, Proof-of-Identity Lock, & Credit Shield",
-            version="5.0.0",
+            version="6.0.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,
