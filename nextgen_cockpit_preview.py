@@ -285,7 +285,7 @@ def render_nextgen_dashboard() -> None:
         )
 
     with tabs[7]:
-        st.markdown("### `WP-7` / `CLIN 0033 v6.3`: Zero-Second Emergency ICE Triage, User Authorization Gate, & Dual-Compartment Identity/Credit Vault")
+        st.markdown("### `WP-7` / `CLIN 0033 v7.0`: 60-Field Personnel Dossier, Zero-Second Emergency ICE Triage, Promotion Shortlist, & Dual-Compartment Vault")
 
         # =====================================================================
         # SECTION A (ALWAYS VISIBLE -- ZERO CLICKS IN AN EMERGENCY):
@@ -309,12 +309,12 @@ def render_nextgen_dashboard() -> None:
         e3.metric("Emergency (ICE) Phone", triage["ice_phone"], triage["ice_short"])
         e4.metric("Blood Type & Medical Alert", triage["blood_type_clean"], triage["medical_alert_clean"])
 
-        triage_card_text = "\n".join([
-            f"INSTANT EMERGENCY TRIAGE CARD // {triage['employee_id']} -- {triage['full_name']} ({triage['department']})",
-            f"  * Employee Direct Contact : {triage['direct_phone']} | Email: {triage['email']}",
-            f"  * Next of Kin (NOK)       : {triage['nok_full_name']} ({triage['nok_relationship']}) | Phone: {triage['nok_phone']} | Address: {triage['nok_address']}",
-            f"  * In Case of Emergency    : {triage['ice_full_name']} ({triage['ice_relationship']}) | Direct Phone: {triage['ice_phone']}",
-            f"  * Medical / Blood Alert   : {triage['blood_type_clean']} -- {triage['medical_alert_clean']}",
+        triage_card_text = nl.join([
+            f"[01] EMERGENCY TRIAGE SUBJECT : {triage['employee_id']} -- {triage['full_name']} ({triage['department']})",
+            f"[02] EMPLOYEE DIRECT CONTACT  : {triage['direct_phone']} | Email: {triage['email']}",
+            f"[03] NEXT OF KIN (NOK)        : {triage['nok_full_name']} ({triage['nok_relationship']}) | Phone: {triage['nok_phone']} | Address: {triage['nok_address']}",
+            f"[04] IN CASE OF EMERGENCY     : {triage['ice_full_name']} ({triage['ice_relationship']}) | Direct Phone: {triage['ice_phone']}",
+            f"[05] MEDICAL & BLOOD ALERT    : {triage['blood_type_clean']} -- {triage['medical_alert_clean']}",
         ])
         st.code(triage_card_text, language="text")
 
