@@ -1,0 +1,77 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 2475 >>
+stream
+BT
+/F1 8.5 Tf
+36 756 Td
+11 TL
+(# HUMPHREY VIRTUAL FARMS LLC // WP-5: COMMAND WATCH-FLOOR RBAC & WORM SHIFT-LEDGER ICD) Tj T*
+(**Entity:** Humphrey Virtual Farms LLC \(`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`\)) Tj T*
+(**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect) Tj T*
+(**Plug-In Module:** `CLIN 0031 \(WP-5 Watch-Floor RBAC & PDF Compiler\)` | **Enclave Tier:**) Tj T*
+(   `PUBLIC`) Tj T*
+(**Host Ebony Baseline Merkle Root:** `cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e1) Tj T*
+(  8e9150949a`) Tj T*
+() Tj T*
+(---) Tj T*
+() Tj T*
+(## 1. Bitwise Watch-Floor Role-Based Access Control \(RBAC\) Verification Matrix) Tj T*
+(* **Level-1 Telemetry Observer \(`0x03`\) -> Airlock Release \(`0x80`\):** Authorized = `Fal) Tj T*
+(  se` \(Blocked as expected\)) Tj T*
+(* **Level-3 Watch Officer \(`0x1F`\) -> Sign Shift Brief \(`0x10`\):** Authorized = `True` \) Tj T*
+(  (Token: `a35d29186b9aa3313f65458d`\)) Tj T*
+(* **Level-5 Sovereign Commander \(`0xFF`\) -> Airlock Release \(`0x80`\):** Authorized = `Tr) Tj T*
+(  ue` \(Token: `34b61abc45a93be263bd04cd`\)) Tj T*
+(* **Session Cryptographic Salt Binding:** `[REDACTED_RBAC_SESSION_SALT_DFARS_252_227_7018]`) Tj T*
+() Tj T*
+(---) Tj T*
+() Tj T*
+(## 2. Automated Command Shift-Handover WORM Ledger \(`CLIN 0022` / `CLIN 0024`\)) Tj T*
+(* **Command TOC Callsign:** `TINKER-OCALC-TOC-ALPHA`) Tj T*
+(* **Shift Window \(UTC\):** `2026-10-25 12:00Z -> 2026-10-25 20:00Z`) Tj T*
+(* **Outgoing Watch Officer:** `MAJ R. VANCE \(LEVEL_3_WATCH_OFFICER\)`) Tj T*
+(* **Incoming Watch Officer:** `CAPT E. MERCER \(LEVEL_3_WATCH_OFFICER\)`) Tj T*
+(* **Command Approving Authority:** `JEFFERY HUMPHREY \(LEVEL_5_SOVEREIGN_COMMANDER\)`) Tj T*
+() Tj T*
+(### Logged Watch-Floor Events:) Tj T*
+(* 12:15Z - CLIN 0003: 60Hz Microgrid Bus locked at 60.000 Hz \(RoCoF -0.04 Hz/s, Nominal\).) Tj T*
+(* 14:40Z - CLIN 0006: 36.75ns SiC MOSFET Hardware Interlock self-test PASSED \(0.0551 um mar) Tj T*
+(  gin\).) Tj T*
+(* 17:05Z - CLIN 0009: 480V 3-Phase Silo Contactor NEMA MG-1 phase unbalance 0.28% \(Safe\).) Tj T*
+(* 19:55Z - CLIN 0022: Outgoing Watch-Floor WORM Ledger verified against Merkle Root cc1ee1c8) Tj T*
+(  ...949a.) Tj T*
+() Tj T*
+(---) Tj T*
+(**Previous Shift Hash:** `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`) Tj T*
+(**Current Shift WORM Chain Seal \(SHA-256\):** `207de035017e747f332d21d9d5a605adafccee11fcbe) Tj T*
+(  e0d80613e6f93cb1d580`) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000189 00000 n 
+0000000315 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2842
+%%EOF
