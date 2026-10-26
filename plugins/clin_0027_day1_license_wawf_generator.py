@@ -22,54 +22,66 @@ ENCLAVE_MODE = "PUBLIC"
 SOVEREIGN_HMAC_SEED = "PUBLIC_VERIFICATION_SEED_REDACTED_DFARS_252_227_7018"
 
 
-def build_minimal_iso_pdf(body_lines: List[str]) -> bytes:
-    clean_lines: List[str] = []
-    for line in body_lines:
-        s = line.encode("ascii", errors="ignore").decode("ascii")
-        s = s.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
-        while len(s) > 92:
-            clean_lines.append(s[:92])
-            s = "  " + s[92:]
-        clean_lines.append(s)
-    lines_per_page = 46
-    pages = [clean_lines[i:i + lines_per_page] for i in range(0, max(1, len(clean_lines)), lines_per_page)]
-    objects = []
-    page_obj_ids = []
-    content_obj_ids = []
-    next_id = 4
-    for _ in pages:
-        page_obj_ids.append(next_id)
-        content_obj_ids.append(next_id + 1)
-        next_id += 2
-    objects.append((1, b"<< /Type /Catalog /Pages 2 0 R >>"))
-    kids_str = " ".join(f"{pid} 0 R" for pid in page_obj_ids)
-    objects.append((2, f"<< /Type /Pages /Kids [{kids_str}] /Count {len(pages)} >>".encode("ascii")))
-    objects.append((3, b"<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>"))
-    for idx, p_lines in enumerate(pages):
-        pid = page_obj_ids[idx]
-        cid = content_obj_ids[idx]
-        stream_cmds = ["BT", "/F1 8.5 Tf", "36 756 Td", "11 TL"]
-        for l_txt in p_lines:
-            stream_cmds.append(f"({l_txt}) Tj T*")
-        stream_cmds.append("ET")
-        stream_bytes = "\n".join(stream_cmds).encode("ascii")
-        page_dict = f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents {cid} 0 R >>".encode("ascii")
-        content_dict = f"<< /Length {len(stream_bytes)} >>\nstream\n".encode("ascii") + stream_bytes + b"\nendstream"
-        objects.append((pid, page_dict))
-        objects.append((cid, content_dict))
-    objects.sort(key=lambda x: x[0])
+def build_minimal_iso_pdf(lines: List[str]) -> bytes:
+    """
+    Compiles a deterministic, standards-compliant ISO 32000-1 %PDF-1.4 binary document
+    using standard Type1 Helvetica font with clean Markdown stripping and whole-word wrapping.
+    """
+    import re, textwrap
+    wrapped_clean_lines: List[str] = []
+    for raw_line in lines:
+        s = raw_line.encode("ascii", errors="ignore").decode("ascii").strip()
+        if not s:
+            wrapped_clean_lines.append("")
+            continue
+        if s == "---":
+            wrapped_clean_lines.append("=" * 88)
+            continue
+        s = re.sub(r"^#+\s*", "", s)
+        s = s.replace("**", "").replace("`", "")
+        if s.startswith("* "):
+            s = "  - " + s[2:]
+        for wline in textwrap.wrap(
+            s,
+            width=88,
+            break_long_words=False,
+            break_on_hyphens=False,
+            subsequent_indent="    ",
+        ):
+            wrapped_clean_lines.append(wline)
+
+    stream_cmds = ["BT", "/F1 8.5 Tf", "36 762 Td", "10.5 TL"]
+    for cline in wrapped_clean_lines[:68]:
+        safe = (
+            cline.replace("\\", "\\\\")
+            .replace("(", "\\(")
+            .replace(")", "\\)")
+        )
+        stream_cmds.append(f"({safe}) Tj T*")
+    stream_cmds.append("ET")
+    content_bytes = "\n".join(stream_cmds).encode("ascii")
+
+    objs = [
+        b"1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n",
+        b"2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n",
+        b"3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n",
+        f"4 0 obj\n<< /Length {len(content_bytes)} >>\nstream\n".encode("ascii")
+        + content_bytes
+        + b"\nendstream\nendobj\n",
+        b"5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n",
+    ]
     out = bytearray(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
-    offsets = {}
-    for oid, odata in objects:
-        offsets[oid] = len(out)
-        out.extend(f"{oid} 0 obj\n".encode("ascii"))
-        out.extend(odata)
-        out.extend(b"\nendobj\n")
+    offsets = []
+    for o in objs:
+        offsets.append(len(out))
+        out.extend(o)
     xref_pos = len(out)
-    out.extend(f"xref\n0 {len(objects) + 1}\n0000000000 65535 f \n".encode("ascii"))
-    for oid in range(1, len(objects) + 1):
-        out.extend(f"{offsets[oid]:010d} 00000 n \n".encode("ascii"))
-    out.extend(f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref_pos}\n%%EOF\n".encode("ascii"))
+    out.extend(f"xref\n0 {len(objs) + 1}\n0000000000 65535 f \n".encode("ascii"))
+    for off in offsets:
+        out.extend(f"{off:010d} 00000 n \n".encode("ascii"))
+    out.extend(
+        f"trailer\n<< /Size {len(objs) + 1} /Root 1 0 R >>\nstartxref\n{xref_pos}\n%%EOF\n".encode("ascii")
+    )
     return bytes(out)
 
 

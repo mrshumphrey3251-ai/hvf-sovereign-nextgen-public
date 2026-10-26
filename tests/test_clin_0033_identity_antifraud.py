@@ -66,8 +66,32 @@ def run_clin_0033_tests() -> None:
     assert test_raw_ssn not in md_text, "CRITICAL: Raw SSN must never appear in Markdown report"
     assert test_raw_dob not in md_text, "CRITICAL: Raw DOB must never appear in Markdown report"
     assert "*--" not in md_text, "CRITICAL: Markdown asterisk collision must never occur"
+    assert "MASKED--" not in md_text, "CRITICAL: Double-hyphen mask must never occur"
     assert pdf_bytes.startswith(b"%PDF-1.4")
+    assert b"**" not in pdf_bytes, "CRITICAL: Raw Markdown ** must be stripped from PDF text stream"
     assert b"%%EOF" in pdf_bytes
+
+    # 5. Verify WORM SQLite Identity & Credit Ledger Immutability (UPDATE & DELETE must raise IntegrityError)
+    import sqlite3
+    db_file = artifacts_dir / "wp7_identity_credit_worm_ledger.db"
+    assert db_file.exists()
+    assert exported["worm_db_stats"]["worm_id_access_rows"] >= 3
+    assert exported["worm_db_stats"]["worm_credit_intercept_rows"] >= 7
+    conn = sqlite3.connect(str(db_file))
+    try:
+        cur = conn.cursor()
+        try:
+            cur.execute("DELETE FROM worm_id_access_log")
+            raise AssertionError("WORM DELETE trigger failed to block deletion!")
+        except sqlite3.IntegrityError as exc:
+            assert "WORM_IMMUTABILITY_VIOLATION" in str(exc)
+        try:
+            cur.execute("UPDATE worm_credit_loan_intercept_log SET interception_decision='HACKED'")
+            raise AssertionError("WORM UPDATE trigger failed to block modification!")
+        except sqlite3.IntegrityError as exc:
+            assert "WORM_IMMUTABILITY_VIOLATION" in str(exc)
+    finally:
+        conn.close()
 
 
 if __name__ == "__main__":

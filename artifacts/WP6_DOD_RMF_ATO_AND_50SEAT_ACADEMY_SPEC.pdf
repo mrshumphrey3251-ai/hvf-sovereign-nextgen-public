@@ -4,69 +4,68 @@
 << /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
 endobj
 3 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
 endobj
 4 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
-endobj
-5 0 obj
-<< /Length 2874 >>
+<< /Length 3005 >>
 stream
 BT
 /F1 8.5 Tf
-36 756 Td
-11 TL
-(# HUMPHREY VIRTUAL FARMS LLC // WP-6: DOD RMF ATO & 50-SEAT FIELD ACADEMY PROVISIONING ICD) Tj T*
-(**Entity:** Humphrey Virtual Farms LLC \(`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`\)) Tj T*
-(**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect) Tj T*
-(**Plug-In Module:** `CLIN 0032 \(WP-6 TRL 9 RMF ATO & Academy Provisioner\)` | **Enclave Tie) Tj T*
-(  r:** `PUBLIC`) Tj T*
-(**Host Ebony Baseline Merkle Root:** `cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e1) Tj T*
-(  8e9150949a`) Tj T*
+36 762 Td
+10.5 TL
+(HUMPHREY VIRTUAL FARMS LLC // WP-6: DOD RMF ATO & 50-SEAT FIELD ACADEMY PROVISIONING ICD) Tj T*
+(Entity: Humphrey Virtual Farms LLC \(CAGE: 1AHA8 | SAM.gov UEI: S1M4ENLHTDH5\)) Tj T*
+(Controlling Authority: Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect) Tj T*
+(Plug-In Module: CLIN 0032 \(WP-6 TRL 9 RMF ATO & Academy Provisioner\) | Enclave Tier:) Tj T*
+(    PUBLIC) Tj T*
+(Host Ebony Baseline Merkle Root:) Tj T*
+(    cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e18e9150949a) Tj T*
 () Tj T*
-(---) Tj T*
+(========================================================================================) Tj T*
 () Tj T*
-(## 1. DoD RMF / NIST SP 800-53 Rev 5 / DISA STIG Authority to Operate \(ATO\) Matrix) Tj T*
-(* **Target Installation Enclave:** `TINKER AFB // OC-ALC SOVEREIGN ENCLAVE`) Tj T*
-(* **eMASS Package Identifier:** `[REDACTED_EMASS_PACKAGE_ID_DFARS_252_227_7018]`) Tj T*
-(* **Controls Satisfied:** `6 / 6 \(100.0%\)`) Tj T*
-(* **DISA STIG Open Findings:** `CAT I = 0` | `CAT II = 0` | `CAT III = 0`) Tj T*
-(* **Authorizing Official \(AO\) Decision:** **`ATO_GRANTED_TRL_9_FULL_OPERATIONAL_CAPABILITY) Tj T*
-(  `**) Tj T*
+(1. DoD RMF / NIST SP 800-53 Rev 5 / DISA STIG Authority to Operate \(ATO\) Matrix) Tj T*
+(  - Target Installation Enclave: TINKER AFB // OC-ALC SOVEREIGN ENCLAVE) Tj T*
+(  - eMASS Package Identifier: [REDACTED_EMASS_PACKAGE_ID_DFARS_252_227_7018]) Tj T*
+(  - Controls Satisfied: 6 / 6 \(100.0%\)) Tj T*
+(  - DISA STIG Open Findings: CAT I = 0 | CAT II = 0 | CAT III = 0) Tj T*
+(  - Authorizing Official \(AO\) Decision: ATO_GRANTED_TRL_9_FULL_OPERATIONAL_CAPABILITY) Tj T*
 () Tj T*
-(### Verified NIST SP 800-53 Rev 5 Control Families:) Tj T*
-(* **AC-2 / AC-3 \(Access Control\) [SATISFIED]:** Bitwise Watch-Floor RBAC \(0x03 / 0x1F / 0) Tj T*
-(  xFF\) & CEO Authorization Gate) Tj T*
-(* **AU-2 / AU-9 \(Audit & Accountability\) [SATISFIED]:** 54-Table WORM SQLite Ledgers \(mat) Tj T*
-(  rix_ledger.db 23 + hvf_memory_vault.db 31\)) Tj T*
-(* **CM-2 / CM-14 \(Signed Baseline Integrity\) [SATISFIED]:** 631/631 Modules Sealed to Merk) Tj T*
-(  le Root cc1ee1c8d29b2ae5e856...) Tj T*
-(* **IA-2 / IA-5 \(Identification & Auth\) [SATISFIED]:** DFARS 252.227-7018 Hardware-UUID HM) Tj T*
-(  AC-SHA256 Node Binding) Tj T*
-(* **SC-7 / SC-28 \(Boundary & Data at Rest\) [SATISFIED]:** 100% Bare-Metal Air-Gap Isolatio) Tj T*
-(  n \($0 Cloud Egress, 0 External Dependencies\)) Tj T*
-(* **SI-7 \(Software & Firmware Integrity\) [SATISFIED]:** 83/83 Deterministic Unit Test Suit) Tj T*
-(  es & 36.75ns SiC MOSFET Hardware Guillotine) Tj T*
+(Verified NIST SP 800-53 Rev 5 Control Families:) Tj T*
+(  - AC-2 / AC-3 \(Access Control\) [SATISFIED]: Bitwise Watch-Floor RBAC \(0x03 / 0x1F /) Tj T*
+(    0xFF\) & CEO Authorization Gate) Tj T*
+(  - AU-2 / AU-9 \(Audit & Accountability\) [SATISFIED]: 54-Table WORM SQLite Ledgers) Tj T*
+(    \(matrix_ledger.db 23 + hvf_memory_vault.db 31\)) Tj T*
+(  - CM-2 / CM-14 \(Signed Baseline Integrity\) [SATISFIED]: 631/631 Modules Sealed to) Tj T*
+(    Merkle Root cc1ee1c8d29b2ae5e856...) Tj T*
+(  - IA-2 / IA-5 \(Identification & Auth\) [SATISFIED]: DFARS 252.227-7018 Hardware-UUID) Tj T*
+(    HMAC-SHA256 Node Binding) Tj T*
+(  - SC-7 / SC-28 \(Boundary & Data at Rest\) [SATISFIED]: 100% Bare-Metal Air-Gap) Tj T*
+(    Isolation \($0 Cloud Egress, 0 External Dependencies\)) Tj T*
+(  - SI-7 \(Software & Firmware Integrity\) [SATISFIED]: 83/83 Deterministic Unit Test) Tj T*
+(    Suites & 36.75ns SiC MOSFET Hardware Guillotine) Tj T*
 () Tj T*
-(---) Tj T*
+(========================================================================================) Tj T*
 () Tj T*
-(## 2. 50-Seat Sovereign Field Academy Cohort Provisioning \(`CLIN 0011`\)) Tj T*
-(* **Cohort Identifier:** `COHORT-2027-OK-ALPHA-01` \(`50` Cryptographic Student Seats\)) Tj T*
-(* **Chapter 1 Unique Milestone Questions:** `800` \(Across 40 Modules\)) Tj T*
-(* **Chapter 5 Unique State Exam Questions:** `620` \(Across 12 Stages\)) Tj T*
-(* **Total Verified Exam Question Bank:** **`1420 / 1420 \(0 Duplicates\)`**) Tj T*
-(* **Bundled Offline Technical Manuals:** `4 / 4`) Tj T*
-(* **Sample Seat #01 Token:** `HVF-ACAD-FCB659F2-78B0345F`) Tj T*
-(* **Sample Seat #50 Token:** `HVF-ACAD-D8813F70-D556C441`) Tj T*
+(2. 50-Seat Sovereign Field Academy Cohort Provisioning \(CLIN 0011\)) Tj T*
+(  - Cohort Identifier: COHORT-2027-OK-ALPHA-01 \(50 Cryptographic Student Seats\)) Tj T*
+(  - Chapter 1 Unique Milestone Questions: 800 \(Across 40 Modules\)) Tj T*
+(  - Chapter 5 Unique State Exam Questions: 620 \(Across 12 Stages\)) Tj T*
+(  - Total Verified Exam Question Bank: 1420 / 1420 \(0 Duplicates\)) Tj T*
+(  - Bundled Offline Technical Manuals: 4 / 4) Tj T*
+(  - Sample Seat #01 Token: HVF-ACAD-FCB659F2-78B0345F) Tj T*
+(  - Sample Seat #50 Token: HVF-ACAD-D8813F70-D556C441) Tj T*
 () Tj T*
-(---) Tj T*
-(**WORM WP-6 TRL 9 ATO & Cohort Seal \(SHA-256\):** `cd9cc71af338607fc4b0ea38710cd0c7bb7f0e3b) Tj T*
-(  7eaf2dd4e5c4a7ed0e2c9a5d`) Tj T*
+(========================================================================================) Tj T*
+(WORM WP-6 TRL 9 ATO & Cohort Seal \(SHA-256\):) Tj T*
+(    cd9cc71af338607fc4b0ea38710cd0c7bb7f0e3b7eaf2dd4e5c4a7ed0e2c9a5d) Tj T*
 ET
 endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 xref
 0 6
@@ -74,10 +73,10 @@ xref
 0000000015 00000 n 
 0000000064 00000 n 
 0000000121 00000 n 
-0000000189 00000 n 
-0000000315 00000 n 
+0000000247 00000 n 
+0000003304 00000 n 
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-3241
+3374
 %%EOF

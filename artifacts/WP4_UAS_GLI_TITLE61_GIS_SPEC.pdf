@@ -4,55 +4,53 @@
 << /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
 endobj
 3 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
 endobj
 4 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
-endobj
-5 0 obj
-<< /Length 1865 >>
+<< /Length 1998 >>
 stream
 BT
 /F1 8.5 Tf
-36 756 Td
-11 TL
-(# HUMPHREY VIRTUAL FARMS LLC // WP-4: UAS OPTICAL GLI & OKLAHOMA TITLE 61 GIS ICD) Tj T*
-(**Entity:** Humphrey Virtual Farms LLC \(`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`\)) Tj T*
-(**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect) Tj T*
-(**Plug-In Module:** `CLIN 0030 \(WP-4 UAS & Title 61 GIS Adapter\)` | **Enclave Tier:** `PUB) Tj T*
-(  LIC`) Tj T*
-(**Host Ebony Baseline Merkle Root:** `cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e1) Tj T*
-(  8e9150949a`) Tj T*
+36 762 Td
+10.5 TL
+(HUMPHREY VIRTUAL FARMS LLC // WP-4: UAS OPTICAL GLI & OKLAHOMA TITLE 61 GIS ICD) Tj T*
+(Entity: Humphrey Virtual Farms LLC \(CAGE: 1AHA8 | SAM.gov UEI: S1M4ENLHTDH5\)) Tj T*
+(Controlling Authority: Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect) Tj T*
+(Plug-In Module: CLIN 0030 \(WP-4 UAS & Title 61 GIS Adapter\) | Enclave Tier: PUBLIC) Tj T*
+(Host Ebony Baseline Merkle Root:) Tj T*
+(    cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e18e9150949a) Tj T*
 () Tj T*
-(---) Tj T*
+(========================================================================================) Tj T*
 () Tj T*
-(## 1. Air-Gapped UAS Optical Green Leaf Index \(GLI\) Ingestion \(`CLIN 0007`\)) Tj T*
-(* **Sampled RGB Multispectral Tuple:** `[62, 178, 48]` @ `60.0m AGL`) Tj T*
-(* **Louhaichi Green Leaf Index \(GLI\):** **`0.527897`**) Tj T*
-(* **Autonomous Canopy / Erosion Classification:** `HEALTHY_VEGETATIVE_CANOPY_OR_ROW_GROWTH`) Tj T*
-(* **Ground Control Station Stream Binding:** `[REDACTED_UAS_STREAM_BINDING_DFARS_252_227_701) Tj T*
-(  8]`) Tj T*
+(1. Air-Gapped UAS Optical Green Leaf Index \(GLI\) Ingestion \(CLIN 0007\)) Tj T*
+(  - Sampled RGB Multispectral Tuple: [62, 178, 48] @ 60.0m AGL) Tj T*
+(  - Louhaichi Green Leaf Index \(GLI\): 0.527897) Tj T*
+(  - Autonomous Canopy / Erosion Classification: HEALTHY_VEGETATIVE_CANOPY_OR_ROW_GROWTH) Tj T*
+(  - Ground Control Station Stream Binding:) Tj T*
+(    [REDACTED_UAS_STREAM_BINDING_DFARS_252_227_7018]) Tj T*
 () Tj T*
-(---) Tj T*
+(========================================================================================) Tj T*
 () Tj T*
-(## 2. Gauss Shoelace Survey Boundary & Oklahoma Statutes Title 61 Compliance \(`CLIN 0010`\)) Tj T*
-(* **Surveyed Corridor Area:** **`10.0000 Acres`** \(`40,468.5642 sq meters` across `4` UTM v) Tj T*
-(  ertices\)) Tj T*
-(* **Civil Engineering Contract Valuation:** `$420,000.00 USD`) Tj T*
-(* **OK Title 61 \(61 O.S. 113\) 5.0% Statutory Retainage:** **`$21,000.00 USD`**) Tj T*
-(* **Net Progress Payment \(95.0%\):** `$399,000.00 USD`) Tj T*
-(* **Mandatory Statutory Performance Bond \(100.0%\):** `$420,000.00 USD`) Tj T*
-(* **GIS Coordinate Reference Binding:** `[REDACTED_GIS_PROJECTION_DRIVER_DFARS_252_227_7018]) Tj T*
-(  `) Tj T*
+(2. Gauss Shoelace Survey Boundary & Oklahoma Statutes Title 61 Compliance \(CLIN 0010\)) Tj T*
+(  - Surveyed Corridor Area: 10.0000 Acres \(40,468.5642 sq meters across 4 UTM vertices\)) Tj T*
+(  - Civil Engineering Contract Valuation: $420,000.00 USD) Tj T*
+(  - OK Title 61 \(61 O.S. 113\) 5.0% Statutory Retainage: $21,000.00 USD) Tj T*
+(  - Net Progress Payment \(95.0%\): $399,000.00 USD) Tj T*
+(  - Mandatory Statutory Performance Bond \(100.0%\): $420,000.00 USD) Tj T*
+(  - GIS Coordinate Reference Binding:) Tj T*
+(    [REDACTED_GIS_PROJECTION_DRIVER_DFARS_252_227_7018]) Tj T*
 () Tj T*
-(---) Tj T*
-(**WORM WP-4 Interface Control Document Seal \(SHA-256\):** `d8a317b5867671108f4be89e04061aa6) Tj T*
-(  d6fa285af37cefa1a7bd7a1f543fcb1b`) Tj T*
+(========================================================================================) Tj T*
+(WORM WP-4 Interface Control Document Seal \(SHA-256\):) Tj T*
+(    d8a317b5867671108f4be89e04061aa6d6fa285af37cefa1a7bd7a1f543fcb1b) Tj T*
 ET
 endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 xref
 0 6
@@ -60,10 +58,10 @@ xref
 0000000015 00000 n 
 0000000064 00000 n 
 0000000121 00000 n 
-0000000189 00000 n 
-0000000315 00000 n 
+0000000247 00000 n 
+0000002297 00000 n 
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-2232
+2367
 %%EOF

@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import pathlib
+import sqlite3
 from typing import Any, Dict, List
 
 from nextgen_core.sovereign_plugin_contract import (
@@ -74,8 +75,8 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
 
     @staticmethod
     def mask_generic(raw_val: str, visible_tail: int = 4) -> str:
-        clean = raw_val.strip()
-        tail = clean[-visible_tail:] if len(clean) >= visible_tail else clean
+        alnum = "".join(ch for ch in raw_val.strip() if ch.isalnum())
+        tail = alnum[-visible_tail:] if len(alnum) >= visible_tail else (alnum or "0000")
         return f"XXXX-MASKED-{tail}"
 
     def hash_identity_zero_knowledge(self, attribute_type: str, raw_value: str) -> Dict[str, str]:
@@ -346,6 +347,128 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "WORM_Ledger_SHA256": worm_entry_hash,
         }
 
+    def init_worm_sqlite_ledger(self, db_path: pathlib.Path) -> Dict[str, Any]:
+        db_path.parent.mkdir(parents=True, exist_ok=True)
+        conn = sqlite3.connect(str(db_path))
+        try:
+            cur = conn.cursor()
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS worm_id_access_log (
+                    seq_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    operator_name TEXT NOT NULL,
+                    id_document_type TEXT NOT NULL,
+                    masked_ssn_dob TEXT NOT NULL,
+                    biometric_gate TEXT NOT NULL,
+                    action TEXT NOT NULL,
+                    liveness_nonce TEXT NOT NULL,
+                    access_decision TEXT NOT NULL,
+                    security_reason TEXT NOT NULL,
+                    worm_ledger_sha256 TEXT NOT NULL UNIQUE
+                )
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_id_access_no_update
+                BEFORE UPDATE ON worm_id_access_log
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: UPDATE PROHIBITED ON worm_id_access_log');
+                END;
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_id_access_no_delete
+                BEFORE DELETE ON worm_id_access_log
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: DELETE PROHIBITED ON worm_id_access_log');
+                END;
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS worm_credit_loan_intercept_log (
+                    seq_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    inquiry_id TEXT NOT NULL,
+                    bureau_or_channel TEXT NOT NULL,
+                    credit_loan_event TEXT NOT NULL,
+                    protected_id_vector TEXT NOT NULL,
+                    interception_decision TEXT NOT NULL,
+                    statutory_action TEXT NOT NULL,
+                    worm_intercept_sha256 TEXT NOT NULL UNIQUE
+                )
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_credit_no_update
+                BEFORE UPDATE ON worm_credit_loan_intercept_log
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: UPDATE PROHIBITED ON worm_credit_loan_intercept_log');
+                END;
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_credit_no_delete
+                BEFORE DELETE ON worm_credit_loan_intercept_log
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: DELETE PROHIBITED ON worm_credit_loan_intercept_log');
+                END;
+            """)
+            conn.commit()
+        finally:
+            conn.close()
+        return {"db_path": str(db_path), "worm_triggers_active": 4}
+
+    def sync_events_to_worm_sqlite(
+        self,
+        db_path: pathlib.Path,
+        access_events: List[Dict[str, Any]],
+        credit_rows: List[Dict[str, str]],
+    ) -> Dict[str, int]:
+        self.init_worm_sqlite_ledger(db_path)
+        conn = sqlite3.connect(str(db_path))
+        try:
+            cur = conn.cursor()
+            for ev in access_events:
+                cur.execute(
+                    """
+                    INSERT OR IGNORE INTO worm_id_access_log (
+                        operator_name, id_document_type, masked_ssn_dob, biometric_gate,
+                        action, liveness_nonce, access_decision, security_reason, worm_ledger_sha256
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        ev["Operator_Name"],
+                        ev["ID_Document_Type"],
+                        ev["Masked_SSN_DOB_Bind"],
+                        ev["Biometric_Gate"],
+                        ev["Action"],
+                        ev["Liveness_Nonce"],
+                        ev["Access_Decision"],
+                        ev["Security_Reason"],
+                        ev["WORM_Ledger_SHA256"],
+                    ),
+                )
+            for crow in credit_rows:
+                c_hash = hashlib.sha256(
+                    f"{crow['Inquiry_ID']}|{crow['Bureau_or_Channel']}|{crow['Interception_Decision']}|{FROZEN_EBONY_MERKLE_ROOT}".encode("utf-8")
+                ).hexdigest()
+                cur.execute(
+                    """
+                    INSERT OR IGNORE INTO worm_credit_loan_intercept_log (
+                        inquiry_id, bureau_or_channel, credit_loan_event, protected_id_vector,
+                        interception_decision, statutory_action, worm_intercept_sha256
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        crow["Inquiry_ID"],
+                        crow["Bureau_or_Channel"],
+                        crow["Credit_Loan_or_Asset_Event"],
+                        crow["Protected_ID_Vector"],
+                        crow["Interception_Decision"],
+                        crow["Statutory_Action"],
+                        c_hash,
+                    ),
+                )
+            conn.commit()
+            id_cnt = cur.execute("SELECT COUNT(*) FROM worm_id_access_log").fetchone()[0]
+            cr_cnt = cur.execute("SELECT COUNT(*) FROM worm_credit_loan_intercept_log").fetchone()[0]
+        finally:
+            conn.close()
+        return {"worm_id_access_rows": id_cnt, "worm_credit_intercept_rows": cr_cnt}
+
     def generate_wp7_antifraud_dossier(
         self,
         out_dir: pathlib.Path,
@@ -462,10 +585,14 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         pdf_bytes = build_minimal_iso_pdf(lines)
         pdf_file.write_bytes(pdf_bytes)
 
+        db_file = out_dir / "wp7_identity_credit_worm_ledger.db"
+        worm_db_stats = self.sync_events_to_worm_sqlite(db_file, [ev1, ev2, ev3], credit_report["credit_loan_rows"])
+
         return {
             "pii_report": pii_report,
             "credit_report": credit_report,
             "access_events": [ev1, ev2, ev3],
+            "worm_db_stats": worm_db_stats,
             "worm_seal": worm_seal,
             "md_path": str(md_file),
             "pdf_path": str(pdf_file),

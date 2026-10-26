@@ -4,68 +4,67 @@
 << /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
 endobj
 3 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
 endobj
 4 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
-endobj
-5 0 obj
-<< /Length 2662 >>
+<< /Length 2883 >>
 stream
 BT
 /F1 8.5 Tf
-36 756 Td
-11 TL
-(# HUMPHREY VIRTUAL FARMS LLC // DAY-1 HARDWARE-LOCKED LICENSE CERTIFICATE & WAWF INVOICE) Tj T*
-(**Vendor Entity:** Humphrey Virtual Farms LLC \(`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`\) Tj T*
-(  )) Tj T*
-(**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect) Tj T*
-(**Contract / Order Number:** `FA8100-26-9-3952` | **Awarding Agency:** DoD CDAO / Tinker AFB) Tj T*
-(   OC-ALC Depot) Tj T*
-(**Issue Timestamp \(UTC\):** `2026-10-25T20:35:00Z` | **Enclave Tier:** `PUBLIC`) Tj T*
+36 762 Td
+10.5 TL
+(HUMPHREY VIRTUAL FARMS LLC // DAY-1 HARDWARE-LOCKED LICENSE CERTIFICATE & WAWF INVOICE) Tj T*
+(Vendor Entity: Humphrey Virtual Farms LLC \(CAGE: 1AHA8 | SAM.gov UEI: S1M4ENLHTDH5\)) Tj T*
+(Controlling Authority: Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect) Tj T*
+(Contract / Order Number: FA8100-26-9-3952 | Awarding Agency: DoD CDAO / Tinker AFB) Tj T*
+(    OC-ALC Depot) Tj T*
+(Issue Timestamp \(UTC\): 2026-10-25T20:35:00Z | Enclave Tier: PUBLIC) Tj T*
 () Tj T*
-(---) Tj T*
+(========================================================================================) Tj T*
 () Tj T*
-(## 1. DFARS 252.227-7018 Hardware-UUID-Locked Cryptographic License Certificate) Tj T*
-(* **Authorized Physical Hardware Node UUID:** `HVF-NODE-OK-OCALC-3001` *\(Strictly 1 Physica) Tj T*
-(  l Node\)*) Tj T*
-(* **Licensed Command Modules \(CLINs\):** `CLIN 1004-A`) Tj T*
-(* **Issued Hardware-Locked License Key:** `HVF-1AHA8-D399CEA9-3E89122F-1E9CDC68-527DDFF3`) Tj T*
-(* **HMAC-SHA256 Cryptographic Binding:** `D399CEA93E89122F1E9CDC68527DDFF389F46C7A68456BD4F2) Tj T*
-(  B1DF086753630D`) Tj T*
-(* **Host Ebony Baseline Merkle Root:** `cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14) Tj T*
-(  e18e9150949a`) Tj T*
+(1. DFARS 252.227-7018 Hardware-UUID-Locked Cryptographic License Certificate) Tj T*
+(  - Authorized Physical Hardware Node UUID: HVF-NODE-OK-OCALC-3001 *\(Strictly 1 Physical) Tj T*
+(    Node\)*) Tj T*
+(  - Licensed Command Modules \(CLINs\): CLIN 1004-A) Tj T*
+(  - Issued Hardware-Locked License Key: HVF-1AHA8-D399CEA9-3E89122F-1E9CDC68-527DDFF3) Tj T*
+(  - HMAC-SHA256 Cryptographic Binding:) Tj T*
+(    D399CEA93E89122F1E9CDC68527DDFF389F46C7A68456BD4F2B1DF086753630D) Tj T*
+(  - Host Ebony Baseline Merkle Root:) Tj T*
+(    cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e18e9150949a) Tj T*
 () Tj T*
-(---) Tj T*
+(========================================================================================) Tj T*
 () Tj T*
-(## 2. DoD PIEE / WAWF Day-1 Immediate Mobilization Invoice Schedule) Tj T*
-(* **Total Contract Award Value:** `$895,000.00 USD`) Tj T*
-(* **IMMEDIATE DAY-1 INVOICE AMOUNT DUE:** **`$447,500.00 USD`**) Tj T*
-(* **PIEE / WAWF Billing Code:** `OTA-MILESTONE-01-50PCT`) Tj T*
-(* **Statutory Payment Authority:** 50% Day-1 Payable Milestone #01: Cryptographic Key Issuan) Tj T*
-(  ce & Hardware Mobilization \(10 U.S.C. 4022 OTA & FAR 52.232-40 15-Day Accelerated Payment) Tj T*
-(  \)) Tj T*
-(* **Mandatory Remittance Target:** ACH Wire / GPC Settlement to `CAGE 1AHA8` \(`UEI S1M4ENLH) Tj T*
-(  TDH5`\) within `<= 15 Calendar Days` \(`FAR 52.232-40`\).) Tj T*
+(2. DoD PIEE / WAWF Day-1 Immediate Mobilization Invoice Schedule) Tj T*
+(  - Total Contract Award Value: $895,000.00 USD) Tj T*
+(  - IMMEDIATE DAY-1 INVOICE AMOUNT DUE: $447,500.00 USD) Tj T*
+(  - PIEE / WAWF Billing Code: OTA-MILESTONE-01-50PCT) Tj T*
+(  - Statutory Payment Authority: 50% Day-1 Payable Milestone #01: Cryptographic Key) Tj T*
+(    Issuance & Hardware Mobilization \(10 U.S.C. 4022 OTA & FAR 52.232-40 15-Day) Tj T*
+(    Accelerated Payment\)) Tj T*
+(  - Mandatory Remittance Target: ACH Wire / GPC Settlement to CAGE 1AHA8 \(UEI) Tj T*
+(    S1M4ENLHTDH5\) within <= 15 Calendar Days \(FAR 52.232-40\).) Tj T*
 () Tj T*
-(---) Tj T*
+(========================================================================================) Tj T*
 () Tj T*
-(## 3. Automated 5-Bucket Post-Award Capital Allocation \(Day-1 Cash Split\)) Tj T*
-(* **1. Day-1 Bare-Metal Enclave & HIL Setup Hardware \(18.0%\):** `$80,550.00 USD`) Tj T*
-(* **2. Executive Governance & Principal SME Allocation \(35.0% - Redacted Public Mirror\):**) Tj T*
-(   `$156,625.00 USD`) Tj T*
-(* **3. TRL 8/9 Field Integration, Travel, & Site Wiring \(15.0%\):** `$67,125.00 USD`) Tj T*
-(* **4. Federal/OK Tax Escrow, Legal, & Insurance Reserve \(17.0%\):** `$76,075.00 USD`) Tj T*
-(* **5. Sovereign Corporate War Chest Retained Reserve \(15.0%\):** `$67,125.00 USD`) Tj T*
+(3. Automated 5-Bucket Post-Award Capital Allocation \(Day-1 Cash Split\)) Tj T*
+(  - 1. Day-1 Bare-Metal Enclave & HIL Setup Hardware \(18.0%\): $80,550.00 USD) Tj T*
+(  - 2. Executive Governance & Principal SME Allocation \(35.0% - Redacted Public Mirror\):) Tj T*
+(    $156,625.00 USD) Tj T*
+(  - 3. TRL 8/9 Field Integration, Travel, & Site Wiring \(15.0%\): $67,125.00 USD) Tj T*
+(  - 4. Federal/OK Tax Escrow, Legal, & Insurance Reserve \(17.0%\): $76,075.00 USD) Tj T*
+(  - 5. Sovereign Corporate War Chest Retained Reserve \(15.0%\): $67,125.00 USD) Tj T*
 () Tj T*
-(---) Tj T*
-(**WORM Packet Integrity Seal \(SHA-256\):** `648ea6d28d3793bdd0d9705f419ed96562484a520dcfc72) Tj T*
-(  fcdeb7a6232718a94`) Tj T*
+(========================================================================================) Tj T*
+(WORM Packet Integrity Seal \(SHA-256\):) Tj T*
+(    648ea6d28d3793bdd0d9705f419ed96562484a520dcfc72fcdeb7a6232718a94) Tj T*
 ET
 endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 xref
 0 6
@@ -73,10 +72,10 @@ xref
 0000000015 00000 n 
 0000000064 00000 n 
 0000000121 00000 n 
-0000000189 00000 n 
-0000000315 00000 n 
+0000000247 00000 n 
+0000003182 00000 n 
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-3029
+3252
 %%EOF

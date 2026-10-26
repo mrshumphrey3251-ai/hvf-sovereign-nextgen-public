@@ -4,69 +4,68 @@
 << /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
 endobj
 3 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
 endobj
 4 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
-endobj
-5 0 obj
-<< /Length 2736 >>
+<< /Length 2958 >>
 stream
 BT
 /F1 8.5 Tf
-36 756 Td
-11 TL
-(# HUMPHREY VIRTUAL FARMS LLC // WP-2: 36.75NS SIC MOSFET INTERLOCK BOARD SPECIFICATION) Tj T*
-(**Entity:** Humphrey Virtual Farms LLC \(`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`\)) Tj T*
-(**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect) Tj T*
-(**Hardware Model:** `HVF-SIC-3675-REV1 \(WP-2 Hardware Interlock\)` | **Enclave Tier:** `PUB) Tj T*
-(  LIC`) Tj T*
-(**Host Ebony Baseline Merkle Root:** `cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e1) Tj T*
-(  8e9150949a`) Tj T*
+36 762 Td
+10.5 TL
+(HUMPHREY VIRTUAL FARMS LLC // WP-2: 36.75NS SIC MOSFET INTERLOCK BOARD SPECIFICATION) Tj T*
+(Entity: Humphrey Virtual Farms LLC \(CAGE: 1AHA8 | SAM.gov UEI: S1M4ENLHTDH5\)) Tj T*
+(Controlling Authority: Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect) Tj T*
+(Hardware Model: HVF-SIC-3675-REV1 \(WP-2 Hardware Interlock\) | Enclave Tier: PUBLIC) Tj T*
+(Host Ebony Baseline Merkle Root:) Tj T*
+(    cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e18e9150949a) Tj T*
 () Tj T*
-(---) Tj T*
+(========================================================================================) Tj T*
 () Tj T*
-(## 1. Deterministic 3-Stage Propagation Timing Budget \(Total = 36.75 Nanoseconds\)) Tj T*
-(* **Stage 1 \(Analog Window Comparator\):** `18.50 ns`) Tj T*
-(* **Stage 2 \(5kVrms Isolated Gate Driver\):** `12.00 ns`) Tj T*
-(* **Stage 3 \(1200V SiC MOSFET Turn-Off\):** `6.25 ns`) Tj T*
-(* **TOTAL HARDWARE GUILLOTINE LATENCY:** **`36.75 ns`** \(`4,081,632.7x` faster than legacy ) Tj T*
-(  150ms PLC\)) Tj T*
+(1. Deterministic 3-Stage Propagation Timing Budget \(Total = 36.75 Nanoseconds\)) Tj T*
+(  - Stage 1 \(Analog Window Comparator\): 18.50 ns) Tj T*
+(  - Stage 2 \(5kVrms Isolated Gate Driver\): 12.00 ns) Tj T*
+(  - Stage 3 \(1200V SiC MOSFET Turn-Off\): 6.25 ns) Tj T*
+(  - TOTAL HARDWARE GUILLOTINE LATENCY: 36.75 ns \(4,081,632.7x faster than legacy 150ms) Tj T*
+(    PLC\)) Tj T*
 () Tj T*
-(---) Tj T*
+(========================================================================================) Tj T*
 () Tj T*
-(## 2. Physical Stopping Kinematics & Inductive Snubber Telemetry) Tj T*
-(* **Tested Manipulator Velocity:** `1,500.0 mm/s`) Tj T*
-(* **HVF 36.75ns Stopping Distance:** **`0.055125 microns \(um\)`** \(`0.000055 mm`\)) Tj T*
-(* **Legacy 150ms PLC Over-Travel Distance:** `225.00 mm` \(Catastrophic crush hazard elimina) Tj T*
-(  ted\)) Tj T*
-(* **DC Actuator Bus Rating:** `480.0 V DC` @ `85.0 A` Peak Fault Current) Tj T*
-(* **Inductive Snubber Clamp Energy \(0.5 * L * I^2\):** `0.043350 Joules`) Tj T*
-(* **Peak SiC Junction Temperature:** `26.82 C` \(Limit: `< 175.0 C` | Pass: `True`\)) Tj T*
+(2. Physical Stopping Kinematics & Inductive Snubber Telemetry) Tj T*
+(  - Tested Manipulator Velocity: 1,500.0 mm/s) Tj T*
+(  - HVF 36.75ns Stopping Distance: 0.055125 microns \(um\) \(0.000055 mm\)) Tj T*
+(  - Legacy 150ms PLC Over-Travel Distance: 225.00 mm \(Catastrophic crush hazard) Tj T*
+(    eliminated\)) Tj T*
+(  - DC Actuator Bus Rating: 480.0 V DC @ 85.0 A Peak Fault Current) Tj T*
+(  - Inductive Snubber Clamp Energy \(0.5 * L * I^2\): 0.043350 Joules) Tj T*
+(  - Peak SiC Junction Temperature: 26.82 C \(Limit: < 175.0 C | Pass: True\)) Tj T*
 () Tj T*
-(---) Tj T*
+(========================================================================================) Tj T*
 () Tj T*
-(## 3. Bill of Materials \(BOM\) & Calibration Network) Tj T*
-(* **Unit PCB Assembly Cost:** `[REDACTED_PRIVATE_MANUFACTURING_COST_DFARS_252_227_7018]`) Tj T*
-(* **Calibration Divider Network:** `[REDACTED_PROPRIETARY_TRIM_DIVIDER_DFARS_252_227_7018]`) Tj T*
-(* **Stage 1: High-Speed Window Comparator \(18.50 ns\):** Dual Ultra-Fast LVDS Comparator \() Tj T*
-(  t_pd = 18.50ns max\) -- Monitors torque/current shunt & optical curtain at 0.0A neural iso) Tj T*
-(  lation) Tj T*
-(* **Stage 2: Galvanically Isolated Gate Driver \(12.00 ns\):** 5kVrms Capacitive Isolated Si) Tj T*
-(  C Gate Driver \(t_pd = 12.00ns\) -- Drives -5V/+20V Miller-clamped turn-off across high-si) Tj T*
-(  de DC actuator bus) Tj T*
-(* **Stage 3: Silicon-Carbide \(SiC\) Power MOSFET Array \(6.25 ns\):** 1200V / 16mOhm SiC Tr) Tj T*
-(  ench MOSFET Half-Bridge \(t_off = 6.25ns\) -- Severs 480V DC bus in 6.25ns; TVS array abso) Tj T*
-(  rbs 0.0433 J) Tj T*
+(3. Bill of Materials \(BOM\) & Calibration Network) Tj T*
+(  - Unit PCB Assembly Cost: [REDACTED_PRIVATE_MANUFACTURING_COST_DFARS_252_227_7018]) Tj T*
+(  - Calibration Divider Network: [REDACTED_PROPRIETARY_TRIM_DIVIDER_DFARS_252_227_7018]) Tj T*
+(  - Stage 1: High-Speed Window Comparator \(18.50 ns\): Dual Ultra-Fast LVDS Comparator) Tj T*
+(    \(t_pd = 18.50ns max\) -- Monitors torque/current shunt & optical curtain at 0.0A) Tj T*
+(    neural isolation) Tj T*
+(  - Stage 2: Galvanically Isolated Gate Driver \(12.00 ns\): 5kVrms Capacitive Isolated) Tj T*
+(    SiC Gate Driver \(t_pd = 12.00ns\) -- Drives -5V/+20V Miller-clamped turn-off across) Tj T*
+(    high-side DC actuator bus) Tj T*
+(  - Stage 3: Silicon-Carbide \(SiC\) Power MOSFET Array \(6.25 ns\): 1200V / 16mOhm SiC) Tj T*
+(    Trench MOSFET Half-Bridge \(t_off = 6.25ns\) -- Severs 480V DC bus in 6.25ns; TVS) Tj T*
+(    array absorbs 0.0433 J) Tj T*
 () Tj T*
-(---) Tj T*
-(**WORM Hardware Spec Seal \(SHA-256\):** `91ee522311d514c0f906e08e95f834486f6ac4f337db9f2694) Tj T*
-(  260fedf36590ab`) Tj T*
+(========================================================================================) Tj T*
+(WORM Hardware Spec Seal \(SHA-256\):) Tj T*
+(    91ee522311d514c0f906e08e95f834486f6ac4f337db9f2694260fedf36590ab) Tj T*
 ET
 endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 xref
 0 6
@@ -74,10 +73,10 @@ xref
 0000000015 00000 n 
 0000000064 00000 n 
 0000000121 00000 n 
-0000000189 00000 n 
-0000000315 00000 n 
+0000000247 00000 n 
+0000003257 00000 n 
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-3103
+3327
 %%EOF
