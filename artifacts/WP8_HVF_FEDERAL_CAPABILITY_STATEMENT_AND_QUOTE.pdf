@@ -1,0 +1,85 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 3 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 3214 >>
+stream
+BT
+/F1 8.5 Tf
+36 758 Td
+11 TL
+(HUMPHREY VIRTUAL FARMS LLC // FEDERAL CAPABILITY STATEMENT & FIRM-FIXED-PRICE QUOTE) Tj T*
+(Entity: Humphrey Virtual Farms LLC \(CAGE: 1AHA8 | SAM.gov UEI: S1M4ENLHTDH5\)) Tj T*
+(Controlling Authority: Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect) Tj T*
+(    \(humphreyvirtualfarm@gmail.com\)) Tj T*
+(Procurement Vehicles: DoD CDAO Tradewinds \(10-26-3952 & 9-26-3703\), 10 U.S.C. 4022 OTA,) Tj T*
+(    FAR Part 12 / Part 13, OK Title 61) Tj T*
+(Host Ebony Baseline Merkle Root:) Tj T*
+(    cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e18e9150949a) Tj T*
+() Tj T*
+(========================================================================================) Tj T*
+() Tj T*
+(1. Core Competencies & Sovereign Technical Differentiators) Tj T*
+(  - 100% Bare-Metal Air-Gapped C2 \(Project Ebony TRL 7\): 631 compiled Python modules, 83) Tj T*
+(    test suites, 54 WORM SQLite audit tables, 0 cloud dependencies \(>42.5% 5-year) Tj T*
+(    lifecycle cost avoidance\).) Tj T*
+(  - 36.75ns SiC MOSFET Hardware Interlock \(CLIN 0006 & CLIN 0028\): 18.50ns + 12.00ns +) Tj T*
+(    6.25ns = 36.75ns physical actuator cutoff \(0.0551 um stop at 1,500 mm/s vs 225.0 mm) Tj T*
+(    legacy PLC\).) Tj T*
+(  - 42-Field Proof-of-Identity, Emergency ICE Triage, & Dual-Compartment Credit Shield) Tj T*
+(    \(CLIN 0033 v6.1\): 0-click Emergency ICE Triage Roster, User Agreement Gate, Employee) Tj T*
+(    Personal Credit/Loan Compartment \(hidden from Employer\), & Employer Internal) Tj T*
+(    HR/I-9/Clearance Compartment \(unalterable lock\).) Tj T*
+(  - Sovereign Field Academy \(CLIN 0011 & CLIN 0032\): 1,420 verified exam questions \(800) Tj T*
+(    Ch.1 + 620 Ch.5\), 4 offline textbooks, and DoD RMF / NIST 800-53 Rev 5 ATO \(0 CAT) Tj T*
+(    I/II/III findings\).) Tj T*
+() Tj T*
+(========================================================================================) Tj T*
+() Tj T*
+(2. Custom Firm-Fixed-Price \(FFP\) Quote for TINKER AFB // OC-ALC DEPOT MAINTENANCE) Tj T*
+(    DIRECTORATE) Tj T*
+(  - Quote Verification Seal: HVF-QUOTE-BCE0FE206E34FB99 | Node Quantity: 1) Tj T*
+(  - Recommended Acquisition Vehicle: FAR Part 13 Simplified Acquisition / FAR Part 12) Tj T*
+(    Commercial COTS \(100% Day-1 WAWF\)) Tj T*
+(  - Total Annual FFP Quote: $184,500.00 USD) Tj T*
+(  - Immediate Day-1 WAWF Mobilization Invoice: $184,500.00 USD) Tj T*
+(  - Executive Allocation Telemetry: [REDACTED_INTERNAL_MARGIN_SPLIT_DFARS_252_227_7018]) Tj T*
+() Tj T*
+(Quoted CLIN Line Items:) Tj T*
+(  - CLIN 0001 \(Sovereign Command Base Entry Pilot - 1 Node\): $24,500.00 x 1 Node\(s\) =) Tj T*
+(    $24,500.00) Tj T*
+(  - CLIN 0028 \(WP-2: 36.75ns SiC MOSFET Breaker Board & BOM\): $65,000.00 x 1 Node\(s\) =) Tj T*
+(    $65,000.00) Tj T*
+(  - CLIN 0033 \(WP-7: 42-Field Proof-of-Identity, Emergency ICE, & Dual-Compartment) Tj T*
+(    Credit Shield\): $95,000.00 x 1 Node\(s\) = $95,000.00) Tj T*
+() Tj T*
+(========================================================================================) Tj T*
+(WORM WP-8 Capability Statement & Quote Seal \(SHA-256\):) Tj T*
+(    daf5a1c1ba9b6f730d3dcc1b728d25f6e08091714a2a8e77d70e3fef8e31a737) Tj T*
+(--- Page 1 of 1 ---) Tj ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000191 00000 n 
+0000000317 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3583
+%%EOF

@@ -28,6 +28,7 @@ from plugins.clin_0030_uas_optical_gli_title61_gis import UASOpticalGLIAndTitle6
 from plugins.clin_0031_command_watchfloor_rbac_pdf_engine import CommandWatchFloorRBACAndPDFEngine
 from plugins.clin_0032_dod_rmf_ato_academy_cohort_engine import DoDRMFATOAndAcademyCohortEngine
 from plugins.clin_0033_sovereign_identity_antifraud_shield import SovereignIdentityAntiFraudShield
+from plugins.clin_0034_federal_capability_and_quote_engine import FederalCapabilityAndQuoteEngine
 
 
 def build_registry_and_engines():
@@ -39,9 +40,10 @@ def build_registry_and_engines():
     e31 = CommandWatchFloorRBACAndPDFEngine()
     e32 = DoDRMFATOAndAcademyCohortEngine()
     e33 = SovereignIdentityAntiFraudShield()
-    for eng in (e27, e28, e29, e30, e31, e32, e33):
+    e34 = FederalCapabilityAndQuoteEngine()
+    for eng in (e27, e28, e29, e30, e31, e32, e33, e34):
         reg.register(eng)
-    return reg, e27, e28, e29, e30, e31, e32, e33
+    return reg, e27, e28, e29, e30, e31, e32, e33, e34
 
 
 def render_nextgen_dashboard() -> None:
@@ -63,7 +65,7 @@ def render_nextgen_dashboard() -> None:
         initial_sidebar_state="expanded",
     )
 
-    reg, e27, e28, e29, e30, e31, e32, e33 = build_registry_and_engines()
+    reg, e27, e28, e29, e30, e31, e32, e33, e34 = build_registry_and_engines()
     artifacts_dir = HERE / "artifacts"
     artifacts_dir.mkdir(parents=True, exist_ok=True)
 
@@ -83,13 +85,13 @@ def render_nextgen_dashboard() -> None:
     )
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Post-Award Work Packages", "7 / 7 (WP-1..WP-7)", "100% Pre-Engineered")
-    c2.metric("Next-Gen Expansion Value", "$515,000 / yr / Node", "CLIN 0027 - CLIN 0033")
-    c3.metric("Combined Catalog Value", "$2,145,000 / yr / Node", "CLIN 0001 - CLIN 0033")
+    c1.metric("Post-Award Work Packages", "8 / 8 (WP-1..WP-8)", "100% Pre-Engineered")
+    c2.metric("Next-Gen Expansion Value", "$545,000 / yr / Node", "CLIN 0027 - CLIN 0034")
+    c3.metric("Combined Catalog Value", "$2,175,000 / yr / Node", "CLIN 0001 - CLIN 0034")
     c4.metric("Frozen Ebony Core Status", "0 Bytes Modified", "Merkle cc1ee1c8...949a")
 
     tabs = st.tabs([
-        f"{ico_shield} 0. Master Registry (WP-1..7)",
+        f"{ico_shield} 0. Master Registry (WP-1..8)",
         f"{ico_key} 1. WP-1: Day-1 License & WAWF (CLIN 0027)",
         f"{ico_bolt} 2. WP-2: 36.75ns SiC Board (CLIN 0028)",
         f"{ico_gear} 3. WP-3: PLC/SCADA/J1939 (CLIN 0029)",
@@ -97,6 +99,7 @@ def render_nextgen_dashboard() -> None:
         f"{ico_lock} 5. WP-5: Watch-Floor RBAC (CLIN 0031)",
         f"{ico_medal} 6. WP-6: DoD RMF ATO & Academy (CLIN 0032)",
         f"{ico_shield} 7. WP-7: SSN/DOB, Credit/Loan & ID Shield (CLIN 0033)",
+        f"{ico_medal} 8. WP-8: Capability Statement, Quote & Outreach (CLIN 0034)",
     ])
 
     with tabs[0]:
@@ -503,6 +506,56 @@ def render_nextgen_dashboard() -> None:
             mime="application/pdf",
             key="dl_c33_pdf",
         )
+
+    with tabs[8]:
+        st.markdown("### `WP-8` / `CLIN 0034`: Federal Capability Statement, Custom CLIN Quote Compiler, & Outreach Generator")
+        q1, q2 = st.columns([2, 1])
+        target_org = q1.text_input("Target Contracting Command / Enterprise Buyer:", value="TINKER AFB // OC-ALC DEPOT MAINTENANCE DIRECTORATE", key="ng_c34_org")
+        node_qty   = q2.number_input("Hardware Node / Chassis Quantity:", min_value=1, max_value=250, value=1, step=1, key="ng_c34_nodes")
+
+        sel_clins = st.multiselect(
+            "Select CLIN Modules to Include in Firm-Fixed-Price Quote:",
+            options=list(e34.KEY_CLIN_PRICES_USD.keys()),
+            default=[
+                "CLIN 0001 (Sovereign Command Base Entry Pilot - 1 Node)",
+                "CLIN 0028 (WP-2: 36.75ns SiC MOSFET Breaker Board & BOM)",
+                "CLIN 0033 (WP-7: 42-Field Proof-of-Identity, Emergency ICE, & Dual-Compartment Credit Shield)",
+            ],
+            key="ng_c34_clins",
+        )
+
+        exp34 = e34.generate_wp8_capability_and_quote_dossier(
+            artifacts_dir,
+            prospect_agency_or_company=target_org,
+            selected_clin_keys=sel_clins,
+            node_count=int(node_qty),
+        )
+        qt = exp34["quote"]
+
+        k1, k2, k3 = st.columns(3)
+        k1.metric("Total Annual FFP Quote", f"${qt['total_annual_ffp_quote_usd']:,.2f} USD", f"Seal: {qt['quote_verification_seal']}")
+        k2.metric("Immediate Day-1 WAWF Invoice", f"${qt['day1_mobilization_invoice_usd']:,.2f} USD", qt["recommended_contract_vehicle"][:32] + "...")
+        k3.metric("Quoted Hardware Nodes", f"{qt['node_count']} Node(s)", f"{len(qt['line_items'])} CLIN Module(s)")
+
+        st.dataframe(qt["line_items"], width="stretch", hide_index=True)
+        st.info(f"**Acquisition Vehicle:** `{qt['recommended_contract_vehicle']}` | **Executive Margin Telemetry:** `{qt['internal_margin_telemetry']}`")
+
+        st.download_button(
+            label=f"{ico_dl} Download Official Federal Capability Statement & FFP Quote PDF ({pathlib.Path(exp34['pdf_path']).name})",
+            data=pathlib.Path(exp34["pdf_path"]).read_bytes(),
+            file_name=pathlib.Path(exp34["pdf_path"]).name,
+            mime="application/pdf",
+            key="dl_c34_pdf",
+        )
+
+        st.markdown("#### Ready-to-Send Contracting Officer Email & LinkedIn Broadcast (Click Copy Icon in Top-Right of Box)")
+        col_em, col_li = st.columns(2)
+        with col_em:
+            st.caption("Direct Contracting Officer / COR Email:")
+            st.code(exp34["outreach"]["contracting_officer_email"], language="text")
+        with col_li:
+            st.caption("LinkedIn Executive Broadcast:")
+            st.code(exp34["outreach"]["linkedin_broadcast"], language="text")
 
 
 if __name__ == "__main__":

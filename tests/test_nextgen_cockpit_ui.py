@@ -18,9 +18,9 @@ def run_nextgen_cockpit_ui_tests() -> None:
     assert "??" not in raw_txt, "Zero encoding-artifact check failed"
     assert " ? " not in raw_txt, "Zero mangled em-dash check failed"
 
-    reg, e27, e28, e29, e30, e31, e32, e33 = build_registry_and_engines()
+    reg, e27, e28, e29, e30, e31, e32, e33, e34 = build_registry_and_engines()
     manifests = reg.list_manifests()
-    assert len(manifests) == 7
+    assert len(manifests) == 8
     assert [m["clin_number"] for m in manifests] == [
         "CLIN 0027",
         "CLIN 0028",
@@ -29,6 +29,7 @@ def run_nextgen_cockpit_ui_tests() -> None:
         "CLIN 0031",
         "CLIN 0032",
         "CLIN 0033",
+        "CLIN 0034",
     ]
 
 
