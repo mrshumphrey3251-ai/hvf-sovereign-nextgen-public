@@ -1,0 +1,9 @@
+# HVF Sovereign Next-Gen Forge - Strict Bytecode & Secret Exclusion
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.env
+*.key
+*.pem
