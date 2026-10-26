@@ -19,6 +19,7 @@ from plugins.clin_0029_site_plc_scada_canbus_mapper import SitePLCSCADACANBusMap
 from plugins.clin_0030_uas_optical_gli_title61_gis import UASOpticalGLIAndTitle61GISEngine
 from plugins.clin_0031_command_watchfloor_rbac_pdf_engine import CommandWatchFloorRBACAndPDFEngine
 from plugins.clin_0032_dod_rmf_ato_academy_cohort_engine import DoDRMFATOAndAcademyCohortEngine
+from plugins.clin_0033_sovereign_identity_antifraud_shield import SovereignIdentityAntiFraudShield
 
 from tests.test_clin_0027_day1_generator import run_clin_0027_tests
 from tests.test_clin_0028_sic_mosfet_board import run_clin_0028_tests
@@ -26,6 +27,7 @@ from tests.test_clin_0029_plc_scada_canbus import run_clin_0029_tests
 from tests.test_clin_0030_uas_gli_title61 import run_clin_0030_tests
 from tests.test_clin_0031_watchfloor_rbac_pdf import run_clin_0031_tests
 from tests.test_clin_0032_dod_rmf_ato_academy import run_clin_0032_tests
+from tests.test_clin_0033_identity_antifraud import run_clin_0033_tests
 from tests.test_nextgen_cockpit_ui import run_nextgen_cockpit_ui_tests
 
 
@@ -45,6 +47,7 @@ def main() -> None:
     run_clin_0030_tests()
     run_clin_0031_tests()
     run_clin_0032_tests()
+    run_clin_0033_tests()
     run_nextgen_cockpit_ui_tests()
 
     # Gate 3: Compile all Python files in Next-Gen repo & verify 0 tracked .pyc files
@@ -66,6 +69,7 @@ def main() -> None:
         UASOpticalGLIAndTitle61GISEngine(),
         CommandWatchFloorRBACAndPDFEngine(),
         DoDRMFATOAndAcademyCohortEngine(),
+        SovereignIdentityAntiFraudShield(),
     ]
     manifests = [reg.register(m) for m in mods]
 
@@ -76,12 +80,13 @@ def main() -> None:
         here / "artifacts" / "WP4_UAS_GLI_TITLE61_GIS_SPEC.pdf",
         here / "artifacts" / "WP5_WATCHFLOOR_RBAC_SHIFT_LEDGER_SPEC.pdf",
         here / "artifacts" / "WP6_DOD_RMF_ATO_AND_50SEAT_ACADEMY_SPEC.pdf",
+        here / "artifacts" / "WP7_SOVEREIGN_IDENTITY_CREDIT_LOAN_SHIELD_SPEC.pdf",
     ]
     for p in pdfs:
         assert p.exists() and p.read_bytes().startswith(b"%PDF-1.4")
 
     print("====================================================================================")
-    print("  HVF SOVEREIGN NEXT-GEN FORGE // COMPLETE WP-1..6 POST-AWARD SUITE SEAL: 100% PASS")
+    print("  HVF SOVEREIGN NEXT-GEN FORGE // COMPLETE WP-1..7 POST-AWARD SUITE SEAL: 100% PASS")
     print("====================================================================================")
     print(f"Frozen Ebony Baseline Status    : 100% UNTOUCHED (0 Working-Tree Changes)")
     print(f"Host Compatibility Merkle Root  : {FROZEN_EBONY_MERKLE_ROOT}")
@@ -90,7 +95,7 @@ def main() -> None:
     print(f"Git Index Bytecode Hygiene      : 0 Tracked .pyc Files (.gitignore Active)")
     for idx, mf in enumerate(manifests, 1):
         print(f"Verified Post-Award Plug-In #{idx}  : {mf.clin_number} // {mf.title[:48]}")
-    print(f"WORM %PDF-1.4 Artifacts Sealed  : 6 / 6 Verified ({', '.join(str(p.stat().st_size) + 'B' for p in pdfs)})")
+    print(f"WORM %PDF-1.4 Artifacts Sealed  : 7 / 7 Verified ({', '.join(str(p.stat().st_size) + 'B' for p in pdfs)})")
     print("====================================================================================")
 
 

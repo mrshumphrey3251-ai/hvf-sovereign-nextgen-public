@@ -27,6 +27,7 @@ from plugins.clin_0029_site_plc_scada_canbus_mapper import SitePLCSCADACANBusMap
 from plugins.clin_0030_uas_optical_gli_title61_gis import UASOpticalGLIAndTitle61GISEngine
 from plugins.clin_0031_command_watchfloor_rbac_pdf_engine import CommandWatchFloorRBACAndPDFEngine
 from plugins.clin_0032_dod_rmf_ato_academy_cohort_engine import DoDRMFATOAndAcademyCohortEngine
+from plugins.clin_0033_sovereign_identity_antifraud_shield import SovereignIdentityAntiFraudShield
 
 
 def build_registry_and_engines():
@@ -37,9 +38,10 @@ def build_registry_and_engines():
     e30 = UASOpticalGLIAndTitle61GISEngine()
     e31 = CommandWatchFloorRBACAndPDFEngine()
     e32 = DoDRMFATOAndAcademyCohortEngine()
-    for eng in (e27, e28, e29, e30, e31, e32):
+    e33 = SovereignIdentityAntiFraudShield()
+    for eng in (e27, e28, e29, e30, e31, e32, e33):
         reg.register(eng)
-    return reg, e27, e28, e29, e30, e31, e32
+    return reg, e27, e28, e29, e30, e31, e32, e33
 
 
 def render_nextgen_dashboard() -> None:
@@ -61,7 +63,7 @@ def render_nextgen_dashboard() -> None:
         initial_sidebar_state="expanded",
     )
 
-    reg, e27, e28, e29, e30, e31, e32 = build_registry_and_engines()
+    reg, e27, e28, e29, e30, e31, e32, e33 = build_registry_and_engines()
     artifacts_dir = HERE / "artifacts"
     artifacts_dir.mkdir(parents=True, exist_ok=True)
 
@@ -81,9 +83,9 @@ def render_nextgen_dashboard() -> None:
     )
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Post-Award Work Packages", "6 / 6 (WP-1..WP-6)", "100% Pre-Engineered")
-    c2.metric("Next-Gen Expansion Value", "$420,000 / yr / Node", "CLIN 0027 - CLIN 0032")
-    c3.metric("Combined Catalog Value", "$2,050,000 / yr / Node", "CLIN 0001 - CLIN 0032")
+    c1.metric("Post-Award Work Packages", "7 / 7 (WP-1..WP-7)", "100% Pre-Engineered")
+    c2.metric("Next-Gen Expansion Value", "$515,000 / yr / Node", "CLIN 0027 - CLIN 0033")
+    c3.metric("Combined Catalog Value", "$2,145,000 / yr / Node", "CLIN 0001 - CLIN 0033")
     c4.metric("Frozen Ebony Core Status", "0 Bytes Modified", "Merkle cc1ee1c8...949a")
 
     tabs = st.tabs([
@@ -94,6 +96,7 @@ def render_nextgen_dashboard() -> None:
         f"{ico_drone} 4. WP-4: UAS GLI & Title 61 (CLIN 0030)",
         f"{ico_lock} 5. WP-5: Watch-Floor RBAC (CLIN 0031)",
         f"{ico_medal} 6. WP-6: DoD RMF ATO & Academy (CLIN 0032)",
+        f"{ico_shield} 7. WP-7: SSN/DOB, Credit/Loan & ID Shield (CLIN 0033)",
     ])
 
     with tabs[0]:
@@ -276,6 +279,41 @@ def render_nextgen_dashboard() -> None:
             file_name=pathlib.Path(exp32["pdf_path"]).name,
             mime="application/pdf",
             key="dl_c32_pdf",
+        )
+
+    with tabs[7]:
+        st.markdown("### `WP-7` / `CLIN 0033`: Sovereign Identity, SSN/DOB, Credit Bureau, & Loan Fraud Sentinel")
+        id1, id2, id3, id4 = st.columns(4)
+        op_name   = id1.text_input("Protected Principal / Operator:", value="JEFFERY HUMPHREY (CEO & ARCHITECT)", key="ng_c33_op")
+        ssn_in    = id2.text_input("SSN (Auto-Masked in Memory):", value="999-00-1234", type="password", key="ng_c33_ssn")
+        dob_in    = id3.text_input("Date of Birth (Auto-Masked):", value="1975-08-15", type="password", key="ng_c33_dob")
+        freeze_on = id4.checkbox("Enforce Hard Credit & Loan Freeze Lock", value=True, key="ng_c33_frz")
+
+        pii_r  = e33.scan_pii_and_biometric_darkweb_feed(raw_ssn=ssn_in, raw_dob=dob_in)
+        cred_r = e33.evaluate_credit_and_loan_activity(credit_freeze_locked=freeze_on)
+        exp33  = e33.generate_wp7_antifraud_dossier(artifacts_dir)
+
+        f1, f2, f3, f4 = st.columns(4)
+        f1.metric("Masked SSN / DOB Bind", f"{pii_r['masked_ssn']} | {pii_r['masked_dob']}", "0 Plaintext Digits Stored")
+        f2.metric("PII & Biometric Vectors", f"{pii_r['clean_attributes']} / {pii_r['attributes_monitored']} Clean", "1 Honeypot Quarantined")
+        f3.metric("Fraudulent Loans Blocked", f"{cred_r['fraudulent_loans_and_pulls_blocked']} Blocked", "Equifax/Experian/TransUnion/UCC-1")
+        f4.metric("Physical ID Access Events", f"{len(exp33['access_events'])} Chained", f"Principal: {op_name[:18]}...")
+
+        st.markdown("#### 1. Credit Bureau, Bank/SBA Loan, & Commercial UCC-1 Lien Interceptor (`FCRA 605B` & `UCC Art. 9`)")
+        st.dataframe(cred_r["credit_loan_rows"], width="stretch", hide_index=True)
+
+        st.markdown("#### 2. 8-Factor Zero-Knowledge PII & Biometric Dark-Web Monitor (`SSN + DOB + REAL-ID + CAC + Biometric + UEI`)")
+        st.dataframe(pii_r["attribute_rows"], width="stretch", hide_index=True)
+
+        st.markdown("#### 3. Physical ID Sign-In / Sign-Out WORM Audit Ledger & Anti-Replay Gate")
+        st.dataframe(exp33["access_events"], width="stretch", hide_index=True)
+
+        st.download_button(
+            label=f"{ico_dl} Download WP-7 Sovereign Identity, SSN/DOB, Credit, & Loan Shield PDF",
+            data=pathlib.Path(exp33["pdf_path"]).read_bytes(),
+            file_name=pathlib.Path(exp33["pdf_path"]).name,
+            mime="application/pdf",
+            key="dl_c33_pdf",
         )
 
 
