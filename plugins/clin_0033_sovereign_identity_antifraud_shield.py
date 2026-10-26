@@ -50,13 +50,13 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     def mask_ssn(raw_ssn: str) -> str:
         digits = "".join(ch for ch in raw_ssn if ch.isdigit())
         last4 = digits[-4:] if len(digits) >= 4 else "0000"
-        return f"***-**-{last4}"
+        return f"XXX-XX-{last4}"
 
     @staticmethod
     def mask_dob(raw_dob: str) -> str:
         clean = raw_dob.strip()
         day_part = clean[-2:] if len(clean) >= 2 else "01"
-        return f"****-**-{day_part}"
+        return f"XXXX-XX-{day_part}"
 
     def hash_identity_zero_knowledge(self, attribute_type: str, raw_value: str) -> Dict[str, str]:
         norm = f"{attribute_type.strip().upper()}:{raw_value.strip().upper()}"
@@ -101,7 +101,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             ("BIOMETRIC_LIVENESS_HASH", biometric_template_id, f"BIOMETRIC ({biometric_template_id[:12]}...)"),
             ("CORPORATE_SAM_UEI_CAGE", corporate_ein_uei, corporate_ein_uei),
             ("EXECUTIVE_AUTH_EMAIL", executive_email, executive_email),
-            ("DARKWEB_HONEYPOT_VECTOR", leaked_test_vector, "HONEYPOT (***-**-7777)"),
+            ("DARKWEB_HONEYPOT_VECTOR", leaked_test_vector, "HONEYPOT (XXX-XX-7777)"),
         ]
 
         leaked_digest = self.hash_identity_zero_knowledge("DARKWEB_HONEYPOT_VECTOR", leaked_test_vector)["full_salted_hmac_sha256"]
@@ -161,8 +161,8 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     "inquiry_id": "INQ-EQFX-99201",
                     "bureau_or_lender": "Equifax / Unknown Online Auto Lender",
                     "product_type": "UNAUTHORIZED_HARD_CREDIT_PULL_AND_75K_AUTO_LOAN",
-                    "applicant_ssn_masked": "***-**-1234",
-                    "applicant_dob_masked": "****-**-15",
+                    "applicant_ssn_masked": "XXX-XX-1234",
+                    "applicant_dob_masked": "XXXX-XX-15",
                     "ceo_unfreeze_token": "NONE_STOLEN_SSN_ATTEMPT",
                 },
                 {
@@ -177,8 +177,8 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     "inquiry_id": "INQ-TRNS-55109",
                     "bureau_or_lender": "TransUnion / Synthetic Identity Credit Card",
                     "product_type": "SYNTHETIC_ID_MISMATCH_SSN_WITH_WRONG_DOB",
-                    "applicant_ssn_masked": "***-**-1234",
-                    "applicant_dob_masked": "****-**-99 (DOB_MISMATCH)",
+                    "applicant_ssn_masked": "XXX-XX-1234",
+                    "applicant_dob_masked": "XXXX-XX-99 (DOB_MISMATCH)",
                     "ceo_unfreeze_token": "NONE",
                 },
                 {
@@ -277,14 +277,23 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "WORM_Ledger_SHA256": worm_entry_hash,
         }
 
-    def generate_wp7_antifraud_dossier(self, out_dir: pathlib.Path) -> Dict[str, Any]:
+    def generate_wp7_antifraud_dossier(
+        self,
+        out_dir: pathlib.Path,
+        operator_name: str = "JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)",
+        raw_ssn: str = "999-00-1234",
+        raw_dob: str = "1975-08-15",
+        credit_freeze_locked: bool = True,
+    ) -> Dict[str, Any]:
         out_dir.mkdir(parents=True, exist_ok=True)
-        pii_report = self.scan_pii_and_biometric_darkweb_feed()
-        credit_report = self.evaluate_credit_and_loan_activity(credit_freeze_locked=True)
+        pii_report = self.scan_pii_and_biometric_darkweb_feed(raw_ssn=raw_ssn, raw_dob=raw_dob)
+        credit_report = self.evaluate_credit_and_loan_activity(credit_freeze_locked=credit_freeze_locked)
 
         self._used_nonces.clear()
         ev1 = self.record_physical_id_access_event(
-            operator_name="JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)",
+            operator_name=operator_name,
+            raw_ssn=raw_ssn,
+            raw_dob=raw_dob,
             physical_id_serial="OK-REALID-1AHA8-7741",
             action="SIGN_IN",
             hardware_liveness_nonce="NONCE-HVF-20261025-0001",
@@ -298,7 +307,9 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             is_compromised_or_mismatched=True,
         )
         ev3 = self.record_physical_id_access_event(
-            operator_name="JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)",
+            operator_name=operator_name,
+            raw_ssn=raw_ssn,
+            raw_dob=raw_dob,
             physical_id_serial="OK-REALID-1AHA8-7741",
             action="SIGN_OUT",
             hardware_liveness_nonce="NONCE-HVF-20261025-0002",

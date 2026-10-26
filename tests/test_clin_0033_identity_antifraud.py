@@ -23,8 +23,8 @@ def run_clin_0033_tests() -> None:
     test_raw_ssn = "999-00-1234"
     test_raw_dob = "1975-08-15"
     pii = shield.scan_pii_and_biometric_darkweb_feed(raw_ssn=test_raw_ssn, raw_dob=test_raw_dob)
-    assert pii["masked_ssn"] == "***-**-1234"
-    assert pii["masked_dob"] == "****-**-15"
+    assert pii["masked_ssn"] == "XXX-XX-1234"
+    assert pii["masked_dob"] == "XXXX-XX-15"
     assert pii["attributes_monitored"] == 8
     assert pii["clean_attributes"] == 7
     assert pii["compromised_vectors_quarantined"] == 1

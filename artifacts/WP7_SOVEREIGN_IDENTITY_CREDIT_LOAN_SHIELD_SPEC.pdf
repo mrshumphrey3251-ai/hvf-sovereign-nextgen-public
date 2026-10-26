@@ -31,7 +31,7 @@ BT
 () Tj T*
 (## 1. 8-Factor Zero-Knowledge PII & Biometric Vault \(SSN, DOB, REAL-ID, CAC, Biometric, UEI) Tj T*
 (  \)) Tj T*
-(* **Masked SSN & DOB Binding:** `***-**-1234` | `****-**-15` \(0 Plaintext Digits Stored\)) Tj T*
+(* **Masked SSN & DOB Binding:** `XXX-XX-1234` | `XXXX-XX-15` \(0 Plaintext Digits Stored\)) Tj T*
 (* **Attributes Monitored:** `8` \(`7 Clean` | `1 Dark-Web Honeypot Quarantined`\)) Tj T*
 (* **Composite 8-Factor Identity Seal:** `c0adf947235da274ac5cfd0bf4c5c48be3cc2c655f931da2524) Tj T*
 (  060a44467640f`) Tj T*
@@ -57,13 +57,13 @@ BT
 (---) Tj T*
 () Tj T*
 (## 3. Physical ID Sign-In / Sign-Out WORM Audit Ledger & Anti-Replay Gate) Tj T*
-(* **Event #1 \(SIGN_IN\):** `JEFFERY HUMPHREY \(CEO & SOVEREIGN ARCHITECT\)` \(`***-**-1234 ) Tj T*
-(  | ****-**-15`\) -> `AUTHORIZED_SIGN_IN_RECORDED`) Tj T*
+(* **Event #1 \(SIGN_IN\):** `JEFFERY HUMPHREY \(CEO & SOVEREIGN ARCHITECT\)` \(`XXX-XX-1234 ) Tj T*
+(  | XXXX-XX-15`\) -> `AUTHORIZED_SIGN_IN_RECORDED`) Tj T*
 (* **Event #2 \(SIGN_IN - Fraud Blocked\):** `IMPOSTOR_WITH_STOLEN_SSN_AND_REPLAYED_BADGE` ->) Tj T*
 (   **`ACCESS_DENIED_FRAUD_INTERLOCK_TRIPPED`** \(`REPLAYED_NONCE_OR_STOLEN_SSN_DOB_ID_MISMAT) Tj T*
 (  CH`\)) Tj T*
-(* **Event #3 \(SIGN_OUT\):** `JEFFERY HUMPHREY \(CEO & SOVEREIGN ARCHITECT\)` \(`***-**-1234) Tj T*
-(   | ****-**-15`\) -> `AUTHORIZED_SIGN_OUT_RECORDED`) Tj T*
+(* **Event #3 \(SIGN_OUT\):** `JEFFERY HUMPHREY \(CEO & SOVEREIGN ARCHITECT\)` \(`XXX-XX-1234) Tj T*
+(   | XXXX-XX-15`\) -> `AUTHORIZED_SIGN_OUT_RECORDED`) Tj T*
 () Tj T*
 ET
 endstream

@@ -89,7 +89,7 @@ def render_nextgen_dashboard() -> None:
     c4.metric("Frozen Ebony Core Status", "0 Bytes Modified", "Merkle cc1ee1c8...949a")
 
     tabs = st.tabs([
-        f"{ico_shield} 0. Master Registry (WP-1..6)",
+        f"{ico_shield} 0. Master Registry (WP-1..7)",
         f"{ico_key} 1. WP-1: Day-1 License & WAWF (CLIN 0027)",
         f"{ico_bolt} 2. WP-2: 36.75ns SiC Board (CLIN 0028)",
         f"{ico_gear} 3. WP-3: PLC/SCADA/J1939 (CLIN 0029)",
@@ -291,7 +291,7 @@ def render_nextgen_dashboard() -> None:
 
         pii_r  = e33.scan_pii_and_biometric_darkweb_feed(raw_ssn=ssn_in, raw_dob=dob_in)
         cred_r = e33.evaluate_credit_and_loan_activity(credit_freeze_locked=freeze_on)
-        exp33  = e33.generate_wp7_antifraud_dossier(artifacts_dir)
+        exp33  = e33.generate_wp7_antifraud_dossier(artifacts_dir, operator_name=op_name, raw_ssn=ssn_in, raw_dob=dob_in, credit_freeze_locked=freeze_on)
 
         f1, f2, f3, f4 = st.columns(4)
         f1.metric("Masked SSN / DOB Bind", f"{pii_r['masked_ssn']} | {pii_r['masked_dob']}", "0 Plaintext Digits Stored")

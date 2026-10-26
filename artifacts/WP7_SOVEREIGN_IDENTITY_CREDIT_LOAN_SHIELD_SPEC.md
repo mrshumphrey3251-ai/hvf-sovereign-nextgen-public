@@ -7,7 +7,7 @@
 ---
 
 ## 1. 8-Factor Zero-Knowledge PII & Biometric Vault (SSN, DOB, REAL-ID, CAC, Biometric, UEI)
-* **Masked SSN & DOB Binding:** `***-**-1234` | `****-**-15` (0 Plaintext Digits Stored)
+* **Masked SSN & DOB Binding:** `XXX-XX-1234` | `XXXX-XX-15` (0 Plaintext Digits Stored)
 * **Attributes Monitored:** `8` (`7 Clean` | `1 Dark-Web Honeypot Quarantined`)
 * **Composite 8-Factor Identity Seal:** `c0adf947235da274ac5cfd0bf4c5c48be3cc2c655f931da2524060a44467640f`
 * **Cryptographic Pepper Binding:** `[REDACTED_PII_AND_CREDIT_PEPPER_DFARS_252_227_7018]`
@@ -26,9 +26,9 @@
 ---
 
 ## 3. Physical ID Sign-In / Sign-Out WORM Audit Ledger & Anti-Replay Gate
-* **Event #1 (SIGN_IN):** `JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)` (`***-**-1234 | ****-**-15`) -> `AUTHORIZED_SIGN_IN_RECORDED`
+* **Event #1 (SIGN_IN):** `JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)` (`XXX-XX-1234 | XXXX-XX-15`) -> `AUTHORIZED_SIGN_IN_RECORDED`
 * **Event #2 (SIGN_IN - Fraud Blocked):** `IMPOSTOR_WITH_STOLEN_SSN_AND_REPLAYED_BADGE` -> **`ACCESS_DENIED_FRAUD_INTERLOCK_TRIPPED`** (`REPLAYED_NONCE_OR_STOLEN_SSN_DOB_ID_MISMATCH`)
-* **Event #3 (SIGN_OUT):** `JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)` (`***-**-1234 | ****-**-15`) -> `AUTHORIZED_SIGN_OUT_RECORDED`
+* **Event #3 (SIGN_OUT):** `JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)` (`XXX-XX-1234 | XXXX-XX-15`) -> `AUTHORIZED_SIGN_OUT_RECORDED`
 
 ---
 **WORM WP-7 Identity, Credit, & Loan Shield Master Seal (SHA-256):** `ba5f6e5c7353a21f2c0fad543423b8828eba39c29e7a19bacace7d7f077f9e6f`
