@@ -16,7 +16,7 @@ def run_clin_0033_tests() -> None:
     shield = SovereignIdentityAntiFraudShield()
     manifest = reg.register(shield)
     assert manifest.clin_number == "CLIN 0033"
-    assert manifest.version == "6.2.0"
+    assert manifest.version == "6.3.0"
     assert manifest.per_node_annual_gov_usd == 95000
     assert manifest.compatible_host_merkle_root == FROZEN_EBONY_MERKLE_ROOT
 
@@ -89,6 +89,7 @@ def run_clin_0033_tests() -> None:
 
     # 4. Verify all 3 WORM SQLite tables (6 triggers) reject UPDATE and DELETE
     db_file = artifacts_dir / "wp7_identity_credit_worm_ledger.db"
+    shield.seed_default_employer_notes(db_file)
     conn = sqlite3.connect(str(db_file))
     try:
         cur = conn.cursor()
@@ -146,6 +147,16 @@ def run_clin_0033_tests() -> None:
     assert empr_gate["gate_open"] is True
     assert empr_gate["employer_internal_records"] is not None
     assert empr_gate["credit_report"] is None, "CRITICAL: Employer must NEVER see Employee personal credit or loans"
+
+
+
+    # Verify every employee's PIN and the Employer Master Key open their respective paths cleanly
+    for rk in roster_keys:
+        p_pin = shield.PERSONNEL_EMERGENCY_ROSTER[rk]["employee_pin"]
+        g_emp = shield.open_compartment_gate(rk, "EMPLOYEE", True, p_pin, artifacts_dir)
+        assert g_emp["gate_open"] is True and g_emp["credit_report"] is not None and g_emp["employer_personnel_notes"] is None
+        g_empr = shield.open_compartment_gate(rk, "EMPLOYER", True, "EMPLOYER-MASTER-1AHA8", artifacts_dir)
+        assert g_empr["gate_open"] is True and g_empr["credit_report"] is None and g_empr["employer_personnel_notes"] is not None
 
 
 if __name__ == "__main__":

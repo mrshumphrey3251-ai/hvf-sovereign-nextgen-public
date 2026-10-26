@@ -285,7 +285,7 @@ def render_nextgen_dashboard() -> None:
         )
 
     with tabs[7]:
-        st.markdown("### `WP-7` / `CLIN 0033 v6.0`: Zero-Second Emergency ICE Triage, User Authorization Gate, & Dual-Compartment Identity/Credit Vault")
+        st.markdown("### `WP-7` / `CLIN 0033 v6.3`: Zero-Second Emergency ICE Triage, User Authorization Gate, & Dual-Compartment Identity/Credit Vault")
 
         # =====================================================================
         # SECTION A (ALWAYS VISIBLE -- ZERO CLICKS IN AN EMERGENCY):
@@ -309,26 +309,34 @@ def render_nextgen_dashboard() -> None:
         e3.metric("Emergency (ICE) Phone", triage["ice_phone"], triage["ice_short"])
         e4.metric("Blood Type & Medical Alert", triage["blood_type_clean"], triage["medical_alert_clean"])
 
-        st.code(
-            "\n".join([
-                f"INSTANT EMERGENCY TRIAGE CARD // {triage['employee_id']} -- {triage['full_name']} ({triage['department']})",
-                f"  - Employee Direct Contact : {triage['direct_phone']} | Email: {triage['email']}",
-                f"  - Next of Kin (NOK)       : {triage['nok_full_name']} ({triage['nok_relationship']}) | Phone: {triage['nok_phone']} | Address: {triage['nok_address']}",
-                f"  - In Case of Emergency    : {triage['ice_full_name']} ({triage['ice_relationship']}) | Direct Phone: {triage['ice_phone']}",
-                f"  - Medical / Blood Alert   : {triage['blood_type_and_medical']}",
-            ]),
-            language="text",
-        )
+        triage_card_text = "\n".join([
+            f"INSTANT EMERGENCY TRIAGE CARD // {triage['employee_id']} -- {triage['full_name']} ({triage['department']})",
+            f"  * Employee Direct Contact : {triage['direct_phone']} | Email: {triage['email']}",
+            f"  * Next of Kin (NOK)       : {triage['nok_full_name']} ({triage['nok_relationship']}) | Phone: {triage['nok_phone']} | Address: {triage['nok_address']}",
+            f"  * In Case of Emergency    : {triage['ice_full_name']} ({triage['ice_relationship']}) | Direct Phone: {triage['ice_phone']}",
+            f"  * Medical / Blood Alert   : {triage['blood_type_clean']} -- {triage['medical_alert_clean']}",
+        ])
+        st.code(triage_card_text, language="text")
 
         st.markdown("---")
 
         # =====================================================================
         # SECTION B: MANDATORY USER AGREEMENT & DUAL-COMPARTMENT GATE
-        # (All sensitive Employee Credit/Financials & Employer HR records are
-        #  100% locked behind this gate until opened by Employee or Employer)
+        # (Dynamic per-employee + per-role key binding automatically loads the
+        #  correct PIN/Key whenever you switch employees or compartments!)
         # =====================================================================
         st.markdown("#### 2. Sovereign User Agreement, Privacy Charter, & Compartment Authorization Gate")
         st.info(e33.USER_AGREEMENT_TEXT)
+
+        person_obj = e33.PERSONNEL_EMERGENCY_ROSTER[sel_person_key]
+        emp_pin_val = person_obj["employee_pin"]
+        empr_key_val = "EMPLOYER-MASTER-1AHA8"
+
+        st.caption(
+            f"**Active Keys for Selected Person (`{triage['employee_id']} // {triage['full_name']}`):** "
+            f"Employee Personal Vault PIN = `{emp_pin_val}` | Employer Internal Vault Master Key = `{empr_key_val}` "
+            f"*(Automatically loaded into the key box when you switch paths below)*"
+        )
 
         agree_chk = st.checkbox(
             "I have read and accept the Sovereign User Agreement & Dual-Compartment Privacy Authorization Charter.",
@@ -338,31 +346,28 @@ def render_nextgen_dashboard() -> None:
 
         g1, g2, g3 = st.columns([2, 2, 1])
         role_mode = g1.radio(
-            "Select Authorization Compartment to Open:",
+            "Select Authorization Compartment Path to Open & Inspect:",
             options=[
                 "GATE_LOCKED (Emergency Triage Only)",
                 "EMPLOYEE_PERSONAL_VAULT (My Credit/Loans, My PII & NOK/ICE)",
-                "EMPLOYER_INTERNAL_VAULT (Proof-of-Identity, I-9 & Internal HR Only)",
+                "EMPLOYER_INTERNAL_VAULT (Proof-of-Identity, I-9, Employer Notes & HR Only)",
             ],
             index=0,
             key="ng_c33_role_radio",
         )
 
-        person_obj = e33.PERSONNEL_EMERGENCY_ROSTER[sel_person_key]
-        default_pin_hint = (
-            person_obj["employee_pin"]
-            if role_mode.startswith("EMPLOYEE")
-            else ("EMPLOYER-MASTER-1AHA8" if role_mode.startswith("EMPLOYER") else "")
-        )
-        key_in = g2.text_input(
-            "Enter Employee Personal PIN or Employer Master Key:",
-            value=default_pin_hint,
-            type="password",
-            key="ng_c33_gate_key",
-        )
-        freeze_toggle = g3.checkbox("Credit/Loan Freeze ON", value=True, key="ng_c33_frz_v6")
-
         short_role = "EMPLOYEE" if role_mode.startswith("EMPLOYEE") else ("EMPLOYER" if role_mode.startswith("EMPLOYER") else "LOCKED")
+        default_pin_hint = emp_pin_val if short_role == "EMPLOYEE" else (empr_key_val if short_role == "EMPLOYER" else "")
+
+        # Dynamic widget key ensures switching employee or role immediately populates the matching valid PIN/Key!
+        dyn_key_id = f"ng_c33_key_{triage['employee_id']}_{short_role}"
+        key_in = g2.text_input(
+            f"Active Authorization Key ({short_role} Path):",
+            value=default_pin_hint,
+            key=dyn_key_id,
+        )
+        freeze_toggle = g3.checkbox("Credit/Loan Freeze ON", value=True, key="ng_c33_frz_v63")
+
         gate_res = e33.open_compartment_gate(
             roster_key=sel_person_key,
             viewer_role=short_role,
@@ -375,18 +380,15 @@ def render_nextgen_dashboard() -> None:
         if not gate_res["gate_open"]:
             st.warning(
                 f"**[VAULT COMPARTMENTS LOCKED // STATUS: `{gate_res['gate_status']}`]** -- "
-                f"To protect both Employee financial privacy and Employer internal security, all personal credit, loan, "
-                f"and internal onboarding records remain hidden behind this gate. Check the User Agreement box above and "
-                f"select either **EMPLOYEE_PERSONAL_VAULT** (Demo PIN: `{person_obj['employee_pin']}`) or "
-                f"**EMPLOYER_INTERNAL_VAULT** (Demo Key: `EMPLOYER-MASTER-1AHA8`) to open your authorized compartment."
+                f"To inspect each path: (1) Check the **I have read and accept the Sovereign User Agreement** box above, and "
+                f"(2) Select either **EMPLOYEE_PERSONAL_VAULT** (Auto-Key: `{emp_pin_val}`) or "
+                f"**EMPLOYER_INTERNAL_VAULT** (Auto-Key: `{empr_key_val}`)."
             )
         elif gate_res["viewer_role"] == "EMPLOYEE":
             # =================================================================
             # COMPARTMENT A: EMPLOYEE PERSONAL VAULT
-            # (Shows Employee Credit/Loans, Personal Assets, & Proof-of-ID;
-            #  Employer Internal HR Records are 100% hidden)
             # =================================================================
-            st.success(f"**[{gate_res['gate_status']}]** -- {gate_res['privacy_notice']}")
+            st.success(f"**[{gate_res['gate_status']} // {triage['employee_id']} ({triage['full_name']})]** -- {gate_res['privacy_notice']}")
             cred_r = gate_res["credit_report"]
             unfrz_id = st.text_input("Generate My Personal One-Time Credit/Loan Unfreeze Token For Inquiry ID:", value="REQ-HVF-EQUIP-2026-001", key="ng_c33_emp_unfrz")
             my_tok = e33.generate_ceo_credit_unfreeze_token(unfrz_id)
@@ -396,24 +398,22 @@ def render_nextgen_dashboard() -> None:
             ec2.metric("Fraudulent Loans/Pulls Blocked", f"{cred_r['fraudulent_loans_and_pulls_blocked']} / {cred_r['total_inquiries_monitored']} Blocked", "Equifax/Experian/TU/Chex/Deed/SIM")
             ec3.metric("My One-Time Unfreeze Token", my_tok, f"For {unfrz_id}")
 
-            st.markdown("#### My Private 7-Channel Credit Bureau, Bank/SBA Loan, Home Deed Title, ACH, & SIM-Swap Shield (Visible ONLY to Employee)")
+            st.markdown("#### 1. My Private 7-Channel Credit Bureau, Bank/SBA Loan, Home Deed Title, ACH, & SIM-Swap Shield (Visible ONLY to Employee)")
             st.dataframe(cred_r["credit_loan_rows"], width="stretch", hide_index=True)
 
-            st.markdown("#### My Sealed 42-Field Personal Identity, Biometric, & NOK/ICE Record")
+            st.markdown("#### 2. My Sealed 42-Field Personal Identity, Biometric, & NOK/ICE Record")
             st.dataframe(gate_res["proof_of_id_rows"], width="stretch", hide_index=True)
 
         elif gate_res["viewer_role"] == "EMPLOYER":
             # =================================================================
-            # COMPARTMENT B: EMPLOYER INTERNAL HR & PROOF-OF-IDENTITY VAULT
-            # (Shows Unalterable Proof-of-Identity, Internal HR/Clearance Vetting,
-            #  & Change-Approval Lock Gate; Employee Credit/Loans are 100% BLOCKED)
+            # COMPARTMENT B: EMPLOYER INTERNAL HR, NOTES, & PROOF-OF-IDENTITY VAULT
             # =================================================================
-            st.success(f"**[{gate_res['gate_status']}]** -- {gate_res['privacy_notice']}")
+            st.success(f"**[{gate_res['gate_status']} // {triage['employee_id']} ({triage['full_name']})]** -- {gate_res['privacy_notice']}")
 
             st.markdown("#### 1. Employer-Only Internal Security Clearance, I-9 E-Verify, & Watch-Floor RBAC Records (Hidden From Employee View)")
             st.dataframe(gate_res["employer_internal_records"], width="stretch", hide_index=True)
 
-            st.markdown(f"#### 1B. Official Employer Personnel File Notes for `{triage['employee_id']} // {triage['full_name']}` (WORM SQLite ? Hidden From Employee)")
+            st.markdown(f"#### 1B. Official Employer Personnel File Notes for `{triage['employee_id']} // {triage['full_name']}` (WORM SQLite -- Hidden From Employee)")
             n_col1, n_col2, n_col3 = st.columns([2, 2, 3])
             note_auth = n_col1.text_input(
                 "Note Author / Commanding Authority:",
@@ -435,7 +435,7 @@ def render_nextgen_dashboard() -> None:
             note_txt = n_col3.text_input(
                 "Enter Confidential Employer Note to Seal into Employee File:",
                 value=f"Verified annual sovereign security & operational readiness review for {triage['full_name']}.",
-                key="ng_c33_note_txt",
+                key=f"ng_c33_note_txt_{triage['employee_id']}",
             )
             if st.button("Seal & Append Official Employer Note to Employee File (WORM SQLite)", type="primary", key="ng_c33_add_note_btn"):
                 db_f = artifacts_dir / "wp7_identity_credit_worm_ledger.db"
@@ -469,10 +469,10 @@ def render_nextgen_dashboard() -> None:
                 st.dataframe(gate_res["proof_of_id_rows"], width="stretch", hide_index=True)
 
                 st.markdown("#### 3. Employer / Commanding Officer Change-Approval Gate (Required to Unlock Onboarding Form for Edits)")
-                st.caption(f"Reference Approval Token for Rev #{cur_rev:02d}: `{employer_approval_tok}`")
+                st.caption(f"Reference Approval Token for Rev #{cur_rev:02d} (Auto-Loaded Below): `{employer_approval_tok}`")
                 u1, u2, u3, u4 = st.columns([2, 2, 2, 1])
                 auth_name_in = u1.text_input("Approving Employer Authority:", value="JEFFERY HUMPHREY (CEO & EMPLOYER AUTHORITY)", key="ng_c33_auth_name")
-                auth_tok_in  = u2.text_input("Employer HMAC Approval Token:", value=employer_approval_tok, key="ng_c33_auth_tok")
+                auth_tok_in  = u2.text_input("Employer HMAC Approval Token:", value=employer_approval_tok, key=f"ng_c33_auth_tok_rev_{cur_rev}")
                 auth_rsn_in  = u3.text_input("Mandatory Change Reason:", value="APPROVED_EMPLOYEE_RECORD_UPDATE", key="ng_c33_auth_rsn")
                 unlock_btn   = u4.button("Approve & Unlock Form", type="primary", key="ng_c33_unlock_btn")
 
