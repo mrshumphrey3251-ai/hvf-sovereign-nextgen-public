@@ -285,7 +285,7 @@ def render_nextgen_dashboard() -> None:
         st.markdown("### `WP-7` / `CLIN 0033 v6.0`: Zero-Second Emergency ICE Triage, User Authorization Gate, & Dual-Compartment Identity/Credit Vault")
 
         # =====================================================================
-        # SECTION A (ALWAYS VISIBLE ? ZERO CLICKS IN AN EMERGENCY):
+        # SECTION A (ALWAYS VISIBLE -- ZERO CLICKS IN AN EMERGENCY):
         # COMPANY COMMAND CONTACTS & CLICKABLE EMPLOYEE EMERGENCY (NOK / ICE) ROSTER
         # =====================================================================
         st.markdown("#### 1. Zero-Second Emergency Response & Clickable Personnel ICE Triage Directory (No Login Required in an Emergency)")
@@ -301,13 +301,13 @@ def render_nextgen_dashboard() -> None:
         triage = e33.get_instant_emergency_triage_card(sel_person_key)
 
         e1, e2, e3, e4 = st.columns(4)
-        e1.metric("Personnel Direct Phone", triage["direct_phone"], triage["role_title"][:28])
-        e2.metric("Next of Kin (NOK) Phone", triage["nok_phone"], f"{triage['nok_full_name'][:20]} ({triage['nok_relationship'][:10]})")
-        e3.metric("Emergency (ICE) Phone", triage["ice_phone"], f"{triage['ice_full_name'][:20]}")
-        e4.metric("Blood Type & Medical Alert", triage["blood_type_and_medical"][:18], triage["blood_type_and_medical"][19:46] or "Verified")
+        e1.metric("Personnel Direct Phone", triage["direct_phone"], triage["role_short"])
+        e2.metric("Next of Kin (NOK) Phone", triage["nok_phone"], triage["nok_short"])
+        e3.metric("Emergency (ICE) Phone", triage["ice_phone"], triage["ice_short"])
+        e4.metric("Blood Type & Medical Alert", triage["blood_type_clean"], triage["medical_alert_clean"])
 
         st.code(
-            f"INSTANT EMERGENCY TRIAGE CARD // {triage['employee_id']} ? {triage['full_name']} ({triage['department']}){nl}"
+            f"INSTANT EMERGENCY TRIAGE CARD // {triage['employee_id']} -- {triage['full_name']} ({triage['department']}){nl}"
             f"  * Employee Direct Contact : {triage['direct_phone']} | Email: {triage['email']}{nl}"
             f"  * Next of Kin (NOK)       : {triage['nok_full_name']} ({triage['nok_relationship']}) | Phone: {triage['nok_phone']} | Address: {triage['nok_address']}{nl}"
             f"  * In Case of Emergency    : {triage['ice_full_name']} ({triage['ice_relationship']}) | Direct Phone: {triage['ice_phone']}{nl}"
@@ -369,7 +369,7 @@ def render_nextgen_dashboard() -> None:
 
         if not gate_res["gate_open"]:
             st.warning(
-                f"**[VAULT COMPARTMENTS LOCKED // STATUS: `{gate_res['gate_status']}`]** ? "
+                f"**[VAULT COMPARTMENTS LOCKED // STATUS: `{gate_res['gate_status']}`]** -- "
                 f"To protect both Employee financial privacy and Employer internal security, all personal credit, loan, "
                 f"and internal onboarding records remain hidden behind this gate. Check the User Agreement box above and "
                 f"select either **EMPLOYEE_PERSONAL_VAULT** (Demo PIN: `{person_obj['employee_pin']}`) or "
@@ -381,7 +381,7 @@ def render_nextgen_dashboard() -> None:
             # (Shows Employee Credit/Loans, Personal Assets, & Proof-of-ID;
             #  Employer Internal HR Records are 100% hidden)
             # =================================================================
-            st.success(f"**[{gate_res['gate_status']}]** ? {gate_res['privacy_notice']}")
+            st.success(f"**[{gate_res['gate_status']}]** -- {gate_res['privacy_notice']}")
             cred_r = gate_res["credit_report"]
             unfrz_id = st.text_input("Generate My Personal One-Time Credit/Loan Unfreeze Token For Inquiry ID:", value="REQ-HVF-EQUIP-2026-001", key="ng_c33_emp_unfrz")
             my_tok = e33.generate_ceo_credit_unfreeze_token(unfrz_id)
@@ -403,7 +403,7 @@ def render_nextgen_dashboard() -> None:
             # (Shows Unalterable Proof-of-Identity, Internal HR/Clearance Vetting,
             #  & Change-Approval Lock Gate; Employee Credit/Loans are 100% BLOCKED)
             # =================================================================
-            st.success(f"**[{gate_res['gate_status']}]** ? {gate_res['privacy_notice']}")
+            st.success(f"**[{gate_res['gate_status']}]** -- {gate_res['privacy_notice']}")
 
             st.markdown("#### 1. Employer-Only Internal Security Clearance, I-9 E-Verify, & Watch-Floor RBAC Records (Hidden From Employee View)")
             st.dataframe(gate_res["employer_internal_records"], width="stretch", hide_index=True)
@@ -415,7 +415,7 @@ def render_nextgen_dashboard() -> None:
 
             if is_locked:
                 st.info(
-                    f"**[UNALTERABLE DIGITAL PROOF-OF-IDENTITY STATE ACTIVE // REVISION #{cur_rev:02d} LOCKED]** ? "
+                    f"**[UNALTERABLE DIGITAL PROOF-OF-IDENTITY STATE ACTIVE // REVISION #{cur_rev:02d} LOCKED]** -- "
                     f"Input form is removed. Employee Personal Credit & Loan Telemetry: **100% BLOCKED BY PRIVACY WALL**."
                 )
                 st.markdown("#### 2. Employee Digital Proof-of-Identity, Government ID, Biometric, & NOK/ICE Record (Read-Only Unalterable State)")
@@ -442,7 +442,7 @@ def render_nextgen_dashboard() -> None:
                         st.error(f"Unlock Denied: {res_un['status']}")
             else:
                 st.warning(
-                    f"**[ONBOARDING APPLICATION FORM UNLOCKED BY `{vault_state.get('last_approved_by')}`]** ? "
+                    f"**[ONBOARDING APPLICATION FORM UNLOCKED BY `{vault_state.get('last_approved_by')}`]** -- "
                     f"Enter 1 atomic value per box below, then click **Seal & Lock Sovereign Personnel Identity Application** to remove the input form."
                 )
                 prof_inputs: Dict[str, str] = {}

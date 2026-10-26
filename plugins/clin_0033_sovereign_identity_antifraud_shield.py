@@ -153,7 +153,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     COMPANY_EMERGENCY_CONTACTS: List[Dict[str, str]] = [
         {
             "Unit": "1. HVF Sovereign Command Watch Desk (24/7 Primary)",
-            "Authority": "Jeffery Humphrey ? Founder, CEO, & Principal Sovereign Architect",
+            "Authority": "Jeffery Humphrey -- Founder, CEO, & Principal Sovereign Architect",
             "Direct_Line": "405-555-0100 (Priority Channel 1)",
             "Email_Dispatch": "humphreyvirtualfarm@gmail.com",
             "Location_Enclave": "Oklahoma City HQ // CAGE: 1AHA8 | UEI: S1M4ENLHTDH5",
@@ -278,21 +278,50 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             roster_key,
             next(iter(self.PERSONNEL_EMERGENCY_ROSTER.values())),
         )
+        raw_med = person["blood_type_and_medical"]
+        parts = [p.strip() for p in raw_med.split("//")]
+        blood_clean = parts[0].replace("_POSITIVE", "+ (Positive)").replace("_NEGATIVE", "- (Negative)")
+        med_clean = parts[1].replace("_", " ").title() if len(parts) > 1 else "Verified Clean"
+
+        role_short_map = {
+            "EMP-001": "Founder, CEO & Sovereign Architect",
+            "EMP-002": "Senior Tactical Watch Officer",
+            "EMP-003": "Lead SiC & SCADA Engineer",
+            "EMP-004": "UAS & Title 61 GIS Specialist",
+        }
+        nok_short_map = {
+            "EMP-001": "Mrs. Humphrey (Spouse / Primary NOK)",
+            "EMP-002": "Elena Vance (Spouse / Primary NOK)",
+            "EMP-003": "David Lin (Father / Primary NOK)",
+            "EMP-004": "Hannah Ross (Spouse / Primary NOK)",
+        }
+        ice_short_map = {
+            "EMP-001": "HVF Tactical Watch Officer Desk",
+            "EMP-002": "Dr. Robert Vance (Brother / MD)",
+            "EMP-003": "Grace Lin (Sister / Secondary ICE)",
+            "EMP-004": "Thomas Ross (Father / Secondary ICE)",
+        }
+        emp_id = person["employee_id"]
         return {
-            "employee_id": person["employee_id"],
+            "employee_id": emp_id,
             "full_name": person["full_name"],
             "role_title": person["role_title"],
+            "role_short": role_short_map.get(emp_id, person["role_title"]),
             "department": person["department"],
             "direct_phone": person["direct_phone"],
             "email": person["email"],
             "nok_full_name": person["nok_full_name"],
             "nok_relationship": person["nok_relationship"],
+            "nok_short": nok_short_map.get(emp_id, person["nok_full_name"]),
             "nok_phone": person["nok_phone"],
             "nok_address": person["nok_address"],
             "ice_full_name": person["ice_full_name"],
             "ice_relationship": person["ice_relationship"],
+            "ice_short": ice_short_map.get(emp_id, person["ice_full_name"]),
             "ice_phone": person["ice_phone"],
-            "blood_type_and_medical": person["blood_type_and_medical"],
+            "blood_type_and_medical": raw_med,
+            "blood_type_clean": blood_clean,
+            "medical_alert_clean": med_clean,
         }
 
     def open_compartment_gate(
@@ -333,7 +362,28 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         expected_emp_pin = person["employee_pin"]
         expected_employer_key = "EMPLOYER-MASTER-1AHA8"
 
-        app_eval = self.evaluate_atomic_42_application()
+        name_parts = person["full_name"].split()
+        first_n = name_parts[0] if len(name_parts) >= 1 else "JEFFERY"
+        mid_n   = name_parts[1] if len(name_parts) >= 3 else "SOVEREIGN"
+        last_n  = name_parts[-1] if len(name_parts) >= 2 else "HUMPHREY"
+        person_overrides = {
+            "f01_first_name": first_n,
+            "f02_middle_name": mid_n,
+            "f03_last_name": last_n,
+            "f15_primary_phone": person["direct_phone"],
+            "f16_email_address": person["email"].upper(),
+            "f21_job_title": person["role_title"].upper(),
+            "f22_department_unit": person["department"].upper(),
+            "f28_nok_full_name": person["nok_full_name"].upper(),
+            "f29_nok_relationship": person["nok_relationship"].upper(),
+            "f30_nok_phone": person["nok_phone"],
+            "f31_nok_address": person["nok_address"].upper(),
+            "f32_ice_full_name": person["ice_full_name"].upper(),
+            "f33_ice_relationship": person["ice_relationship"].upper(),
+            "f34_ice_phone": person["ice_phone"],
+            "f35_ice_medical_blood": person["blood_type_and_medical"],
+        }
+        app_eval = self.evaluate_atomic_42_application(person_overrides)
 
         if viewer_role == "EMPLOYEE":
             if access_key_or_pin.strip() != expected_emp_pin:
@@ -959,7 +1009,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 INSERT OR IGNORE INTO worm_identity_profile_revisions (
                     operator_name, update_reason, masked_ssn_dob, composite_16factor_seal,
                     masked_profile_json, previous_revision_hash, worm_revision_sha256
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?,?,?,?,?,?,?)
                 """,
                 (
                     operator_name,
@@ -1038,7 +1088,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     INSERT OR IGNORE INTO worm_id_access_log (
                         operator_name, id_document_type, masked_ssn_dob, biometric_gate,
                         action, liveness_nonce, access_decision, security_reason, worm_ledger_sha256
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (?,?,?,?,?,?,?,?,?)
                     """,
                     (
                         ev["Operator_Name"],
@@ -1061,7 +1111,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     INSERT OR IGNORE INTO worm_credit_loan_intercept_log (
                         inquiry_id, bureau_or_channel, credit_loan_event, protected_id_vector,
                         interception_decision, statutory_action, worm_intercept_sha256
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ) VALUES (?,?,?,?,?,?,?)
                     """,
                     (
                         crow["Inquiry_ID"],

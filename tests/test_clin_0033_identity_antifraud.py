@@ -32,6 +32,9 @@ def run_clin_0033_tests() -> None:
 
     # 2. Verify Employer Proof-of-Identity Lock & Cryptographic Approval Unlock State Machine
     artifacts_dir = here / "artifacts"
+    state_file = artifacts_dir / "wp7_personnel_vault_state.json"
+    if state_file.exists():
+        state_file.unlink()
     state_init = shield.load_or_init_vault_lock_state(artifacts_dir)
     assert state_init["is_locked"] is True
 
@@ -104,7 +107,9 @@ def run_clin_0033_tests() -> None:
     roster_keys = list(shield.PERSONNEL_EMERGENCY_ROSTER.keys())
     assert len(roster_keys) >= 4
     ice_card = shield.get_instant_emergency_triage_card(roster_keys[0])
-    assert "nok_phone" in ice_card and "ice_phone" in ice_card and "blood_type_and_medical" in ice_card
+    assert "nok_phone" in ice_card and "ice_phone" in ice_card and "blood_type_clean" in ice_card
+    assert ice_card["blood_type_clean"] == "O+ (Positive)"
+    assert ice_card["medical_alert_clean"] == "No Known Drug Allergies"
 
     # Gate must remain locked if User Agreement is not accepted
     locked_gate = shield.open_compartment_gate(

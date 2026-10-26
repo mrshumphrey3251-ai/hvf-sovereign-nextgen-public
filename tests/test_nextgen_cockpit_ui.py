@@ -16,6 +16,7 @@ def run_nextgen_cockpit_ui_tests() -> None:
     py_compile.compile(str(cockpit_file), doraise=True)
     raw_txt = cockpit_file.read_text(encoding="utf-8")
     assert "??" not in raw_txt, "Zero encoding-artifact check failed"
+    assert " ? " not in raw_txt, "Zero mangled em-dash check failed"
 
     reg, e27, e28, e29, e30, e31, e32, e33 = build_registry_and_engines()
     manifests = reg.list_manifests()
