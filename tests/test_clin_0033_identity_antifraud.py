@@ -69,6 +69,8 @@ def run_clin_0033_tests() -> None:
     assert "MASKED--" not in md_text, "CRITICAL: Double-hyphen mask must never occur"
     assert pdf_bytes.startswith(b"%PDF-1.4")
     assert b"**" not in pdf_bytes, "CRITICAL: Raw Markdown ** must be stripped from PDF text stream"
+    assert b"Event #3" in pdf_bytes, "CRITICAL: Event #3 must not be truncated from PDF"
+    assert b"WORM WP-7 16-Factor Identity" in pdf_bytes, "CRITICAL: Final Master Seal must not be truncated from PDF"
     assert b"%%EOF" in pdf_bytes
 
     # 5. Verify WORM SQLite Identity & Credit Ledger Immutability (UPDATE & DELETE must raise IntegrityError)

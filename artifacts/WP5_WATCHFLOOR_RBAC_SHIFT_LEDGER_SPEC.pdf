@@ -4,18 +4,21 @@
 << /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+<< /Type /Pages /Kids [4 0 R] /Count 1 >>
 endobj
 3 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 4 0 obj
-<< /Length 2650 >>
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 3 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 2673 >>
 stream
 BT
 /F1 8.5 Tf
-36 762 Td
-10.5 TL
+36 758 Td
+11 TL
 (HUMPHREY VIRTUAL FARMS LLC // WP-5: COMMAND WATCH-FLOOR RBAC & WORM SHIFT-LEDGER ICD) Tj T*
 (Entity: Humphrey Virtual Farms LLC \(CAGE: 1AHA8 | SAM.gov UEI: S1M4ENLHTDH5\)) Tj T*
 (Controlling Authority: Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect) Tj T*
@@ -57,11 +60,8 @@ BT
 (Previous Shift Hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855) Tj T*
 (Current Shift WORM Chain Seal \(SHA-256\):) Tj T*
 (    207de035017e747f332d21d9d5a605adafccee11fcbee0d80613e6f93cb1d580) Tj T*
-ET
+(--- Page 1 of 1 ---) Tj ET
 endstream
-endobj
-5 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
 endobj
 xref
 0 6
@@ -69,10 +69,10 @@ xref
 0000000015 00000 n 
 0000000064 00000 n 
 0000000121 00000 n 
-0000000247 00000 n 
-0000002949 00000 n 
+0000000191 00000 n 
+0000000317 00000 n 
 trailer
 << /Size 6 /Root 1 0 R >>
 startxref
-3019
+3042
 %%EOF

@@ -24,8 +24,9 @@ SOVEREIGN_HMAC_SEED = "PUBLIC_VERIFICATION_SEED_REDACTED_DFARS_252_227_7018"
 
 def build_minimal_iso_pdf(lines: List[str]) -> bytes:
     """
-    Compiles a deterministic, standards-compliant ISO 32000-1 %PDF-1.4 binary document
-    using standard Type1 Helvetica font with clean Markdown stripping and whole-word wrapping.
+    Compiles a deterministic, multi-page ISO 32000-1 %PDF-1.4 binary document
+    using standard Type1 Helvetica font with clean Markdown stripping, whole-word
+    wrapping, and automatic multi-page pagination (zero line truncation).
     """
     import re, textwrap
     wrapped_clean_lines: List[str] = []
@@ -50,26 +51,56 @@ def build_minimal_iso_pdf(lines: List[str]) -> bytes:
         ):
             wrapped_clean_lines.append(wline)
 
-    stream_cmds = ["BT", "/F1 8.5 Tf", "36 762 Td", "10.5 TL"]
-    for cline in wrapped_clean_lines[:68]:
-        safe = (
-            cline.replace("\\", "\\\\")
-            .replace("(", "\\(")
-            .replace(")", "\\)")
-        )
-        stream_cmds.append(f"({safe}) Tj T*")
-    stream_cmds.append("ET")
-    content_bytes = "\n".join(stream_cmds).encode("ascii")
+    if not wrapped_clean_lines:
+        wrapped_clean_lines = ["HVF Sovereign Document"]
 
-    objs = [
-        b"1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n",
-        b"2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n",
-        b"3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n",
-        f"4 0 obj\n<< /Length {len(content_bytes)} >>\nstream\n".encode("ascii")
-        + content_bytes
-        + b"\nendstream\nendobj\n",
-        b"5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n",
+    lines_per_page = 62
+    pages_lines = [
+        wrapped_clean_lines[i : i + lines_per_page]
+        for i in range(0, len(wrapped_clean_lines), lines_per_page)
     ]
+    num_pages = len(pages_lines)
+
+    # Object IDs:
+    # 1: Catalog, 2: Pages, 3: Font
+    # For each page p (0..num_pages-1):
+    #   page_obj_id = 4 + 2*p
+    #   content_obj_id = 5 + 2*p
+    kids_refs = " ".join(f"{4 + 2 * p} 0 R" for p in range(num_pages))
+    objs: List[bytes] = [
+        b"1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n",
+        f"2 0 obj\n<< /Type /Pages /Kids [{kids_refs}] /Count {num_pages} >>\nendobj\n".encode("ascii"),
+        b"3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n",
+    ]
+
+    for p, plines in enumerate(pages_lines):
+        page_id = 4 + 2 * p
+        cont_id = 5 + 2 * p
+        stream_cmds = ["BT", "/F1 8.5 Tf", "36 758 Td", "11 TL"]
+        for cline in plines:
+            safe = (
+                cline.replace("\\", "\\\\")
+                .replace("(", "\\(")
+                .replace(")", "\\)")
+            )
+            stream_cmds.append(f"({safe}) Tj T*")
+        stream_cmds.append(f"(--- Page {p + 1} of {num_pages} ---) Tj ET")
+        content_bytes = "\n".join(stream_cmds).encode("ascii")
+
+        page_obj = (
+            f"{page_id} 0 obj\n"
+            f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] "
+            f"/Contents {cont_id} 0 R /Resources << /Font << /F1 3 0 R >> >> >>\n"
+            f"endobj\n"
+        ).encode("ascii")
+        cont_obj = (
+            f"{cont_id} 0 obj\n<< /Length {len(content_bytes)} >>\nstream\n".encode("ascii")
+            + content_bytes
+            + b"\nendstream\nendobj\n"
+        )
+        objs.append(page_obj)
+        objs.append(cont_obj)
+
     out = bytearray(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
     offsets = []
     for o in objs:

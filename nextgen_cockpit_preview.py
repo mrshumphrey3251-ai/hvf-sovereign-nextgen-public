@@ -307,13 +307,20 @@ def render_nextgen_dashboard() -> None:
         )
         pii_r  = exp33["pii_report"]
         cred_r = exp33["credit_report"]
+        w_db   = exp33["worm_db_stats"]
         ceo_tk = e33.generate_ceo_credit_unfreeze_token(unfrz_req)
 
         f1, f2, f3, f4 = st.columns(4)
         f1.metric("Masked SSN / DOB Bind", f"{pii_r['masked_ssn']} | {pii_r['masked_dob']}", "0 Plaintext Digits Stored")
         f2.metric("16-Factor Identity Matrix", f"{pii_r['clean_attributes']} / {pii_r['core_identifying_features_count']} Clean", "+1 Dark-Web Canary Quarantined")
         f3.metric("Loans/Deeds/SIMs Blocked", f"{cred_r['fraudulent_loans_and_pulls_blocked']} / {cred_r['total_inquiries_monitored']} Blocked", "Equifax/Experian/TU/Chex/Deed/SIM")
-        f4.metric("One-Time CEO Unfreeze Token", ceo_tk[:14] + "...", f"For {unfrz_req}")
+        f4.metric("WORM SQLite Ledger Rows", f"{w_db['worm_id_access_rows']} ID | {w_db['worm_credit_intercept_rows']} Credit", "4 WORM Triggers Active")
+
+        st.success(
+            f"**Composite 16-Factor Identity Seal:** `{pii_r['composite_16factor_identity_seal'][:32]}...` | "
+            f"**CEO Unfreeze Token (`{unfrz_req}`):** `{ceo_tk}` | "
+            f"**WORM SQLite DB:** `artifacts/wp7_identity_credit_worm_ledger.db` (`UPDATE/DELETE Locked`)"
+        )
 
         st.markdown("#### 1. 7-Channel Credit Bureau, SBA/Bank Loan, County Deed Title, ChexSystems/ACH, & SIM-Swap Interceptor")
         st.dataframe(cred_r["credit_loan_rows"], width="stretch", hide_index=True)
@@ -325,7 +332,7 @@ def render_nextgen_dashboard() -> None:
         st.dataframe(exp33["access_events"], width="stretch", hide_index=True)
 
         st.download_button(
-            label=f"{ico_dl} Download WP-7 16-Factor Identity, SSN/DOB, Biometric, Credit, Loan & Deed Shield PDF",
+            label=f"{ico_dl} Download WP-7 Multi-Page 16-Factor Identity, SSN/DOB, Biometric, Credit, Loan & Deed Shield PDF",
             data=pathlib.Path(exp33["pdf_path"]).read_bytes(),
             file_name=pathlib.Path(exp33["pdf_path"]).name,
             mime="application/pdf",
