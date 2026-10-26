@@ -17,12 +17,14 @@ def run_clin_0033_tests() -> None:
     shield = SovereignIdentityAntiFraudShield()
     manifest = reg.register(shield)
     assert manifest.clin_number == "CLIN 0033"
-    assert manifest.version == "7.6.0"
+    assert manifest.version == "7.7.0"
     assert manifest.per_node_annual_gov_usd == 95000
     assert manifest.compatible_host_merkle_root == FROZEN_EBONY_MERKLE_ROOT
 
     # 1. Verify all 60 Atomic Fields (1 response per box: Legal, Contact, Job/I-9, NOK/ICE, Biometrics, Addresses, Prior Jobs, Training)
     assert len(shield.ATOMIC_42_SCHEMA) == 60
+    assert shield.ATOMIC_42_SCHEMA[0][1].startswith("[01] ")
+    assert shield.ATOMIC_42_SCHEMA[59][1].startswith("[60] ")
     test_raw_ssn = "999-00-1234"
     test_raw_dob = "1975-08-15"
     pii = shield.scan_pii_and_biometric_darkweb_feed(raw_ssn=test_raw_ssn, raw_dob=test_raw_dob)
@@ -82,7 +84,7 @@ def run_clin_0033_tests() -> None:
     assert "In Case of Emergency (ICE)" in md_text
     assert pdf_bytes.startswith(b"%PDF-1.4")
     assert b"**" not in pdf_bytes
-    assert b"CLIN 0033 v7.6" in pdf_bytes
+    assert b"CLIN 0033 v7.7" in pdf_bytes
     assert b"WORM WP-7" in pdf_bytes
     assert b"%%EOF" in pdf_bytes
 
@@ -191,4 +193,4 @@ def run_clin_0033_tests() -> None:
 
 if __name__ == "__main__":
     run_clin_0033_tests()
-    print("[100% PASS] CLIN 0033 (WP-7 v7.6) 60-Field Dossier, HIPAA Gate, Muster SOPs, Promotion Shortlist, & 6-Table (12-Trigger) WORM Vault Passed!")
+    print("[100% PASS] CLIN 0033 (WP-7 v7.7) 60-Field Dossier, HIPAA Gate, Muster SOPs, Promotion Shortlist, & 6-Table (12-Trigger) WORM Vault Passed!")

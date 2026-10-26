@@ -25,7 +25,7 @@ IDENTITY_VAULT_PEPPER = "PUBLIC_IDENTITY_CREDIT_PEPPER_REDACTED_DFARS_252_227_70
 
 class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     """
-    WP-7 / CLIN 0033 v7.6 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
+    WP-7 / CLIN 0033 v7.7 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
       1. 42 Atomic Application Fields (Strictly 1 single response per box; zero pipe-concatenated fields)
          covering Legal Identity, Vital Stats, Physical Description, Job/I-9/Clearance, Government IDs,
          Next of Kin (NOK), In Case of Emergency (ICE), 3-Modal Biometrics, and Financial/Asset Locks.
@@ -40,73 +40,73 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     # (field_key, display_label, category_name, is_sensitive_masked)
     ATOMIC_42_SCHEMA: List[Tuple[str, str, str, bool]] = [
         # Section 1: Legal Identity & Vital Statistics (10 Atomic Fields)
-        ("f01_first_name", "01. Legal First Name", "1_LEGAL_VITAL", False),
-        ("f02_middle_name", "02. Legal Middle Name", "1_LEGAL_VITAL", False),
-        ("f03_last_name", "03. Legal Last Name", "1_LEGAL_VITAL", False),
-        ("f04_name_suffix", "04. Name Suffix (Jr/Sr/III/None)", "1_LEGAL_VITAL", False),
-        ("f05_ssn", "05. Social Security Number (9-Digit SSN)", "1_LEGAL_VITAL", True),
-        ("f06_dob", "06. Date of Birth (YYYY-MM-DD)", "1_LEGAL_VITAL", True),
-        ("f07_birth_city", "07. City of Birth", "1_LEGAL_VITAL", False),
-        ("f08_birth_state", "08. State / Province of Birth", "1_LEGAL_VITAL", False),
-        ("f09_birth_country", "09. Country of Birth", "1_LEGAL_VITAL", False),
-        ("f10_mothers_maiden", "10. Mother's Maiden Surname (KBA)", "1_LEGAL_VITAL", True),
+        ("f01_first_name", "[01] Legal First Name", "1_LEGAL_VITAL", False),
+        ("f02_middle_name", "[02] Legal Middle Name", "1_LEGAL_VITAL", False),
+        ("f03_last_name", "[03] Legal Last Name", "1_LEGAL_VITAL", False),
+        ("f04_name_suffix", "[04] Name Suffix (Jr/Sr/III/None)", "1_LEGAL_VITAL", False),
+        ("f05_ssn", "[05] Social Security Number (9-Digit SSN)", "1_LEGAL_VITAL", True),
+        ("f06_dob", "[06] Date of Birth (YYYY-MM-DD)", "1_LEGAL_VITAL", True),
+        ("f07_birth_city", "[07] City of Birth", "1_LEGAL_VITAL", False),
+        ("f08_birth_state", "[08] State / Province of Birth", "1_LEGAL_VITAL", False),
+        ("f09_birth_country", "[09] Country of Birth", "1_LEGAL_VITAL", False),
+        ("f10_mothers_maiden", "[10] Mother's Maiden Surname (KBA)", "1_LEGAL_VITAL", True),
         # Section 2: Residential Contact & Physical Description (10 Atomic Fields)
-        ("f11_street_address", "11. Residential Street Address", "2_CONTACT_PHYSICAL", True),
-        ("f12_residence_city", "12. Residential City", "2_CONTACT_PHYSICAL", False),
-        ("f13_residence_state", "13. Residential State", "2_CONTACT_PHYSICAL", False),
-        ("f14_residence_zip", "14. Residential ZIP / Postal Code", "2_CONTACT_PHYSICAL", False),
-        ("f15_primary_phone", "15. Primary Mobile Phone Number", "2_CONTACT_PHYSICAL", True),
-        ("f16_email_address", "16. Official Email Address", "2_CONTACT_PHYSICAL", False),
-        ("f17_eye_color", "17. Physical Eye Color", "2_CONTACT_PHYSICAL", False),
-        ("f18_hair_color", "18. Physical Hair Color", "2_CONTACT_PHYSICAL", False),
-        ("f19_height_inches", "19. Physical Height (Inches)", "2_CONTACT_PHYSICAL", False),
-        ("f20_scars_marks_tattoos", "20. Distinguishing Scars, Marks, or Tattoos (SMT)", "2_CONTACT_PHYSICAL", False),
+        ("f11_street_address", "[11] Residential Street Address", "2_CONTACT_PHYSICAL", True),
+        ("f12_residence_city", "[12] Residential City", "2_CONTACT_PHYSICAL", False),
+        ("f13_residence_state", "[13] Residential State", "2_CONTACT_PHYSICAL", False),
+        ("f14_residence_zip", "[14] Residential ZIP / Postal Code", "2_CONTACT_PHYSICAL", False),
+        ("f15_primary_phone", "[15] Primary Mobile Phone Number", "2_CONTACT_PHYSICAL", True),
+        ("f16_email_address", "[16] Official Email Address", "2_CONTACT_PHYSICAL", False),
+        ("f17_eye_color", "[17] Physical Eye Color", "2_CONTACT_PHYSICAL", False),
+        ("f18_hair_color", "[18] Physical Hair Color", "2_CONTACT_PHYSICAL", False),
+        ("f19_height_inches", "[19] Physical Height (Inches)", "2_CONTACT_PHYSICAL", False),
+        ("f20_scars_marks_tattoos", "[20] Distinguishing Scars, Marks, or Tattoos (SMT)", "2_CONTACT_PHYSICAL", False),
         # Section 3: Employment Application, I-9, & Government IDs (7 Atomic Fields)
-        ("f21_job_title", "21. Position / Role Applied For", "3_EMPLOYMENT_GOV_IDS", False),
-        ("f22_department_unit", "22. Assigned Department / Command Unit", "3_EMPLOYMENT_GOV_IDS", False),
-        ("f23_clearance_level", "23. Security Clearance / Vetting Tier", "3_EMPLOYMENT_GOV_IDS", False),
-        ("f24_citizenship_i9", "24. Citizenship / Form I-9 Work Eligibility", "3_EMPLOYMENT_GOV_IDS", False),
-        ("f25_drivers_license", "25. State Driver's License / REAL-ID Number", "3_EMPLOYMENT_GOV_IDS", True),
-        ("f26_passport_number", "26. U.S. Passport Book / Card Number", "3_EMPLOYMENT_GOV_IDS", True),
-        ("f27_dod_cac_edipi", "27. DoD CAC / FIPS 201 PIV 10-Digit EDIPI", "3_EMPLOYMENT_GOV_IDS", True),
+        ("f21_job_title", "[21] Position / Role Applied For", "3_EMPLOYMENT_GOV_IDS", False),
+        ("f22_department_unit", "[22] Assigned Department / Command Unit", "3_EMPLOYMENT_GOV_IDS", False),
+        ("f23_clearance_level", "[23] Security Clearance / Vetting Tier", "3_EMPLOYMENT_GOV_IDS", False),
+        ("f24_citizenship_i9", "[24] Citizenship / Form I-9 Work Eligibility", "3_EMPLOYMENT_GOV_IDS", False),
+        ("f25_drivers_license", "[25] State Driver's License / REAL-ID Number", "3_EMPLOYMENT_GOV_IDS", True),
+        ("f26_passport_number", "[26] U.S. Passport Book / Card Number", "3_EMPLOYMENT_GOV_IDS", True),
+        ("f27_dod_cac_edipi", "[27] DoD CAC / FIPS 201 PIV 10-Digit EDIPI", "3_EMPLOYMENT_GOV_IDS", True),
         # Section 4: Next of Kin (NOK) & In Case of Emergency (ICE) (8 Atomic Fields)
-        ("f28_nok_full_name", "28. Next of Kin (NOK) Full Legal Name", "4_NOK_AND_ICE", False),
-        ("f29_nok_relationship", "29. Next of Kin (NOK) Relationship", "4_NOK_AND_ICE", False),
-        ("f30_nok_phone", "30. Next of Kin (NOK) Primary Phone", "4_NOK_AND_ICE", True),
-        ("f31_nok_address", "31. Next of Kin (NOK) Residential Address", "4_NOK_AND_ICE", True),
-        ("f32_ice_full_name", "32. In Case of Emergency (ICE) Contact Name", "4_NOK_AND_ICE", False),
-        ("f33_ice_relationship", "33. In Case of Emergency (ICE) Relationship", "4_NOK_AND_ICE", False),
-        ("f34_ice_phone", "34. In Case of Emergency (ICE) Direct Phone", "4_NOK_AND_ICE", True),
-        ("f35_ice_medical_blood", "35. Emergency Blood Type & Medical Alert Notes", "4_NOK_AND_ICE", False),
+        ("f28_nok_full_name", "[28] Next of Kin (NOK) Full Legal Name", "4_NOK_AND_ICE", False),
+        ("f29_nok_relationship", "[29] Next of Kin (NOK) Relationship", "4_NOK_AND_ICE", False),
+        ("f30_nok_phone", "[30] Next of Kin (NOK) Primary Phone", "4_NOK_AND_ICE", True),
+        ("f31_nok_address", "[31] Next of Kin (NOK) Residential Address", "4_NOK_AND_ICE", True),
+        ("f32_ice_full_name", "[32] In Case of Emergency (ICE) Contact Name", "4_NOK_AND_ICE", False),
+        ("f33_ice_relationship", "[33] In Case of Emergency (ICE) Relationship", "4_NOK_AND_ICE", False),
+        ("f34_ice_phone", "[34] In Case of Emergency (ICE) Direct Phone", "4_NOK_AND_ICE", True),
+        ("f35_ice_medical_blood", "[35] Emergency Blood Type & Medical Alert Notes", "4_NOK_AND_ICE", False),
         # Section 5: 3-Modal Biometrics & Financial / Asset Protection Locks (7 Atomic Fields)
-        ("f36_bio_fingerprint", "36. Biometric #1: Fingerprint Minutiae Template", "5_BIOMETRIC_ASSETS", True),
-        ("f37_bio_iris", "37. Biometric #2: Iris & Retinal Vascular Template", "5_BIOMETRIC_ASSETS", True),
-        ("f38_bio_face_voice", "38. Biometric #3: 3D Facial & Voiceprint Liveness", "5_BIOMETRIC_ASSETS", True),
-        ("f39_bank_aba_routing", "39. Direct Deposit / Treasury Bank ABA Routing", "5_BIOMETRIC_ASSETS", True),
-        ("f40_bank_account_num", "40. Direct Deposit / Treasury Account Number", "5_BIOMETRIC_ASSETS", True),
-        ("f41_property_deed_apn", "41. Real Estate Home/Land Deed Parcel APN", "5_BIOMETRIC_ASSETS", True),
-                ("f42_mobile_sim_imei", "42. Mobile Carrier SIM / IMEI Port-Out Lock", "5_BIOMETRIC_ASSETS", True),
+        ("f36_bio_fingerprint", "[36] Biometric #1: Fingerprint Minutiae Template", "5_BIOMETRIC_ASSETS", True),
+        ("f37_bio_iris", "[37] Biometric #2: Iris & Retinal Vascular Template", "5_BIOMETRIC_ASSETS", True),
+        ("f38_bio_face_voice", "[38] Biometric #3: 3D Facial & Voiceprint Liveness", "5_BIOMETRIC_ASSETS", True),
+        ("f39_bank_aba_routing", "[39] Direct Deposit / Treasury Bank ABA Routing", "5_BIOMETRIC_ASSETS", True),
+        ("f40_bank_account_num", "[40] Direct Deposit / Treasury Account Number", "5_BIOMETRIC_ASSETS", True),
+        ("f41_property_deed_apn", "[41] Real Estate Home/Land Deed Parcel APN", "5_BIOMETRIC_ASSETS", True),
+                ("f42_mobile_sim_imei", "[42] Mobile Carrier SIM / IMEI Port-Out Lock", "5_BIOMETRIC_ASSETS", True),
         # Section 6: Previous 7-Year Residential Address History (6 Atomic Fields: 43 - 48)
-        ("f43_prev_addr1_street", "43. Previous Street Address #1", "6_PREVIOUS_ADDRESSES", True),
-        ("f44_prev_addr1_city", "44. Previous City #1", "6_PREVIOUS_ADDRESSES", False),
-        ("f45_prev_addr1_state_zip", "45. Previous State & ZIP Code #1", "6_PREVIOUS_ADDRESSES", False),
-        ("f46_prev_addr1_dates", "46. Previous Residence #1 Dates (From-To)", "6_PREVIOUS_ADDRESSES", False),
-        ("f47_prev_addr2_summary", "47. Previous Residence #2 City & State", "6_PREVIOUS_ADDRESSES", False),
-        ("f48_prev_addr_verifier", "48. Previous Residence Verification / Landlord Contact", "6_PREVIOUS_ADDRESSES", True),
+        ("f43_prev_addr1_street", "[43] Previous Street Address #1", "6_PREVIOUS_ADDRESSES", True),
+        ("f44_prev_addr1_city", "[44] Previous City #1", "6_PREVIOUS_ADDRESSES", False),
+        ("f45_prev_addr1_state_zip", "[45] Previous State & ZIP Code #1", "6_PREVIOUS_ADDRESSES", False),
+        ("f46_prev_addr1_dates", "[46] Previous Residence #1 Dates (From-To)", "6_PREVIOUS_ADDRESSES", False),
+        ("f47_prev_addr2_summary", "[47] Previous Residence #2 City & State", "6_PREVIOUS_ADDRESSES", False),
+        ("f48_prev_addr_verifier", "[48] Previous Residence Verification / Landlord Contact", "6_PREVIOUS_ADDRESSES", True),
         # Section 7: Prior Employment & Job History (6 Atomic Fields: 49 - 54)
-        ("f49_prior_emp1_org", "49. Prior Employer #1 Organization / Command", "7_JOB_HISTORY", False),
-        ("f50_prior_emp1_title", "50. Prior Employer #1 Job Title / Rank", "7_JOB_HISTORY", False),
-        ("f51_prior_emp1_supervisor", "51. Prior Employer #1 Supervisor & Verification Phone", "7_JOB_HISTORY", True),
-        ("f52_prior_emp1_years", "52. Prior Employer #1 Tenure (Years)", "7_JOB_HISTORY", False),
-        ("f53_prior_emp2_org_role", "53. Prior Employer #2 Organization & Title", "7_JOB_HISTORY", False),
-        ("f54_total_experience_yrs", "54. Total Verified Career Experience (Years)", "7_JOB_HISTORY", False),
+        ("f49_prior_emp1_org", "[49] Prior Employer #1 Organization / Command", "7_JOB_HISTORY", False),
+        ("f50_prior_emp1_title", "[50] Prior Employer #1 Job Title / Rank", "7_JOB_HISTORY", False),
+        ("f51_prior_emp1_supervisor", "[51] Prior Employer #1 Supervisor & Verification Phone", "7_JOB_HISTORY", True),
+        ("f52_prior_emp1_years", "[52] Prior Employer #1 Tenure (Years)", "7_JOB_HISTORY", False),
+        ("f53_prior_emp2_org_role", "[53] Prior Employer #2 Organization & Title", "7_JOB_HISTORY", False),
+        ("f54_total_experience_yrs", "[54] Total Verified Career Experience (Years)", "7_JOB_HISTORY", False),
         # Section 8: Training, Sovereign Academy, & Company Evaluations (6 Atomic Fields: 55 - 60)
-        ("f55_highest_education", "55. Highest Degree / Technical Diploma", "8_TRAINING_AND_EVAL", False),
-        ("f56_academy_exam_score", "56. HVF Sovereign Field Academy Exam Score (%)", "8_TRAINING_AND_EVAL", False),
-        ("f57_completed_hvf_courses", "57. Completed HVF Technical Modules", "8_TRAINING_AND_EVAL", False),
-        ("f58_active_certifications", "58. Active Federal / Safety / Trade Certifications", "8_TRAINING_AND_EVAL", False),
-        ("f59_training_hours_total", "59. Total Verified Continuing Training Hours", "8_TRAINING_AND_EVAL", False),
-        ("f60_company_eval_rating", "60. Annual Company Evaluation Rating (0.0 - 5.0)", "8_TRAINING_AND_EVAL", False),
+        ("f55_highest_education", "[55] Highest Degree / Technical Diploma", "8_TRAINING_AND_EVAL", False),
+        ("f56_academy_exam_score", "[56] HVF Sovereign Field Academy Exam Score (%)", "8_TRAINING_AND_EVAL", False),
+        ("f57_completed_hvf_courses", "[57] Completed HVF Technical Modules", "8_TRAINING_AND_EVAL", False),
+        ("f58_active_certifications", "[58] Active Federal / Safety / Trade Certifications", "8_TRAINING_AND_EVAL", False),
+        ("f59_training_hours_total", "[59] Total Verified Continuing Training Hours", "8_TRAINING_AND_EVAL", False),
+        ("f60_company_eval_rating", "[60] Annual Company Evaluation Rating (0.0 - 5.0)", "8_TRAINING_AND_EVAL", False),
     ]
 
     DEFAULT_ATOMIC_42_VALUES: Dict[str, str] = {
@@ -857,11 +857,26 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         qualified_rows: List[Dict[str, Any]] = []
         all_evaluated_rows: List[Dict[str, Any]] = []
 
+        state_data = self.load_or_init_vault_lock_state(out_dir)
+        saved_by_emp = state_data.get("saved_profiles_by_emp", {})
         for emp_id, cand in self.CANDIDATE_CAREER_AND_TRAINING_MATRIX.items():
-            exp_yrs = int(cand["total_experience_yrs"])
-            acad_pct = float(cand["academy_exam_score_pct"])
-            eval_rat = float(cand["company_eval_rating"])
-            train_hrs = int(cand["training_hours"])
+            emp_saved = saved_by_emp.get(emp_id, {})
+            try:
+                exp_yrs = int(float(emp_saved.get("f54_total_experience_yrs", cand["total_experience_yrs"])))
+            except ValueError:
+                exp_yrs = int(cand["total_experience_yrs"])
+            try:
+                acad_pct = float(emp_saved.get("f56_academy_exam_score", cand["academy_exam_score_pct"]))
+            except ValueError:
+                acad_pct = float(cand["academy_exam_score_pct"])
+            try:
+                eval_rat = float(emp_saved.get("f60_company_eval_rating", cand["company_eval_rating"]))
+            except ValueError:
+                eval_rat = float(cand["company_eval_rating"])
+            try:
+                train_hrs = int(float(emp_saved.get("f59_training_hours_total", cand["training_hours"])))
+            except ValueError:
+                train_hrs = int(cand["training_hours"])
 
             # 100-Point Composite Promotion Readiness Index (PRI)
             pri_score = round(
@@ -1256,7 +1271,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
             title="60-Field Atomic Personnel Dossier, NOK/ICE, Promotion Shortlist, & Credit Shield",
-            version="7.6.0",
+            version="7.7.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,
@@ -2123,7 +2138,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "# HUMPHREY VIRTUAL FARMS LLC // WP-7: 42-FIELD PERSONNEL ONBOARDING, NOK/ICE, PROOF-OF-IDENTITY, & CREDIT SHIELD",
             "**Entity:** Humphrey Virtual Farms LLC (`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`)",
             "**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect",
-            f"**Plug-In Module:** `CLIN 0033 v7.6 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
+            f"**Plug-In Module:** `CLIN 0033 v7.7 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
             f"**Host Ebony Baseline Merkle Root:** `{FROZEN_EBONY_MERKLE_ROOT}`",
             "",
             "---",

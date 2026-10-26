@@ -285,7 +285,7 @@ def render_nextgen_dashboard() -> None:
         )
 
     with tabs[7]:
-        st.markdown("### `WP-7` / `CLIN 0033 v7.6`: Front-Screen OSHA Muster Points & Emergency Procedures + HIPAA-Gated 60-Field User Input Console, Medical/ICE Triage, & Credit Shield")
+        st.markdown("### `WP-7` / `CLIN 0033 v7.7`: Front-Screen OSHA Muster Points & Emergency Procedures + HIPAA-Gated 60-Field User Input Console, Medical/ICE Triage, & Credit Shield")
 
         # =====================================================================
         # SECTION 1 (ALWAYS VISIBLE ON FRONT SCREEN -- NO LOGIN REQUIRED):
