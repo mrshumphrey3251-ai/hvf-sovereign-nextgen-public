@@ -9,3 +9,5 @@ venv/
 *.pem
 
 *.db
+
+artifacts/wp7_personnel_vault_state.json

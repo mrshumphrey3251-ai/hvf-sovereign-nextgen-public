@@ -1,8 +1,8 @@
 """
-HUMPHREY VIRTUAL FARMS LLC // CLIN 0033 (WP-7 v4.0): FULL-PAGE 16-FACTOR SOVEREIGN IDENTITY, BIOMETRIC, CREDIT, LOAN, DEED, & PROFILE UPDATE SHIELD
+HUMPHREY VIRTUAL FARMS LLC // CLIN 0033 (WP-7 v5.0): 42-FIELD ATOMIC PERSONNEL ONBOARDING, NOK/ICE, DIGITAL PROOF-OF-IDENTITY, & EMPLOYER LOCK VAULT
 Entity: Humphrey Virtual Farms LLC (CAGE: 1AHA8 | SAM.gov UEI: S1M4ENLHTDH5)
 Authority: Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect
-Work Package: WP-7 (16-Factor Interactive Identity Matrix, Versioned WORM Profile Updater, 7-Channel Credit/Loan/Deed/SIM Interceptor, & ID Access Ledger)
+Work Package: WP-7 (42-Field Atomic Personnel Application, NOK/ICE Emergency Ledger, Unalterable Proof-of-Identity Lock, & 7-Channel Credit/Loan Shield)
 Host Compatibility: Frozen Project Ebony TRL 7 Baseline (cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e18e9150949a)
 """
 from __future__ import annotations
@@ -11,7 +11,7 @@ import hmac
 import json
 import pathlib
 import sqlite3
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 from nextgen_core.sovereign_plugin_contract import (
     FROZEN_EBONY_MERKLE_ROOT,
@@ -25,40 +25,120 @@ IDENTITY_VAULT_PEPPER = "PUBLIC_IDENTITY_CREDIT_PEPPER_REDACTED_DFARS_252_227_70
 
 class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     """
-    WP-7 / CLIN 0033 v4.0 Complete 4-Pillar Identity Security & Profile Update Fortress:
-      Pillar 1: Full 16-Factor Zero-Knowledge Personal, Physical (SMT), 3-Modal Biometric, & Asset Identity Matrix.
-      Pillar 2: Versioned Cryptographic Profile Update Engine (worm_identity_profile_revisions) allowing operators
-                to update any of the 16+ identifiers while chaining every revision in an immutable WORM SQLite ledger.
-      Pillar 3: 7-Channel Credit Bureau, SBA/Bank Loan, County Deed Title, ChexSystems/ACH, & SIM-Swap Interceptor.
-      Pillar 4: Physical ID & 3-Modal Biometric Sign-In / Sign-Out WORM Audit Ledger & Anti-Replay Gate.
+    WP-7 / CLIN 0033 v5.0 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
+      1. 42 Atomic Application Fields (Strictly 1 single response per box; zero pipe-concatenated fields)
+         covering Legal Identity, Vital Stats, Physical Description, Job/I-9/Clearance, Government IDs,
+         Next of Kin (NOK), In Case of Emergency (ICE), 3-Modal Biometrics, and Financial/Asset Locks.
+      2. Unalterable Employer Proof-of-Identity State Machine:
+         - Once submitted/sealed, the input form is removed and replaced by a read-only, cryptographically
+           sealed Digital Proof-of-Identity Dossier.
+         - Modifying any field requires a cryptographic Employer/CEO Change-Approval Token and logged reason.
+      3. 7-Channel Credit Bureau, SBA/Bank Loan, County Deed Title, ChexSystems/ACH, & SIM-Swap Interceptor.
+      4. Physical ID & 3-Modal Biometric Sign-In / Sign-Out WORM Audit Ledger.
     """
 
-    DEFAULT_16_PROFILE: Dict[str, str] = {
-        "operator_name": "JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)",
-        "raw_ssn": "999-00-1234",
-        "raw_dob": "1975-08-15",
-        "pob_and_maiden_kba": "OKLAHOMA-KBA-SEAL-991",
-        "physical_id_number": "OK-REALID-1AHA8-7741",
-        "passport_number": "US-PASS-558912044",
-        "dod_cac_piv_serial": "CAC-EDIPI-1099482210",
-        "physical_smt_features": "EYES:BRN|HGT:72IN|SMT:NONE-VERIFIED",
-        "fingerprint_minutiae": "BIO-FINGER-ISO19794-2-V1",
-        "iris_vascular_hash": "BIO-IRIS-ISO19794-6-V1",
-        "face_voice_liveness": "BIO-3DFACE-VOICE-LIVENESS-V1",
-        "home_deed_parcel_apn": "OK-APN-DEED-LOCK-44019",
-        "bank_ach_aba_routing": "ABA-103000648-ACH-LOCKED",
-        "mobile_sim_imei_lock": "IMEI-35988109-SIMLOCK-ON",
-        "medical_npi_beneficiary": "MED-SHIELD-ID-88310",
-        "vehicle_fleet_vin": "1HVF882910SOVEREIGN",
-        "corporate_ein_uei": "UEI:S1M4ENLHTDH5|CAGE:1AHA8",
+    # (field_key, display_label, category_name, is_sensitive_masked)
+    ATOMIC_42_SCHEMA: List[Tuple[str, str, str, bool]] = [
+        # Section 1: Legal Identity & Vital Statistics (10 Atomic Fields)
+        ("f01_first_name", "01. Legal First Name", "1_LEGAL_VITAL", False),
+        ("f02_middle_name", "02. Legal Middle Name", "1_LEGAL_VITAL", False),
+        ("f03_last_name", "03. Legal Last Name", "1_LEGAL_VITAL", False),
+        ("f04_name_suffix", "04. Name Suffix (Jr/Sr/III/None)", "1_LEGAL_VITAL", False),
+        ("f05_ssn", "05. Social Security Number (9-Digit SSN)", "1_LEGAL_VITAL", True),
+        ("f06_dob", "06. Date of Birth (YYYY-MM-DD)", "1_LEGAL_VITAL", True),
+        ("f07_birth_city", "07. City of Birth", "1_LEGAL_VITAL", False),
+        ("f08_birth_state", "08. State / Province of Birth", "1_LEGAL_VITAL", False),
+        ("f09_birth_country", "09. Country of Birth", "1_LEGAL_VITAL", False),
+        ("f10_mothers_maiden", "10. Mother's Maiden Surname (KBA)", "1_LEGAL_VITAL", True),
+        # Section 2: Residential Contact & Physical Description (10 Atomic Fields)
+        ("f11_street_address", "11. Residential Street Address", "2_CONTACT_PHYSICAL", True),
+        ("f12_residence_city", "12. Residential City", "2_CONTACT_PHYSICAL", False),
+        ("f13_residence_state", "13. Residential State", "2_CONTACT_PHYSICAL", False),
+        ("f14_residence_zip", "14. Residential ZIP / Postal Code", "2_CONTACT_PHYSICAL", False),
+        ("f15_primary_phone", "15. Primary Mobile Phone Number", "2_CONTACT_PHYSICAL", True),
+        ("f16_email_address", "16. Official Email Address", "2_CONTACT_PHYSICAL", False),
+        ("f17_eye_color", "17. Physical Eye Color", "2_CONTACT_PHYSICAL", False),
+        ("f18_hair_color", "18. Physical Hair Color", "2_CONTACT_PHYSICAL", False),
+        ("f19_height_inches", "19. Physical Height (Inches)", "2_CONTACT_PHYSICAL", False),
+        ("f20_scars_marks_tattoos", "20. Distinguishing Scars, Marks, or Tattoos (SMT)", "2_CONTACT_PHYSICAL", False),
+        # Section 3: Employment Application, I-9, & Government IDs (7 Atomic Fields)
+        ("f21_job_title", "21. Position / Role Applied For", "3_EMPLOYMENT_GOV_IDS", False),
+        ("f22_department_unit", "22. Assigned Department / Command Unit", "3_EMPLOYMENT_GOV_IDS", False),
+        ("f23_clearance_level", "23. Security Clearance / Vetting Tier", "3_EMPLOYMENT_GOV_IDS", False),
+        ("f24_citizenship_i9", "24. Citizenship / Form I-9 Work Eligibility", "3_EMPLOYMENT_GOV_IDS", False),
+        ("f25_drivers_license", "25. State Driver's License / REAL-ID Number", "3_EMPLOYMENT_GOV_IDS", True),
+        ("f26_passport_number", "26. U.S. Passport Book / Card Number", "3_EMPLOYMENT_GOV_IDS", True),
+        ("f27_dod_cac_edipi", "27. DoD CAC / FIPS 201 PIV 10-Digit EDIPI", "3_EMPLOYMENT_GOV_IDS", True),
+        # Section 4: Next of Kin (NOK) & In Case of Emergency (ICE) (8 Atomic Fields)
+        ("f28_nok_full_name", "28. Next of Kin (NOK) Full Legal Name", "4_NOK_AND_ICE", False),
+        ("f29_nok_relationship", "29. Next of Kin (NOK) Relationship", "4_NOK_AND_ICE", False),
+        ("f30_nok_phone", "30. Next of Kin (NOK) Primary Phone", "4_NOK_AND_ICE", True),
+        ("f31_nok_address", "31. Next of Kin (NOK) Residential Address", "4_NOK_AND_ICE", True),
+        ("f32_ice_full_name", "32. In Case of Emergency (ICE) Contact Name", "4_NOK_AND_ICE", False),
+        ("f33_ice_relationship", "33. In Case of Emergency (ICE) Relationship", "4_NOK_AND_ICE", False),
+        ("f34_ice_phone", "34. In Case of Emergency (ICE) Direct Phone", "4_NOK_AND_ICE", True),
+        ("f35_ice_medical_blood", "35. Emergency Blood Type & Medical Alert Notes", "4_NOK_AND_ICE", False),
+        # Section 5: 3-Modal Biometrics & Financial / Asset Protection Locks (7 Atomic Fields)
+        ("f36_bio_fingerprint", "36. Biometric #1: Fingerprint Minutiae Template", "5_BIOMETRIC_ASSETS", True),
+        ("f37_bio_iris", "37. Biometric #2: Iris & Retinal Vascular Template", "5_BIOMETRIC_ASSETS", True),
+        ("f38_bio_face_voice", "38. Biometric #3: 3D Facial & Voiceprint Liveness", "5_BIOMETRIC_ASSETS", True),
+        ("f39_bank_aba_routing", "39. Direct Deposit / Treasury Bank ABA Routing", "5_BIOMETRIC_ASSETS", True),
+        ("f40_bank_account_num", "40. Direct Deposit / Treasury Account Number", "5_BIOMETRIC_ASSETS", True),
+        ("f41_property_deed_apn", "41. Real Estate Home/Land Deed Parcel APN", "5_BIOMETRIC_ASSETS", True),
+        ("f42_mobile_sim_imei", "42. Mobile Carrier SIM / IMEI Port-Out Lock", "5_BIOMETRIC_ASSETS", True),
+    ]
+
+    DEFAULT_ATOMIC_42_VALUES: Dict[str, str] = {
+        "f01_first_name": "JEFFERY",
+        "f02_middle_name": "SOVEREIGN",
+        "f03_last_name": "HUMPHREY",
+        "f04_name_suffix": "NONE",
+        "f05_ssn": "999-00-1234",
+        "f06_dob": "1975-08-15",
+        "f07_birth_city": "OKLAHOMA CITY",
+        "f08_birth_state": "OKLAHOMA",
+        "f09_birth_country": "UNITED STATES",
+        "f10_mothers_maiden": "VAULT-KBA-MAIDEN-991",
+        "f11_street_address": "100 SOVEREIGN COMMAND PKWY",
+        "f12_residence_city": "OKLAHOMA CITY",
+        "f13_residence_state": "OK",
+        "f14_residence_zip": "73102",
+        "f15_primary_phone": "405-555-0199",
+        "f16_email_address": "HUMPHREYVIRTUALFARM@GMAIL.COM",
+        "f17_eye_color": "BROWN",
+        "f18_hair_color": "BLACK",
+        "f19_height_inches": "72",
+        "f20_scars_marks_tattoos": "NONE_VERIFIED",
+        "f21_job_title": "FOUNDER, CEO, & PRINCIPAL SOVEREIGN ARCHITECT",
+        "f22_department_unit": "HVF EXECUTIVE COMMAND (CAGE 1AHA8)",
+        "f23_clearance_level": "SOVEREIGN_COMMANDER_LEVEL_5",
+        "f24_citizenship_i9": "US_CITIZEN_VERIFIED_I9_SEALED",
+        "f25_drivers_license": "OK-REALID-1AHA8-7741",
+        "f26_passport_number": "US-PASS-558912044",
+        "f27_dod_cac_edipi": "1099482210",
+        "f28_nok_full_name": "MRS. HUMPHREY (DESIGNATED SPOUSE / NOK)",
+        "f29_nok_relationship": "SPOUSE_PRIMARY_BENEFICIARY",
+        "f30_nok_phone": "405-555-0188",
+        "f31_nok_address": "100 SOVEREIGN COMMAND PKWY, OKLAHOMA CITY, OK",
+        "f32_ice_full_name": "HVF TACTICAL WATCH OFFICER DESK",
+        "f33_ice_relationship": "SECONDARY_EMERGENCY_COMMAND_CONTACT",
+        "f34_ice_phone": "405-555-0177",
+        "f35_ice_medical_blood": "O_POSITIVE_NO_KNOWN_DRUG_ALLERGIES",
+        "f36_bio_fingerprint": "ISO19794-2-MINUTIAE-SEAL-8841",
+        "f37_bio_iris": "ISO19794-6-IRIS-VASCULAR-9920",
+        "f38_bio_face_voice": "3DFACE-VOICE-LIVENESS-7712",
+        "f39_bank_aba_routing": "103000648",
+        "f40_bank_account_num": "990011223344",
+        "f41_property_deed_apn": "OK-APN-DEED-LOCK-44019",
+        "f42_mobile_sim_imei": "359881090044112",
     }
 
     def __init__(self) -> None:
         super().__init__(
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
-            title="16-Factor Sovereign Identity, SSN/DOB, Biometric, Credit/Loan/Deed, & ID Access Shield",
-            version="4.0.0",
+            title="42-Field Atomic Personnel Application, NOK/ICE, Proof-of-Identity Lock, & Credit Shield",
+            version="5.0.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,
@@ -83,6 +163,15 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         tail = alnum[-visible_tail:] if len(alnum) >= visible_tail else (alnum or "0000")
         return f"XXXX-MASKED-{tail}"
 
+    def format_display_value(self, field_key: str, raw_val: str, is_sensitive: bool) -> str:
+        if field_key == "f05_ssn":
+            return self.mask_ssn(raw_val)
+        if field_key == "f06_dob":
+            return self.mask_dob(raw_val)
+        if is_sensitive:
+            return self.mask_generic(raw_val, 4)
+        return raw_val.strip()
+
     def hash_identity_zero_knowledge(self, attribute_type: str, raw_value: str) -> Dict[str, str]:
         norm = f"{attribute_type.strip().upper()}:{raw_value.strip().upper()}"
         full_sha = hmac.new(
@@ -104,95 +193,224 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             hashlib.sha256,
         ).hexdigest().upper()[:20]
 
-    def scan_pii_and_biometric_darkweb_feed(
+    def generate_employer_change_approval_token(self, current_revision_number: int) -> str:
+        digest = hmac.new(
+            IDENTITY_VAULT_PEPPER.encode("utf-8"),
+            f"EMPLOYER_CHANGE_APPROVAL|REV_{int(current_revision_number)}|{FROZEN_EBONY_MERKLE_ROOT}".encode("utf-8"),
+            hashlib.sha256,
+        ).hexdigest().upper()[:16]
+        return f"HVF-APPROVE-{digest}"
+
+    def verify_employer_change_approval_token(
         self,
-        raw_ssn: str = "999-00-1234",
-        raw_dob: str = "1975-08-15",
-        pob_and_maiden_kba: str = "OKLAHOMA-KBA-SEAL-991",
-        physical_id_number: str = "OK-REALID-1AHA8-7741",
-        passport_number: str = "US-PASS-558912044",
-        dod_cac_piv_serial: str = "CAC-EDIPI-1099482210",
-        physical_smt_features: str = "EYES:BRN|HGT:72IN|SMT:NONE-VERIFIED",
-        fingerprint_minutiae: str = "BIO-FINGER-ISO19794-2-V1",
-        iris_vascular_hash: str = "BIO-IRIS-ISO19794-6-V1",
-        face_voice_liveness: str = "BIO-3DFACE-VOICE-LIVENESS-V1",
-        home_deed_parcel_apn: str = "OK-APN-DEED-LOCK-44019",
-        bank_ach_aba_routing: str = "ABA-103000648-ACH-LOCKED",
-        mobile_sim_imei_lock: str = "IMEI-35988109-SIMLOCK-ON",
-        medical_npi_beneficiary: str = "MED-SHIELD-ID-88310",
-        vehicle_fleet_vin: str = "1HVF882910SOVEREIGN",
-        corporate_ein_uei: str = "UEI:S1M4ENLHTDH5|CAGE:1AHA8",
+        provided_token: str,
+        current_revision_number: int,
+    ) -> bool:
+        expected = self.generate_employer_change_approval_token(current_revision_number)
+        return hmac.compare_digest(provided_token.strip().upper(), expected)
+
+    def evaluate_atomic_42_application(
+        self,
+        profile_42: Dict[str, str] | None = None,
     ) -> Dict[str, Any]:
-        masked_ssn = self.mask_ssn(raw_ssn)
-        masked_dob = self.mask_dob(raw_dob)
-
-        attributes = [
-            ("01_SSN_9DIGIT_TAX_ID", raw_ssn, f"1. SSN ({masked_ssn})"),
-            ("02_DATE_OF_BIRTH_ISO", raw_dob, f"2. DOB ({masked_dob})"),
-            ("03_POB_AND_MAIDEN_KBA", pob_and_maiden_kba, f"3. Birthplace & KBA ({self.mask_generic(pob_and_maiden_kba)})"),
-            ("04_STATE_REAL_ID_LIC", physical_id_number, f"4. State REAL-ID ({self.mask_generic(physical_id_number)})"),
-            ("05_US_PASSPORT_MRZ", passport_number, f"5. U.S. Passport ({self.mask_generic(passport_number)})"),
-            ("06_DOD_CAC_PIV_EDIPI", dod_cac_piv_serial, f"6. DoD CAC/PIV EDIPI ({self.mask_generic(dod_cac_piv_serial)})"),
-            ("07_PHYSICAL_SMT_TRAITS", physical_smt_features, f"7. Physical Traits/SMT ({self.mask_generic(physical_smt_features, 8)})"),
-            ("08_BIO_FINGERPRINT_ISO", fingerprint_minutiae, f"8. Fingerprint Minutiae ({self.mask_generic(fingerprint_minutiae)})"),
-            ("09_BIO_IRIS_RETINAL_ISO", iris_vascular_hash, f"9. Iris/Retinal Pattern ({self.mask_generic(iris_vascular_hash)})"),
-            ("10_BIO_3DFACE_VOICE", face_voice_liveness, f"10. 3D Face & Voice Liveness ({self.mask_generic(face_voice_liveness)})"),
-            ("11_REAL_ESTATE_DEED_APN", home_deed_parcel_apn, f"11. Property Deed/Title APN ({self.mask_generic(home_deed_parcel_apn)})"),
-            ("12_BANK_ABA_ACH_WIRE", bank_ach_aba_routing, f"12. Bank ABA/ACH Wire Lock ({self.mask_generic(bank_ach_aba_routing)})"),
-            ("13_MOBILE_SIM_IMEI_LOCK", mobile_sim_imei_lock, f"13. Mobile SIM/IMEI Port Lock ({self.mask_generic(mobile_sim_imei_lock)})"),
-            ("14_MEDICAL_INSURANCE_ID", medical_npi_beneficiary, f"14. Medical/Beneficiary ID ({self.mask_generic(medical_npi_beneficiary)})"),
-            ("15_VEHICLE_CHASSIS_VIN", vehicle_fleet_vin, f"15. Vehicle/Chassis VIN ({self.mask_generic(vehicle_fleet_vin)})"),
-            ("16_CORP_EIN_UEI_CAGE", corporate_ein_uei, f"16. Corporate EIN/UEI ({corporate_ein_uei})"),
-        ]
-
-        honeypot_raw = "DARKWEB-LEAKED-SSN-CLONE-999-88-7777"
-        leaked_digest = self.hash_identity_zero_knowledge("HONEYPOT_TRAP", honeypot_raw)["full_salted_hmac_sha256"]
-        threat_feed = {leaked_digest}
+        merged: Dict[str, str] = dict(self.DEFAULT_ATOMIC_42_VALUES)
+        if profile_42:
+            for k, v in profile_42.items():
+                if k in merged and v is not None and str(v).strip() != "":
+                    merged[k] = str(v).strip()
 
         rows: List[Dict[str, str]] = []
         composite_parts: List[str] = []
-        for attr_type, raw_val, safe_display_label in attributes:
-            zk = self.hash_identity_zero_knowledge(attr_type, raw_val)
+        masked_summary: Dict[str, str] = {}
+
+        for f_key, f_label, f_cat, is_sens in self.ATOMIC_42_SCHEMA:
+            raw_v = merged[f_key]
+            disp_v = self.format_display_value(f_key, raw_v, is_sens)
+            zk = self.hash_identity_zero_knowledge(f_key, raw_v)
             composite_parts.append(zk["full_salted_hmac_sha256"])
+            masked_summary[f_key] = disp_v
             rows.append({
-                "Identifying_Feature": safe_display_label,
-                "Attribute_Class": attr_type,
+                "Field_ID": f_key.upper(),
+                "Section_Category": f_cat,
+                "Application_Field": f_label,
+                "Sealed_Display_Value": disp_v,
                 "k_Anonymity_Prefix": zk["k_anonymity_prefix_5hex"],
-                "Salted_HMAC_Digest": zk["full_salted_hmac_sha256"][:22] + "...",
-                "DarkWeb_Status": "CLEAN_ZERO_EXPOSURE",
-                "Automated_Defense": "PROTECTED_IN_16FACTOR_VAULT",
+                "Zero_Knowledge_HMAC": zk["full_salted_hmac_sha256"][:20] + "...",
+                "Verification_State": "SEALED_UNALTERABLE",
             })
 
+        honeypot_raw = "DARKWEB-LEAKED-SSN-CLONE-999-88-7777"
         hp_zk = self.hash_identity_zero_knowledge("HONEYPOT_TRAP", honeypot_raw)
-        hp_hit = hp_zk["full_salted_hmac_sha256"] in threat_feed
         rows.append({
-            "Identifying_Feature": "17. Active Dark-Web Honeypot Canary (XXX-XX-7777)",
-            "Attribute_Class": "HONEYPOT_DARKWEB_CANARY",
+            "Field_ID": "F43_DARKWEB_CANARY",
+            "Section_Category": "6_ACTIVE_THREAT_CANARY",
+            "Application_Field": "43. Active Dark-Web Honeypot Canary (XXX-XX-7777)",
+            "Sealed_Display_Value": "XXX-XX-7777 (QUARANTINED)",
             "k_Anonymity_Prefix": hp_zk["k_anonymity_prefix_5hex"],
-            "Salted_HMAC_Digest": hp_zk["full_salted_hmac_sha256"][:22] + "...",
-            "DarkWeb_Status": "DARKWEB_LEAK_INTERCEPTED" if hp_hit else "CLEAN",
-            "Automated_Defense": "CREDENTIAL_QUARANTINED_AND_BUREAUS_LOCKED",
+            "Zero_Knowledge_HMAC": hp_zk["full_salted_hmac_sha256"][:20] + "...",
+            "Verification_State": "DARKWEB_LEAK_INTERCEPTED",
         })
 
-        composite_16factor_seal = hmac.new(
+        composite_42_seal = hmac.new(
             IDENTITY_VAULT_PEPPER.encode("utf-8"),
             ("|".join(composite_parts) + "|" + FROZEN_EBONY_MERKLE_ROOT).encode("utf-8"),
             hashlib.sha256,
         ).hexdigest()
 
-        masked_summary = {r["Attribute_Class"]: r["Identifying_Feature"] for r in rows[:16]}
+        full_legal_name = f"{merged['f01_first_name']} {merged['f02_middle_name']} {merged['f03_last_name']}".strip()
+        masked_ssn = self.mask_ssn(merged["f05_ssn"])
+        masked_dob = self.mask_dob(merged["f06_dob"])
 
         return {
+            "full_legal_name": full_legal_name,
             "masked_ssn": masked_ssn,
             "masked_dob": masked_dob,
-            "core_identifying_features_count": len(attributes),
+            "atomic_fields_count": len(self.ATOMIC_42_SCHEMA),
+            "core_identifying_features_count": len(self.ATOMIC_42_SCHEMA),
             "attributes_monitored": len(rows),
-            "clean_attributes": len(attributes),
-            "compromised_vectors_quarantined": 1 if hp_hit else 0,
-            "composite_8factor_identity_seal": composite_16factor_seal,
-            "composite_16factor_identity_seal": composite_16factor_seal,
+            "clean_attributes": len(self.ATOMIC_42_SCHEMA),
+            "compromised_vectors_quarantined": 1,
+            "composite_8factor_identity_seal": composite_42_seal,
+            "composite_16factor_identity_seal": composite_42_seal,
+            "composite_42field_application_seal": composite_42_seal,
             "masked_summary": masked_summary,
             "attribute_rows": rows,
+        }
+
+    def scan_pii_and_biometric_darkweb_feed(
+        self,
+        raw_ssn: str = "999-00-1234",
+        raw_dob: str = "1975-08-15",
+        pob_and_maiden_kba: str = "VAULT-KBA-MAIDEN-991",
+        physical_id_number: str = "OK-REALID-1AHA8-7741",
+        passport_number: str = "US-PASS-558912044",
+        dod_cac_piv_serial: str = "1099482210",
+        physical_smt_features: str = "NONE_VERIFIED",
+        fingerprint_minutiae: str = "ISO19794-2-MINUTIAE-SEAL-8841",
+        iris_vascular_hash: str = "ISO19794-6-IRIS-VASCULAR-9920",
+        face_voice_liveness: str = "3DFACE-VOICE-LIVENESS-7712",
+        home_deed_parcel_apn: str = "OK-APN-DEED-LOCK-44019",
+        bank_ach_aba_routing: str = "103000648",
+        mobile_sim_imei_lock: str = "359881090044112",
+        medical_npi_beneficiary: str = "O_POSITIVE_NO_KNOWN_DRUG_ALLERGIES",
+        vehicle_fleet_vin: str = "1HVF882910SOVEREIGN",
+        corporate_ein_uei: str = "HVF EXECUTIVE COMMAND (CAGE 1AHA8)",
+        profile_42_overrides: Dict[str, str] | None = None,
+    ) -> Dict[str, Any]:
+        prof = dict(self.DEFAULT_ATOMIC_42_VALUES)
+        prof.update({
+            "f05_ssn": raw_ssn,
+            "f06_dob": raw_dob,
+            "f10_mothers_maiden": pob_and_maiden_kba,
+            "f25_drivers_license": physical_id_number,
+            "f26_passport_number": passport_number,
+            "f27_dod_cac_edipi": dod_cac_piv_serial,
+            "f20_scars_marks_tattoos": physical_smt_features,
+            "f36_bio_fingerprint": fingerprint_minutiae,
+            "f37_bio_iris": iris_vascular_hash,
+            "f38_bio_face_voice": face_voice_liveness,
+            "f41_property_deed_apn": home_deed_parcel_apn,
+            "f39_bank_aba_routing": bank_ach_aba_routing,
+            "f42_mobile_sim_imei": mobile_sim_imei_lock,
+            "f35_ice_medical_blood": medical_npi_beneficiary,
+            "f22_department_unit": corporate_ein_uei,
+        })
+        if profile_42_overrides:
+            for k, v in profile_42_overrides.items():
+                if k in prof and v is not None:
+                    prof[k] = str(v)
+        return self.evaluate_atomic_42_application(prof)
+
+    def load_or_init_vault_lock_state(self, out_dir: pathlib.Path) -> Dict[str, Any]:
+        out_dir.mkdir(parents=True, exist_ok=True)
+        state_file = out_dir / "wp7_personnel_vault_state.json"
+        if state_file.exists():
+            try:
+                data = json.loads(state_file.read_text(encoding="utf-8"))
+                if isinstance(data, dict) and "masked_profile" in data:
+                    return data
+            except Exception:
+                pass
+        app_eval = self.evaluate_atomic_42_application(self.DEFAULT_ATOMIC_42_VALUES)
+        default_state = {
+            "is_locked": True,
+            "revision_number": 1,
+            "last_approved_by": "SYSTEM_INITIAL_SOVEREIGN_SEAL",
+            "last_change_reason": "INITIAL_42FIELD_ONBOARDING_PROOF_OF_IDENTITY",
+            "composite_42field_seal": app_eval["composite_42field_application_seal"],
+            "masked_profile": app_eval["masked_summary"],
+        }
+        state_file.write_text(json.dumps(default_state, indent=2, sort_keys=True), encoding="utf-8")
+        return default_state
+
+    def request_employer_unlock_for_edit(
+        self,
+        out_dir: pathlib.Path,
+        provided_approval_token: str,
+        change_reason: str,
+        approving_authority: str = "JEFFERY HUMPHREY (EMPLOYER / CEO AUTHORITY)",
+    ) -> Dict[str, Any]:
+        state = self.load_or_init_vault_lock_state(out_dir)
+        rev_num = int(state.get("revision_number", 1))
+        if not self.verify_employer_change_approval_token(provided_approval_token, rev_num):
+            return {
+                "unlocked": False,
+                "status": "UNLOCK_DENIED_INVALID_EMPLOYER_APPROVAL_TOKEN",
+                "state": state,
+            }
+        if not change_reason or len(change_reason.strip()) < 4:
+            return {
+                "unlocked": False,
+                "status": "UNLOCK_DENIED_CHANGE_REASON_REQUIRED",
+                "state": state,
+            }
+        state["is_locked"] = False
+        state["last_approved_by"] = approving_authority.strip()
+        state["last_change_reason"] = change_reason.strip()
+        (out_dir / "wp7_personnel_vault_state.json").write_text(
+            json.dumps(state, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+        return {
+            "unlocked": True,
+            "status": "UNLOCK_APPROVED_FOR_ONE_TIME_REVISION",
+            "state": state,
+        }
+
+    def seal_and_lock_personnel_application(
+        self,
+        out_dir: pathlib.Path,
+        profile_42: Dict[str, str],
+        update_reason: str = "EMPLOYER_VERIFIED_ONBOARDING_SEAL",
+        approving_authority: str = "JEFFERY HUMPHREY (EMPLOYER / CEO AUTHORITY)",
+    ) -> Dict[str, Any]:
+        out_dir.mkdir(parents=True, exist_ok=True)
+        app_eval = self.evaluate_atomic_42_application(profile_42)
+        db_file = out_dir / "wp7_identity_credit_worm_ledger.db"
+        rev_info = self.commit_profile_update_revision(
+            db_path=db_file,
+            operator_name=app_eval["full_legal_name"],
+            update_reason=update_reason,
+            pii_report=app_eval,
+        )
+        new_state = {
+            "is_locked": True,
+            "revision_number": rev_info["revision_number"],
+            "last_approved_by": approving_authority,
+            "last_change_reason": update_reason,
+            "composite_42field_seal": app_eval["composite_42field_application_seal"],
+            "masked_profile": app_eval["masked_summary"],
+        }
+        (out_dir / "wp7_personnel_vault_state.json").write_text(
+            json.dumps(new_state, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+        return {
+            "locked": True,
+            "status": "SEALED_UNALTERABLE_PROOF_OF_IDENTITY",
+            "revision_info": rev_info,
+            "state": new_state,
+            "app_eval": app_eval,
         }
 
     def evaluate_credit_and_loan_activity(
@@ -329,7 +547,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         else:
             self._used_nonces.add(hardware_liveness_nonce)
             access_decision = f"AUTHORIZED_{action}_RECORDED"
-            reason = "16_FACTOR_ID_SSN_DOB_AND_BIOMETRIC_LIVENESS_VERIFIED"
+            reason = "42_FIELD_ID_SSN_DOB_AND_BIOMETRIC_LIVENESS_VERIFIED"
 
         worm_entry_hash = hmac.new(
             IDENTITY_VAULT_PEPPER.encode("utf-8"),
@@ -518,9 +736,9 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             {
                 "Revision": f"Rev #{r[0]:02d}",
                 "Principal": r[1],
-                "Update_Reason": r[2],
+                "Approval_Reason": r[2],
                 "Masked_SSN_DOB": r[3],
-                "16Factor_Seal": r[4][:20] + "...",
+                "42Field_Seal": r[4][:20] + "...",
                 "Prev_Rev_Hash": r[5][:16] + "...",
                 "WORM_Revision_SHA256": r[6][:20] + "...",
             }
@@ -532,9 +750,9 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         db_path: pathlib.Path,
         access_events: List[Dict[str, Any]],
         credit_rows: List[Dict[str, str]],
-        operator_name: str = "JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)",
+        operator_name: str = "JEFFERY SOVEREIGN HUMPHREY",
         pii_report: Dict[str, Any] | None = None,
-        update_reason: str = "INITIAL_16FACTOR_BASELINE_ENROLLMENT",
+        update_reason: str = "INITIAL_42FIELD_ONBOARDING_PROOF_OF_IDENTITY",
     ) -> Dict[str, int]:
         self.init_worm_sqlite_ledger(db_path)
         if pii_report is not None:
@@ -604,25 +822,26 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     def generate_wp7_antifraud_dossier(
         self,
         out_dir: pathlib.Path,
-        operator_name: str = "JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)",
+        operator_name: str = "JEFFERY SOVEREIGN HUMPHREY",
         raw_ssn: str = "999-00-1234",
         raw_dob: str = "1975-08-15",
-        pob_and_maiden_kba: str = "OKLAHOMA-KBA-SEAL-991",
+        pob_and_maiden_kba: str = "VAULT-KBA-MAIDEN-991",
         physical_id_number: str = "OK-REALID-1AHA8-7741",
         passport_number: str = "US-PASS-558912044",
-        dod_cac_piv_serial: str = "CAC-EDIPI-1099482210",
-        physical_smt_features: str = "EYES:BRN|HGT:72IN|SMT:NONE-VERIFIED",
-        fingerprint_minutiae: str = "BIO-FINGER-ISO19794-2-V1",
-        iris_vascular_hash: str = "BIO-IRIS-ISO19794-6-V1",
-        face_voice_liveness: str = "BIO-3DFACE-VOICE-LIVENESS-V1",
+        dod_cac_piv_serial: str = "1099482210",
+        physical_smt_features: str = "NONE_VERIFIED",
+        fingerprint_minutiae: str = "ISO19794-2-MINUTIAE-SEAL-8841",
+        iris_vascular_hash: str = "ISO19794-6-IRIS-VASCULAR-9920",
+        face_voice_liveness: str = "3DFACE-VOICE-LIVENESS-7712",
         home_deed_parcel_apn: str = "OK-APN-DEED-LOCK-44019",
-        bank_ach_aba_routing: str = "ABA-103000648-ACH-LOCKED",
-        mobile_sim_imei_lock: str = "IMEI-35988109-SIMLOCK-ON",
-        medical_npi_beneficiary: str = "MED-SHIELD-ID-88310",
+        bank_ach_aba_routing: str = "103000648",
+        mobile_sim_imei_lock: str = "359881090044112",
+        medical_npi_beneficiary: str = "O_POSITIVE_NO_KNOWN_DRUG_ALLERGIES",
         vehicle_fleet_vin: str = "1HVF882910SOVEREIGN",
-        corporate_ein_uei: str = "UEI:S1M4ENLHTDH5|CAGE:1AHA8",
+        corporate_ein_uei: str = "HVF EXECUTIVE COMMAND (CAGE 1AHA8)",
         credit_freeze_locked: bool = True,
-        update_reason: str = "INITIAL_16FACTOR_BASELINE_ENROLLMENT",
+        update_reason: str = "INITIAL_42FIELD_ONBOARDING_PROOF_OF_IDENTITY",
+        profile_42_overrides: Dict[str, str] | None = None,
     ) -> Dict[str, Any]:
         out_dir.mkdir(parents=True, exist_ok=True)
         pii_report = self.scan_pii_and_biometric_darkweb_feed(
@@ -642,12 +861,13 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             medical_npi_beneficiary=medical_npi_beneficiary,
             vehicle_fleet_vin=vehicle_fleet_vin,
             corporate_ein_uei=corporate_ein_uei,
+            profile_42_overrides=profile_42_overrides,
         )
         credit_report = self.evaluate_credit_and_loan_activity(credit_freeze_locked=credit_freeze_locked)
 
         self._used_nonces.clear()
         ev1 = self.record_physical_id_access_event(
-            operator_name=operator_name,
+            operator_name=pii_report["full_legal_name"],
             physical_id_serial=physical_id_number,
             raw_ssn=raw_ssn,
             raw_dob=raw_dob,
@@ -667,7 +887,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             is_compromised_or_mismatched=True,
         )
         ev3 = self.record_physical_id_access_event(
-            operator_name=operator_name,
+            operator_name=pii_report["full_legal_name"],
             physical_id_serial=physical_id_number,
             raw_ssn=raw_ssn,
             raw_dob=raw_dob,
@@ -682,14 +902,14 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             db_path=db_file,
             access_events=[ev1, ev2, ev3],
             credit_rows=credit_report["credit_loan_rows"],
-            operator_name=operator_name,
+            operator_name=pii_report["full_legal_name"],
             pii_report=pii_report,
             update_reason=update_reason,
         )
         revision_history = self.get_profile_revision_history(db_file)
 
         seal_str = (
-            f"WP7|{pii_report['composite_16factor_identity_seal']}|"
+            f"WP7|{pii_report['composite_42field_application_seal']}|"
             f"{credit_report['fraudulent_loans_and_pulls_blocked']}|"
             f"{ev1['WORM_Ledger_SHA256']}|{ev2['WORM_Ledger_SHA256']}|"
             f"{ev3['WORM_Ledger_SHA256']}|{FROZEN_EBONY_MERKLE_ROOT}"
@@ -697,29 +917,29 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         worm_seal = hashlib.sha256(seal_str.encode("utf-8")).hexdigest()
 
         if ENCLAVE_MODE == "PRIVATE":
-            pepper_desc = f"Active Sovereign 16-Factor Pepper ({IDENTITY_VAULT_PEPPER[:18]}...)"
+            pepper_desc = f"Active Sovereign 42-Field Pepper ({IDENTITY_VAULT_PEPPER[:18]}...)"
         else:
-            pepper_desc = "[REDACTED_16FACTOR_PII_PEPPER_DFARS_252_227_7018]"
+            pepper_desc = "[REDACTED_42FIELD_PII_PEPPER_DFARS_252_227_7018]"
 
         lines = [
-            "# HUMPHREY VIRTUAL FARMS LLC // WP-7: 16-FACTOR IDENTITY, SSN/DOB, BIOMETRIC, CREDIT, LOAN, & DEED SHIELD",
+            "# HUMPHREY VIRTUAL FARMS LLC // WP-7: 42-FIELD PERSONNEL ONBOARDING, NOK/ICE, PROOF-OF-IDENTITY, & CREDIT SHIELD",
             "**Entity:** Humphrey Virtual Farms LLC (`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`)",
             "**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect",
-            f"**Plug-In Module:** `CLIN 0033 v4.0 (WP-7 16-Factor Identity & Profile Revision Fortress)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
+            f"**Plug-In Module:** `CLIN 0033 v5.0 (WP-7 42-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
             f"**Host Ebony Baseline Merkle Root:** `{FROZEN_EBONY_MERKLE_ROOT}`",
             "",
             "---",
             "",
-            "## 1. 16-Factor Zero-Knowledge Personal, Physical, Biometric, & Asset Identity Matrix",
-            f"* **Protected Principal:** `{operator_name}` | **Latest Update Reason:** `{update_reason}`",
-            f"* **Masked SSN & DOB Binding:** `{pii_report['masked_ssn']}` | `{pii_report['masked_dob']}` (`0` Plaintext Digits Stored)",
-            f"* **Core Identifying Features Protected:** `{pii_report['core_identifying_features_count']} / 16` (`100% Clean`) + `1 Active Dark-Web Honeypot Canary Quarantined`",
-            f"* **Composite 16-Factor Identity Seal (HMAC-SHA256):** `{pii_report['composite_16factor_identity_seal']}`",
+            "## 1. Unalterable 42-Field Personnel Proof-of-Identity, Employment, & NOK/ICE Application Dossier",
+            f"* **Verified Applicant / Employee:** `{pii_report['full_legal_name']}` | **Reason:** `{update_reason}`",
+            f"* **Masked SSN & DOB Binding:** `{pii_report['masked_ssn']}` | `{pii_report['masked_dob']}` (`0` Plaintext Sensitive Digits Stored)",
+            f"* **Atomic Onboarding Fields Sealed:** `{pii_report['atomic_fields_count']} / 42` (`100% Atomic 1-Response-Per-Box`) + `1 Active Dark-Web Canary`",
+            f"* **Composite 42-Field Proof-of-Identity Seal (HMAC-SHA256):** `{pii_report['composite_42field_application_seal']}`",
             f"* **Cryptographic Pepper Binding:** `{pepper_desc}`",
         ]
         for arow in pii_report["attribute_rows"]:
             lines.append(
-                f"* **{arow['Identifying_Feature']}** (`k-Prefix {arow['k_Anonymity_Prefix']}`): `{arow['DarkWeb_Status']}` -> `{arow['Automated_Defense']}`"
+                f"* **{arow['Application_Field']}:** `{arow['Sealed_Display_Value']}` (`k-Prefix {arow['k_Anonymity_Prefix']}` | `{arow['Verification_State']}`)"
             )
         lines.extend([
             "",
