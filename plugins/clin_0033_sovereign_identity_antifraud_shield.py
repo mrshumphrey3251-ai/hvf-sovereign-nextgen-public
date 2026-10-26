@@ -25,7 +25,7 @@ IDENTITY_VAULT_PEPPER = "PUBLIC_IDENTITY_CREDIT_PEPPER_REDACTED_DFARS_252_227_70
 
 class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     """
-    WP-7 / CLIN 0033 v7.4 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
+    WP-7 / CLIN 0033 v7.5 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
       1. 42 Atomic Application Fields (Strictly 1 single response per box; zero pipe-concatenated fields)
          covering Legal Identity, Vital Stats, Physical Description, Job/I-9/Clearance, Government IDs,
          Next of Kin (NOK), In Case of Emergency (ICE), 3-Modal Biometrics, and Financial/Asset Locks.
@@ -426,6 +426,13 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "bunker_sub": ks["b_sub"],
             "aed_kit_title": ks["a_title"],
             "aed_kit_sub": ks["a_sub"],
+            "muster_dispatch_ledger_rows": [
+                {"Dispatch_Line": "01 // FACILITY ZONE", "OSHA_1910_38_Parameter": "Active Operational Zone", "Verified_Site_Directive": card["department"]},
+                {"Dispatch_Line": "02 // PRIMARY MUSTER", "OSHA_1910_38_Parameter": "Primary & Secondary Muster Points", "Verified_Site_Directive": f"{card['primary_muster_point']} | Secondary: {card['secondary_muster_point']}"},
+                {"Dispatch_Line": "03 // SHELTER BUNKER", "OSHA_1910_38_Parameter": "Tornado / Blast / CBRN Shelter Vault", "Verified_Site_Directive": card["shelter_in_place_bunker"]},
+                {"Dispatch_Line": "04 // AED & TRAUMA KIT", "OSHA_1910_38_Parameter": "Nearest AED & Level-1 Trauma Kit", "Verified_Site_Directive": card["nearest_aed_trauma_kit"]},
+                {"Dispatch_Line": "05 // EVACUATION ROUTE", "OSHA_1910_38_Parameter": "Primary Egress Route & Zone Warden", "Verified_Site_Directive": card["evacuation_route_and_warden"]},
+            ],
         }
 
     def get_instant_emergency_triage_card(self, roster_key: str) -> Dict[str, Any]:
@@ -563,6 +570,14 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "nearest_aed_trauma_kit": m_info["nearest_aed_trauma_kit"],
             "evacuation_route_and_warden": m_info["evacuation_route_and_warden"],
             "emergency_procedures_rows": m_info["emergency_procedures_rows"],
+            "hipaa_triage_ledger_rows": [
+                {"Triage_Line": "01 // AUTHENTICATED SUBJECT", "HIPAA_45_CFR_164_502_Field": "Employee ID, Name & Duty Unit", "Unsealed_Emergency_Telemetry": f"{emp_id} -- {person['full_name']} ({person['department']})"},
+                {"Triage_Line": "02 // BLOOD & ALLERGIES", "HIPAA_45_CFR_164_502_Field": "Blood Type & Drug/Latex Allergies", "Unsealed_Emergency_Telemetry": f"{blood_clean} // ALLERGIES: {allergies_map.get(emp_id, med_clean)}"},
+                {"Triage_Line": "03 // MEDICAL HISTORY & RX", "HIPAA_45_CFR_164_502_Field": "Chronic Conditions, Surgeries & Rx", "Unsealed_Emergency_Telemetry": med_history_map.get(emp_id, "Cleared for Full Duty")},
+                {"Triage_Line": "04 // PHYSICIAN & HOSPITAL", "HIPAA_45_CFR_164_502_Field": "Primary Physician & Trauma Center", "Unsealed_Emergency_Telemetry": physician_hospital_map.get(emp_id, "Regional Level-1 Trauma Center")},
+                {"Triage_Line": "05 // NEXT OF KIN (NOK)", "HIPAA_45_CFR_164_502_Field": "Primary Next of Kin (Name, Phone, Address)", "Unsealed_Emergency_Telemetry": f"{person['nok_full_name']} ({person['nok_relationship']}) | Phone: {person['nok_phone']} | Address: {person['nok_address']}"},
+                {"Triage_Line": "06 // IN CASE OF EMERGENCY", "HIPAA_45_CFR_164_502_Field": "Secondary ICE & Employee Direct Phone", "Unsealed_Emergency_Telemetry": f"{person['ice_full_name']} ({person['ice_relationship']}) | ICE Phone: {person['ice_phone']} | Employee Phone: {person['direct_phone']}"},
+            ],
         }
 
     def record_hipaa_emergency_triage_access(
@@ -1142,7 +1157,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
             title="60-Field Atomic Personnel Dossier, NOK/ICE, Promotion Shortlist, & Credit Shield",
-            version="7.4.0",
+            version="7.5.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,
@@ -2009,7 +2024,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "# HUMPHREY VIRTUAL FARMS LLC // WP-7: 42-FIELD PERSONNEL ONBOARDING, NOK/ICE, PROOF-OF-IDENTITY, & CREDIT SHIELD",
             "**Entity:** Humphrey Virtual Farms LLC (`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`)",
             "**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect",
-            f"**Plug-In Module:** `CLIN 0033 v7.4 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
+            f"**Plug-In Module:** `CLIN 0033 v7.5 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
             f"**Host Ebony Baseline Merkle Root:** `{FROZEN_EBONY_MERKLE_ROOT}`",
             "",
             "---",

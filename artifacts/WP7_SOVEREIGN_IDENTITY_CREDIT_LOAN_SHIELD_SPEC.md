@@ -1,7 +1,7 @@
 # HUMPHREY VIRTUAL FARMS LLC // WP-7: 42-FIELD PERSONNEL ONBOARDING, NOK/ICE, PROOF-OF-IDENTITY, & CREDIT SHIELD
 **Entity:** Humphrey Virtual Farms LLC (`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`)
 **Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect
-**Plug-In Module:** `CLIN 0033 v7.4 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `PUBLIC`
+**Plug-In Module:** `CLIN 0033 v7.5 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `PUBLIC`
 **Host Ebony Baseline Merkle Root:** `cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e18e9150949a`
 
 ---

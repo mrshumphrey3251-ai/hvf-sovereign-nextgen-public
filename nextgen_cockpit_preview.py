@@ -285,7 +285,7 @@ def render_nextgen_dashboard() -> None:
         )
 
     with tabs[7]:
-        st.markdown("### `WP-7` / `CLIN 0033 v7.4`: Front-Screen OSHA Muster Points & Emergency Procedures + HIPAA-Gated 60-Field Dossier, Medical/ICE Triage, & Credit Shield")
+        st.markdown("### `WP-7` / `CLIN 0033 v7.5`: Front-Screen OSHA Muster Points & Emergency Procedures + HIPAA-Gated 60-Field Dossier, Medical/ICE Triage, & Credit Shield")
 
         # =====================================================================
         # SECTION 1 (ALWAYS VISIBLE ON FRONT SCREEN -- NO LOGIN REQUIRED):
@@ -314,15 +314,7 @@ def render_nextgen_dashboard() -> None:
         m3.metric("Shelter-in-Place Bunker", pub_muster["bunker_title"], pub_muster["bunker_sub"])
         m4.metric("Nearest AED & Trauma Kit", pub_muster["aed_kit_title"], pub_muster["aed_kit_sub"])
 
-        front_muster_banner = nl.join([
-            "=== HVF OSHA 29 CFR 1910.38 FRONT-SCREEN EMERGENCY MUSTER & EVACUATION DISPATCH ===",
-            f"[01] FACILITY MUSTER ZONE : {pub_muster['department_zone']}",
-            f"[02] PRIMARY MUSTER POINT : {pub_muster['primary_muster_point']} | Secondary: {pub_muster['secondary_muster_point']}",
-            f"[03] SHELTER BUNKER VAULT : {pub_muster['shelter_in_place_bunker']}",
-            f"[04] NEAREST AED / TRAUMA : {pub_muster['nearest_aed_trauma_kit']}",
-            f"[05] EVACUATION ROUTE     : {pub_muster['evacuation_route_and_warden']}",
-        ])
-        st.code(front_muster_banner, language="text")
+        st.dataframe(pub_muster["muster_dispatch_ledger_rows"], width="stretch", hide_index=True)
         st.dataframe(pub_muster["emergency_procedures_rows"], width="stretch", hide_index=True)
 
         st.markdown("---")
@@ -419,16 +411,7 @@ def render_nextgen_dashboard() -> None:
             e3.metric("Emergency (ICE) Direct Phone", triage["ice_phone"], triage["ice_short"])
             e4.metric("Employee Direct Phone", triage["direct_phone"], triage["role_short"])
 
-            triage_card_text = nl.join([
-                "=== HVF AUTHENTICATED HIPAA 45 CFR 164.502 EMERGENCY MEDICAL & ICE PACKET ===",
-                f"[01] AUTHENTICATED SUBJECT    : {triage['employee_id']} -- {triage['full_name']} ({triage['department']})",
-                f"[02] BLOOD TYPE & ALLERGIES   : {triage['blood_type_clean']} // ALLERGIES: {triage['allergies_detailed']}",
-                f"[03] MEDICAL HISTORY & RX     : {triage['medical_history_detailed']}",
-                f"[04] PHYSICIAN & TRAUMA HOSP  : {triage['physician_and_hospital']}",
-                f"[05] NEXT OF KIN (NOK)        : {triage['nok_full_name']} ({triage['nok_relationship']}) | Phone: {triage['nok_phone']} | Address: {triage['nok_address']}",
-                f"[06] IN CASE OF EMERGENCY     : {triage['ice_full_name']} ({triage['ice_relationship']}) | Direct Phone: {triage['ice_phone']} | Employee Phone: {triage['direct_phone']}",
-            ])
-            st.code(triage_card_text, language="text")
+            st.dataframe(triage["hipaa_triage_ledger_rows"], width="stretch", hide_index=True)
 
             st.markdown("---")
 
