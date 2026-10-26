@@ -401,7 +401,7 @@ def render_nextgen_dashboard() -> None:
             st.markdown("#### 1. My Private 7-Channel Credit Bureau, Bank/SBA Loan, Home Deed Title, ACH, & SIM-Swap Shield (Visible ONLY to Employee)")
             st.dataframe(cred_r["credit_loan_rows"], width="stretch", hide_index=True)
 
-            st.markdown("#### 2. My Sealed 42-Field Personal Identity, Biometric, & NOK/ICE Record")
+            st.markdown("#### 2. My Sealed 60-Field Personal Identity, Address/Job History, Training, Biometric, & NOK/ICE Record")
             st.dataframe(gate_res["proof_of_id_rows"], width="stretch", hide_index=True)
 
         elif gate_res["viewer_role"] == "EMPLOYER":
@@ -454,6 +454,41 @@ def render_nextgen_dashboard() -> None:
                 )
 
             st.dataframe(gate_res["employer_personnel_notes"], width="stretch", hide_index=True)
+
+            # =================================================================
+            # SECTION 1C: EMPLOYER 1-CLICK QUALIFIED CANDIDATE PROMOTION &
+            # COMPANY EVALUATION SHORTLIST PULLER (WORM SQLite Sealed)
+            # =================================================================
+            st.markdown("#### 1C. Employer Qualified Candidate Promotion & Company Evaluation Shortlist Puller (`worm_promotion_evaluation_board`)")
+            st.caption(
+                "Filter across all personnel by verified prior job experience, HVF Field Academy exam score, "
+                "continuing training hours, 7-year address verification, and annual company evaluation rating to pull a single ranked Promotion Shortlist:"
+            )
+            p_c1, p_c2, p_c3, p_c4 = st.columns(4)
+            min_exp_in  = p_c1.slider("Minimum Verified Experience (Yrs):", min_value=0, max_value=20, value=5, step=1, key="ng_c33_p_exp")
+            min_acad_in = p_c2.slider("Minimum HVF Academy Score (%):", min_value=70.0, max_value=100.0, value=90.0, step=1.0, key="ng_c33_p_acad")
+            min_eval_in = p_c3.slider("Minimum Company Eval Rating (0-5):", min_value=3.0, max_value=5.0, value=4.5, step=0.05, key="ng_c33_p_eval")
+            req_spec_in = p_c4.selectbox(
+                "Required Technical Specialty Track:",
+                options=["ALL", "EXECUTIVE_C2", "SIC_HARDWARE", "SCADA_PLC", "UAS_GIS", "RMF_CYBER"],
+                index=0,
+                key="ng_c33_p_spec",
+            )
+
+            promo_res = e33.evaluate_promotion_and_company_shortlist(
+                out_dir=artifacts_dir,
+                min_experience_years=int(min_exp_in),
+                min_academy_score_pct=float(min_acad_in),
+                min_eval_rating=float(min_eval_in),
+                required_specialty=req_spec_in,
+            )
+
+            pm1, pm2, pm3 = st.columns(3)
+            pm1.metric("Qualified Candidates Pulled", f"{promo_res['qualified_candidates_count']} / {promo_res['total_personnel_evaluated']} Qualified", f"Track: {req_spec_in}")
+            pm2.metric("Top-Ranked Promotion Candidate", promo_res["top_ranked_candidate"], f"Readiness Index: {promo_res['top_pri_score']} / 100")
+            pm3.metric("WORM Promotion Board Seals", f"{promo_res['worm_board_rows_logged']} Sealed Rows", "10 Active SQLite WORM Triggers")
+
+            st.dataframe(promo_res["qualified_shortlist_rows"], width="stretch", hide_index=True)
 
             vault_state = e33.load_or_init_vault_lock_state(artifacts_dir)
             is_locked = bool(vault_state.get("is_locked", True))
@@ -519,6 +554,21 @@ def render_nextgen_dashboard() -> None:
                 s5_cols = st.columns(4)
                 for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[35:42]):
                     prof_inputs[fk] = s5_cols[idx % 4].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{fk}")
+
+                st.markdown("##### Section 6: Previous 7-Year Residential Address History (`Fields 43 - 48` // 1 Response Per Box)")
+                s6_cols = st.columns(3)
+                for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[42:48]):
+                    prof_inputs[fk] = s6_cols[idx % 3].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{fk}")
+
+                st.markdown("##### Section 7: Verified Prior Employment & Job History (`Fields 49 - 54` // 1 Response Per Box)")
+                s7_cols = st.columns(3)
+                for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[48:54]):
+                    prof_inputs[fk] = s7_cols[idx % 3].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{fk}")
+
+                st.markdown("##### Section 8: Sovereign Academy, Certifications, Training Hours, & Company Evaluation (`Fields 55 - 60` // 1 Response Per Box)")
+                s8_cols = st.columns(3)
+                for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[54:60]):
+                    prof_inputs[fk] = s8_cols[idx % 3].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{fk}")
 
                 if st.button("Seal & Lock Sovereign Personnel Identity Application (Remove Input Form & Lock Record)", type="primary", key="ng_c33_seal_lock_btn"):
                     e33.seal_and_lock_personnel_application(

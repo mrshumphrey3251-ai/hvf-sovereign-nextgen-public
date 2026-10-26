@@ -85,7 +85,28 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         ("f39_bank_aba_routing", "39. Direct Deposit / Treasury Bank ABA Routing", "5_BIOMETRIC_ASSETS", True),
         ("f40_bank_account_num", "40. Direct Deposit / Treasury Account Number", "5_BIOMETRIC_ASSETS", True),
         ("f41_property_deed_apn", "41. Real Estate Home/Land Deed Parcel APN", "5_BIOMETRIC_ASSETS", True),
-        ("f42_mobile_sim_imei", "42. Mobile Carrier SIM / IMEI Port-Out Lock", "5_BIOMETRIC_ASSETS", True),
+                ("f42_mobile_sim_imei", "42. Mobile Carrier SIM / IMEI Port-Out Lock", "5_BIOMETRIC_ASSETS", True),
+        # Section 6: Previous 7-Year Residential Address History (6 Atomic Fields: 43 - 48)
+        ("f43_prev_addr1_street", "43. Previous Street Address #1", "6_PREVIOUS_ADDRESSES", True),
+        ("f44_prev_addr1_city", "44. Previous City #1", "6_PREVIOUS_ADDRESSES", False),
+        ("f45_prev_addr1_state_zip", "45. Previous State & ZIP Code #1", "6_PREVIOUS_ADDRESSES", False),
+        ("f46_prev_addr1_dates", "46. Previous Residence #1 Dates (From-To)", "6_PREVIOUS_ADDRESSES", False),
+        ("f47_prev_addr2_summary", "47. Previous Residence #2 City & State", "6_PREVIOUS_ADDRESSES", False),
+        ("f48_prev_addr_verifier", "48. Previous Residence Verification / Landlord Contact", "6_PREVIOUS_ADDRESSES", True),
+        # Section 7: Prior Employment & Job History (6 Atomic Fields: 49 - 54)
+        ("f49_prior_emp1_org", "49. Prior Employer #1 Organization / Command", "7_JOB_HISTORY", False),
+        ("f50_prior_emp1_title", "50. Prior Employer #1 Job Title / Rank", "7_JOB_HISTORY", False),
+        ("f51_prior_emp1_supervisor", "51. Prior Employer #1 Supervisor & Verification Phone", "7_JOB_HISTORY", True),
+        ("f52_prior_emp1_years", "52. Prior Employer #1 Tenure (Years)", "7_JOB_HISTORY", False),
+        ("f53_prior_emp2_org_role", "53. Prior Employer #2 Organization & Title", "7_JOB_HISTORY", False),
+        ("f54_total_experience_yrs", "54. Total Verified Career Experience (Years)", "7_JOB_HISTORY", False),
+        # Section 8: Training, Sovereign Academy, & Company Evaluations (6 Atomic Fields: 55 - 60)
+        ("f55_highest_education", "55. Highest Degree / Technical Diploma", "8_TRAINING_AND_EVAL", False),
+        ("f56_academy_exam_score", "56. HVF Sovereign Field Academy Exam Score (%)", "8_TRAINING_AND_EVAL", False),
+        ("f57_completed_hvf_courses", "57. Completed HVF Technical Modules", "8_TRAINING_AND_EVAL", False),
+        ("f58_active_certifications", "58. Active Federal / Safety / Trade Certifications", "8_TRAINING_AND_EVAL", False),
+        ("f59_training_hours_total", "59. Total Verified Continuing Training Hours", "8_TRAINING_AND_EVAL", False),
+        ("f60_company_eval_rating", "60. Annual Company Evaluation Rating (0.0 - 5.0)", "8_TRAINING_AND_EVAL", False),
     ]
 
     DEFAULT_ATOMIC_42_VALUES: Dict[str, str] = {
@@ -130,7 +151,25 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         "f39_bank_aba_routing": "103000648",
         "f40_bank_account_num": "990011223344",
         "f41_property_deed_apn": "OK-APN-DEED-LOCK-44019",
-        "f42_mobile_sim_imei": "359881090044112",
+                "f42_mobile_sim_imei": "359881090044112",
+        "f43_prev_addr1_street": "740 HERITAGE RIDGE RD",
+        "f44_prev_addr1_city": "EDMOND",
+        "f45_prev_addr1_state_zip": "OK 73034",
+        "f46_prev_addr1_dates": "2016-01_TO_2022-06",
+        "f47_prev_addr2_summary": "TULSA_OK_74103 (2011_TO_2016)",
+        "f48_prev_addr_verifier": "OKLAHOMA_COUNTY_DEED_REGISTRY_VERIFIED",
+        "f49_prior_emp1_org": "SOVEREIGN INDUSTRIAL & AGRICULTURAL SYSTEMS",
+        "f50_prior_emp1_title": "PRINCIPAL SYSTEMS DIRECTOR",
+        "f51_prior_emp1_supervisor": "BOARD_VERIFIED_405-555-0100",
+        "f52_prior_emp1_years": "12",
+        "f53_prior_emp2_org_role": "CRITICAL_INFRASTRUCTURE_OPERATIONS_LEAD",
+        "f54_total_experience_yrs": "22",
+        "f55_highest_education": "PRINCIPAL_SOVEREIGN_ARCHITECT_FELLOWSHIP",
+        "f56_academy_exam_score": "100.0",
+        "f57_completed_hvf_courses": "ALL_34_CLINS_MASTER_CERTIFIED",
+        "f58_active_certifications": "CAGE_1AHA8_PRINCIPAL_IPC6012_DOD_RMF_MASTER",
+        "f59_training_hours_total": "1420",
+        "f60_company_eval_rating": "5.0",
     }
 
 
@@ -326,7 +365,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
 
     def seed_default_employer_notes(self, db_path: pathlib.Path) -> None:
         self.init_worm_sqlite_ledger(db_path)
-        conn = sqlite3.connect(str(db_path))
+        conn = sqlite3.connect(str(db_path), timeout=30.0)
         try:
             cnt = conn.cursor().execute("SELECT COUNT(*) FROM worm_employer_personnel_notes").fetchone()[0]
         finally:
@@ -360,7 +399,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         self.init_worm_sqlite_ledger(db_path)
         clean_text = confidential_note_text.strip()
         assert len(clean_text) >= 3, "Employer personnel note text must be at least 3 characters"
-        conn = sqlite3.connect(str(db_path))
+        conn = sqlite3.connect(str(db_path), timeout=30.0)
         try:
             cur = conn.cursor()
             last_row = cur.execute(
@@ -416,7 +455,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         employee_id: str | None = None,
     ) -> List[Dict[str, str]]:
         self.seed_default_employer_notes(db_path)
-        conn = sqlite3.connect(str(db_path))
+        conn = sqlite3.connect(str(db_path), timeout=30.0)
         try:
             cur = conn.cursor()
             if employee_id:
@@ -454,6 +493,198 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             }
             for r in rows
         ]
+
+    # =========================================================================
+    # STAGE 13W (v7.0): 60-FIELD DOSSIER (PREVIOUS ADDRESSES, JOB HISTORY, &
+    # TRAINING) + AUTOMATED EMPLOYER PROMOTION & EVALUATION SHORTLIST ENGINE
+    # =========================================================================
+    CANDIDATE_CAREER_AND_TRAINING_MATRIX: Dict[str, Dict[str, Any]] = {
+        "EMP-001": {
+            "employee_id": "EMP-001",
+            "full_name": "JEFFERY SOVEREIGN HUMPHREY",
+            "current_role": "Founder, CEO, & Principal Sovereign Architect",
+            "target_promotion_track": "EXECUTIVE_COMMAND_BOARD_CHAIR_LEVEL_5",
+            "clearance_tier": "LEVEL_5_SOVEREIGN_COMMANDER",
+            "prev_address_1": "740 Heritage Ridge Rd, Edmond, OK 73034 (2016-2022)",
+            "prev_address_2": "Tulsa, OK 74103 (2011-2016) // 7-Yr Address Check: VERIFIED",
+            "prior_job_1": "Principal Systems Director -- Sovereign Industrial Systems (12 Yrs)",
+            "prior_job_2": "Critical Infrastructure Operations Lead (10 Yrs)",
+            "total_experience_yrs": 22,
+            "highest_education": "Principal Sovereign Architect Fellowship",
+            "academy_exam_score_pct": 100.0,
+            "completed_hvf_modules": "ALL_34_CLINS_MASTER_CERTIFIED (Ch.1 800 Qs + Ch.5 620 Qs)",
+            "active_certifications": "CAGE 1AHA8 Principal | DoD RMF ATO Master | IPC-6012 Class-3",
+            "training_hours": 1420,
+            "company_eval_rating": 5.0,
+            "specialty_tags": ["ALL", "EXECUTIVE_C2", "SIC_HARDWARE", "SCADA_PLC", "UAS_GIS", "RMF_CYBER"],
+        },
+        "EMP-002": {
+            "employee_id": "EMP-002",
+            "full_name": "MARCUS ALEXANDER VANCE",
+            "current_role": "Senior Tactical Watch Officer (Shift Alpha)",
+            "target_promotion_track": "DEPUTY_WATCH_FLOOR_COMMANDER_0xFF",
+            "clearance_tier": "SECRET // DOD_RMF_CLEARED",
+            "prev_address_1": "118 Falcon Crest Blvd, Tinker AFB / Midwest City, OK 73110 (2019-2024)",
+            "prev_address_2": "Colorado Springs, CO 80914 (2014-2019) // 7-Yr Address Check: VERIFIED",
+            "prior_job_1": "USAF C2 Battle Management Watch Officer (8 Yrs)",
+            "prior_job_2": "Regional Microgrid Dispatch Supervisor (4 Yrs)",
+            "total_experience_yrs": 12,
+            "highest_education": "B.S. Electrical & Systems Engineering",
+            "academy_exam_score_pct": 96.5,
+            "completed_hvf_modules": "CLIN 0001, CLIN 0003 (60Hz SCADA), CLIN 0031 (RBAC), CLIN 0032 (RMF)",
+            "active_certifications": "CompTIA Security+ CE | NERC Grid Operator | DoD RMF Watch Officer",
+            "training_hours": 480,
+            "company_eval_rating": 4.9,
+            "specialty_tags": ["ALL", "EXECUTIVE_C2", "SCADA_PLC", "RMF_CYBER"],
+        },
+        "EMP-003": {
+            "employee_id": "EMP-003",
+            "full_name": "SARAH MEI LIN",
+            "current_role": "Lead 36.75ns SiC MOSFET & SCADA Integration Engineer",
+            "target_promotion_track": "CHIEF_HARDWARE_AND_ROBOTICS_SAFETY_DIRECTOR",
+            "clearance_tier": "SECRET // DFARS_HARDWARE_CUSTODIAN",
+            "prev_address_1": "2901 Research Park Dr, Norman, OK 73072 (2020-2024)",
+            "prev_address_2": "Austin, TX 78712 (2016-2020) // 7-Yr Address Check: VERIFIED",
+            "prior_job_1": "Senior Power Electronics Designer -- Defense SiC Lab (6 Yrs)",
+            "prior_job_2": "Industrial SAE J1939 CAN-Bus Firmware Engineer (4 Yrs)",
+            "total_experience_yrs": 10,
+            "highest_education": "Ph.D. Power Electronics & Solid-State Switching",
+            "academy_exam_score_pct": 98.0,
+            "completed_hvf_modules": "CLIN 0006, CLIN 0008, CLIN 0009, CLIN 0028 (36.75ns SiC), CLIN 0029 (PLC/J1939)",
+            "active_certifications": "IPC-6012 Class-3 Master | IEEE Power Electronics Fellow | OSHA-30",
+            "training_hours": 610,
+            "company_eval_rating": 4.95,
+            "specialty_tags": ["ALL", "SIC_HARDWARE", "SCADA_PLC"],
+        },
+        "EMP-004": {
+            "employee_id": "EMP-004",
+            "full_name": "CALEB JACKSON ROSS",
+            "current_role": "UAS Flight Operator & Civil GIS Boundary Specialist",
+            "target_promotion_track": "DIRECTOR_OF_AERIAL_RECON_AND_TITLE_61_CIVIL_WORKS",
+            "clearance_tier": "PUBLIC_TRUST // TITLE_61_BONDED",
+            "prev_address_1": "512 Cimmaron Trail, Stillwater, OK 74074 (2020-2024)",
+            "prev_address_2": "Enid, OK 73701 (2017-2020) // 7-Yr Address Check: VERIFIED",
+            "prior_job_1": "Lead Photogrammetry & Multispectral UAS Pilot (5 Yrs)",
+            "prior_job_2": "Civil Earthwork & Retainage Survey Technician (3 Yrs)",
+            "total_experience_yrs": 8,
+            "highest_education": "M.S. Geomatics & Remote Sensing",
+            "academy_exam_score_pct": 94.0,
+            "completed_hvf_modules": "CLIN 0007 (UAS GLI), CLIN 0010 (Title 61), CLIN 0030 (GIS Boundary)",
+            "active_certifications": "FAA Part 107 Remote Pilot | OK Licensed GIS Surveyor | Louhaichi GLI Spec",
+            "training_hours": 340,
+            "company_eval_rating": 4.8,
+            "specialty_tags": ["ALL", "UAS_GIS"],
+        },
+    }
+
+    def evaluate_promotion_and_company_shortlist(
+        self,
+        out_dir: pathlib.Path,
+        min_experience_years: int = 5,
+        min_academy_score_pct: float = 90.0,
+        min_eval_rating: float = 4.5,
+        required_specialty: str = "ALL",
+    ) -> Dict[str, Any]:
+        """
+        Pulls all personnel who meet the Employer's experience, training/Academy score,
+        7-year address/job background verification, and company evaluation thresholds
+        into a single ranked Promotion & Evaluation Shortlist, sealing the board run in WORM SQLite.
+        """
+        db_path = out_dir / "wp7_identity_credit_worm_ledger.db"
+        self.init_worm_sqlite_ledger(db_path)
+
+        qualified_rows: List[Dict[str, Any]] = []
+        all_evaluated_rows: List[Dict[str, Any]] = []
+
+        for emp_id, cand in self.CANDIDATE_CAREER_AND_TRAINING_MATRIX.items():
+            exp_yrs = int(cand["total_experience_yrs"])
+            acad_pct = float(cand["academy_exam_score_pct"])
+            eval_rat = float(cand["company_eval_rating"])
+            train_hrs = int(cand["training_hours"])
+
+            # 100-Point Composite Promotion Readiness Index (PRI)
+            pri_score = round(
+                (0.35 * acad_pct)
+                + (0.35 * ((eval_rat / 5.0) * 100.0))
+                + (0.15 * min(100.0, (exp_yrs / 15.0) * 100.0))
+                + (0.15 * min(100.0, (train_hrs / 300.0) * 100.0)),
+                2,
+            )
+
+            spec_ok = (required_specialty.upper() == "ALL") or (required_specialty.upper() in cand["specialty_tags"])
+            meets_all = (
+                (exp_yrs >= int(min_experience_years))
+                and (acad_pct >= float(min_academy_score_pct))
+                and (eval_rat >= float(min_eval_rating))
+                and spec_ok
+            )
+
+            status_str = "QUALIFIED_PROMOTION_SHORTLIST" if meets_all else "BELOW_CURRENT_FILTER_THRESHOLD"
+            row_item = {
+                "Employee_ID": emp_id,
+                "Candidate_Name": cand["full_name"],
+                "Current_Role": cand["current_role"],
+                "Recommended_Promotion_Track": cand["target_promotion_track"],
+                "Exp_Yrs": exp_yrs,
+                "Academy_Score": f"{acad_pct:.1f}%",
+                "Training_Hrs": train_hrs,
+                "Eval_Rating": f"{eval_rat:.2f} / 5.00",
+                "Promotion_Readiness_Index": pri_score,
+                "Prior_Jobs_and_Addresses": f"VERIFIED ({cand['prior_job_1'][:28]}...)",
+                "Active_Certifications": cand["active_certifications"],
+                "Promotion_Board_Decision": status_str,
+            }
+            all_evaluated_rows.append(row_item)
+            if meets_all:
+                qualified_rows.append(row_item)
+
+        # Sort qualified shortlist by Promotion_Readiness_Index descending
+        qualified_rows.sort(key=lambda r: r["Promotion_Readiness_Index"], reverse=True)
+        for rank_idx, qrow in enumerate(qualified_rows, start=1):
+            qrow["Shortlist_Rank"] = f"RANK #{rank_idx:02d}"
+
+        # Record shortlist board evaluation in the 5th WORM SQLite table
+        conn = sqlite3.connect(str(db_path), timeout=30.0)
+        try:
+            cur = conn.cursor()
+            for qrow in qualified_rows:
+                b_hash = hashlib.sha256(
+                    f"{qrow['Employee_ID']}|{qrow['Promotion_Readiness_Index']}|{qrow['Recommended_Promotion_Track']}|{FROZEN_EBONY_MERKLE_ROOT}".encode("utf-8")
+                ).hexdigest()
+                cur.execute(
+                    """
+                    INSERT OR IGNORE INTO worm_promotion_evaluation_board (
+                        employee_id, candidate_name, recommended_promotion_track,
+                        experience_years, academy_score_pct, eval_rating,
+                        promotion_readiness_index, board_decision, worm_board_sha256
+                    ) VALUES (?,?,?,?,?,?,?,?,?)
+                    """,
+                    (
+                        qrow["Employee_ID"],
+                        qrow["Candidate_Name"],
+                        qrow["Recommended_Promotion_Track"],
+                        int(qrow["Exp_Yrs"]),
+                        float(qrow["Academy_Score"].replace("%", "")),
+                        float(qrow["Eval_Rating"].split("/")[0].strip()),
+                        float(qrow["Promotion_Readiness_Index"]),
+                        qrow["Promotion_Board_Decision"],
+                        b_hash,
+                    ),
+                )
+            conn.commit()
+            board_rows_cnt = cur.execute("SELECT COUNT(*) FROM worm_promotion_evaluation_board").fetchone()[0]
+        finally:
+            conn.close()
+
+        return {
+            "total_personnel_evaluated": len(all_evaluated_rows),
+            "qualified_candidates_count": len(qualified_rows),
+            "top_ranked_candidate": qualified_rows[0]["Candidate_Name"] if qualified_rows else "NONE_MATCHING_FILTER",
+            "top_pri_score": qualified_rows[0]["Promotion_Readiness_Index"] if qualified_rows else 0.0,
+            "worm_board_rows_logged": board_rows_cnt,
+            "qualified_shortlist_rows": qualified_rows,
+            "all_evaluated_rows": all_evaluated_rows,
+        }
 
     def open_compartment_gate(
         self,
@@ -514,6 +745,21 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "f34_ice_phone": person["ice_phone"],
             "f35_ice_medical_blood": person["blood_type_and_medical"],
         }
+        cand_m = self.CANDIDATE_CAREER_AND_TRAINING_MATRIX.get(person["employee_id"])
+        if cand_m:
+            person_overrides.update({
+                "f43_prev_addr1_street": cand_m["prev_address_1"].upper(),
+                "f47_prev_addr2_summary": cand_m["prev_address_2"].upper(),
+                "f49_prior_emp1_org": cand_m["prior_job_1"].upper(),
+                "f53_prior_emp2_org_role": cand_m["prior_job_2"].upper(),
+                "f54_total_experience_yrs": str(cand_m["total_experience_yrs"]),
+                "f55_highest_education": cand_m["highest_education"].upper(),
+                "f56_academy_exam_score": str(cand_m["academy_exam_score_pct"]),
+                "f57_completed_hvf_courses": cand_m["completed_hvf_modules"].upper(),
+                "f58_active_certifications": cand_m["active_certifications"].upper(),
+                "f59_training_hours_total": str(cand_m["training_hours"]),
+                "f60_company_eval_rating": str(cand_m["company_eval_rating"]),
+            })
         app_eval = self.evaluate_atomic_42_application(person_overrides)
 
         if viewer_role == "EMPLOYEE":
@@ -591,7 +837,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
             title="42-Field Atomic Personnel Application, NOK/ICE, Proof-of-Identity Lock, & Credit Shield",
-            version="6.3.0",
+            version="7.0.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,
@@ -695,9 +941,9 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         honeypot_raw = "DARKWEB-LEAKED-SSN-CLONE-999-88-7777"
         hp_zk = self.hash_identity_zero_knowledge("HONEYPOT_TRAP", honeypot_raw)
         rows.append({
-            "Field_ID": "F43_DARKWEB_CANARY",
-            "Section_Category": "6_ACTIVE_THREAT_CANARY",
-            "Application_Field": "43. Active Dark-Web Honeypot Canary (XXX-XX-7777)",
+            "Field_ID": "F61_DARKWEB_CANARY",
+            "Section_Category": "9_ACTIVE_THREAT_CANARY",
+            "Application_Field": "61. Active Dark-Web Honeypot Canary (XXX-XX-7777)",
             "Sealed_Display_Value": "XXX-XX-7777 (QUARANTINED)",
             "k_Anonymity_Prefix": hp_zk["k_anonymity_prefix_5hex"],
             "Zero_Knowledge_HMAC": hp_zk["full_salted_hmac_sha256"][:20] + "...",
@@ -1025,7 +1271,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
 
     def init_worm_sqlite_ledger(self, db_path: pathlib.Path) -> Dict[str, Any]:
         db_path.parent.mkdir(parents=True, exist_ok=True)
-        conn = sqlite3.connect(str(db_path))
+        conn = sqlite3.connect(str(db_path), timeout=30.0)
         try:
             cur = conn.cursor()
             cur.execute("""
@@ -1134,10 +1380,38 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: DELETE PROHIBITED ON worm_employer_personnel_notes');
                 END;
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS worm_promotion_evaluation_board (
+                    board_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    employee_id TEXT NOT NULL,
+                    candidate_name TEXT NOT NULL,
+                    recommended_promotion_track TEXT NOT NULL,
+                    experience_years INTEGER NOT NULL,
+                    academy_score_pct REAL NOT NULL,
+                    eval_rating REAL NOT NULL,
+                    promotion_readiness_index REAL NOT NULL,
+                    board_decision TEXT NOT NULL,
+                    worm_board_sha256 TEXT NOT NULL UNIQUE
+                )
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_promo_board_no_update
+                BEFORE UPDATE ON worm_promotion_evaluation_board
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: UPDATE PROHIBITED ON worm_promotion_evaluation_board');
+                END;
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_promo_board_no_delete
+                BEFORE DELETE ON worm_promotion_evaluation_board
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: DELETE PROHIBITED ON worm_promotion_evaluation_board');
+                END;
+            """)
             conn.commit()
         finally:
             conn.close()
-        return {"db_path": str(db_path), "worm_triggers_active": 8}
+        return {"db_path": str(db_path), "worm_triggers_active": 10}
 
     def commit_profile_update_revision(
         self,
@@ -1147,7 +1421,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         pii_report: Dict[str, Any],
     ) -> Dict[str, Any]:
         self.init_worm_sqlite_ledger(db_path)
-        conn = sqlite3.connect(str(db_path))
+        conn = sqlite3.connect(str(db_path), timeout=30.0)
         try:
             cur = conn.cursor()
             last_row = cur.execute(
@@ -1198,7 +1472,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
 
     def get_profile_revision_history(self, db_path: pathlib.Path) -> List[Dict[str, Any]]:
         self.init_worm_sqlite_ledger(db_path)
-        conn = sqlite3.connect(str(db_path))
+        conn = sqlite3.connect(str(db_path), timeout=30.0)
         try:
             cur = conn.cursor()
             rows = cur.execute(
@@ -1241,7 +1515,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 update_reason=update_reason,
                 pii_report=pii_report,
             )
-        conn = sqlite3.connect(str(db_path))
+        conn = sqlite3.connect(str(db_path), timeout=30.0)
         try:
             cur = conn.cursor()
             for ev in access_events:

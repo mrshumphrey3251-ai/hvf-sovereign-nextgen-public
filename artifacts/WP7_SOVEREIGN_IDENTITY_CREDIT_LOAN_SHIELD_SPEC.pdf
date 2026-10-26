@@ -36,10 +36,10 @@ BT
 (    INITIAL_42FIELD_ONBOARDING_PROOF_OF_IDENTITY) Tj T*
 (  - Masked SSN & DOB Binding: XXX-XX-1234 | XXXX-XX-15 \(0 Plaintext Sensitive Digits) Tj T*
 (    Stored\)) Tj T*
-(  - Atomic Onboarding Fields Sealed: 42 / 42 \(100% Atomic 1-Response-Per-Box\) + 1 Active) Tj T*
+(  - Atomic Onboarding Fields Sealed: 60 / 42 \(100% Atomic 1-Response-Per-Box\) + 1 Active) Tj T*
 (    Dark-Web Canary) Tj T*
 (  - Composite 42-Field Proof-of-Identity Seal \(HMAC-SHA256\):) Tj T*
-(    70ac099bc863762c4b76acb15adfe4f040a761a9f1b7b32e260f2873e832b2b0) Tj T*
+(    1abc999228c93113642d0971b88fb103cd8a0df260aed942306a6bd61ff69323) Tj T*
 (  - Cryptographic Pepper Binding: [REDACTED_42FIELD_PII_PEPPER_DFARS_252_227_7018]) Tj T*
 (  - 01. Legal First Name: JEFFERY \(k-Prefix B092D | SEALED_UNALTERABLE\)) Tj T*
 (  - 02. Legal Middle Name: SOVEREIGN \(k-Prefix 18DBC | SEALED_UNALTERABLE\)) Tj T*
@@ -88,7 +88,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 7 0 R /Resources << /Font << /F1 3 0 R >> >> >>
 endobj
 7 0 obj
-<< /Length 4114 >>
+<< /Length 4269 >>
 stream
 BT
 /F1 8.5 Tf
@@ -124,7 +124,53 @@ BT
 (    SEALED_UNALTERABLE\)) Tj T*
 (  - 42. Mobile Carrier SIM / IMEI Port-Out Lock: XXXX-MASKED-4112 \(k-Prefix D7159 |) Tj T*
 (    SEALED_UNALTERABLE\)) Tj T*
-(  - 43. Active Dark-Web Honeypot Canary \(XXX-XX-7777\): XXX-XX-7777 \(QUARANTINED\)) Tj T*
+(  - 43. Previous Street Address #1: XXXX-MASKED-GERD \(k-Prefix C8C0F |) Tj T*
+(    SEALED_UNALTERABLE\)) Tj T*
+(  - 44. Previous City #1: EDMOND \(k-Prefix 64E04 | SEALED_UNALTERABLE\)) Tj T*
+(  - 45. Previous State & ZIP Code #1: OK 73034 \(k-Prefix 8C4CA | SEALED_UNALTERABLE\)) Tj T*
+(  - 46. Previous Residence #1 Dates \(From-To\): 2016-01_TO_2022-06 \(k-Prefix 17297 |) Tj T*
+(    SEALED_UNALTERABLE\)) Tj T*
+(  - 47. Previous Residence #2 City & State: TULSA_OK_74103 \(2011_TO_2016\) \(k-Prefix) Tj T*
+(    A00B0 | SEALED_UNALTERABLE\)) Tj T*
+(  - 48. Previous Residence Verification / Landlord Contact: XXXX-MASKED-FIED \(k-Prefix) Tj T*
+(    DD51A | SEALED_UNALTERABLE\)) Tj T*
+(  - 49. Prior Employer #1 Organization / Command: SOVEREIGN INDUSTRIAL & AGRICULTURAL) Tj T*
+(    SYSTEMS \(k-Prefix FE18C | SEALED_UNALTERABLE\)) Tj T*
+(  - 50. Prior Employer #1 Job Title / Rank: PRINCIPAL SYSTEMS DIRECTOR \(k-Prefix 1C0B2 |) Tj T*
+(    SEALED_UNALTERABLE\)) Tj T*
+(  - 51. Prior Employer #1 Supervisor & Verification Phone: XXXX-MASKED-0100 \(k-Prefix) Tj T*
+(    2DB45 | SEALED_UNALTERABLE\)) Tj T*
+(  - 52. Prior Employer #1 Tenure \(Years\): 12 \(k-Prefix ABA47 | SEALED_UNALTERABLE\)) Tj T*
+(  - 53. Prior Employer #2 Organization & Title: CRITICAL_INFRASTRUCTURE_OPERATIONS_LEAD) Tj T*
+(    \(k-Prefix FC78D | SEALED_UNALTERABLE\)) Tj T*
+(  - 54. Total Verified Career Experience \(Years\): 22 \(k-Prefix 2E2AE |) Tj T*
+(    SEALED_UNALTERABLE\)) Tj T*
+(  - 55. Highest Degree / Technical Diploma: PRINCIPAL_SOVEREIGN_ARCHITECT_FELLOWSHIP) Tj T*
+(    \(k-Prefix 4F81B | SEALED_UNALTERABLE\)) Tj T*
+(  - 56. HVF Sovereign Field Academy Exam Score \(%\): 100.0 \(k-Prefix 2A137 |) Tj T*
+(    SEALED_UNALTERABLE\)) Tj T*
+(  - 57. Completed HVF Technical Modules: ALL_34_CLINS_MASTER_CERTIFIED \(k-Prefix DDA06 |) Tj T*
+(    SEALED_UNALTERABLE\)) Tj T*
+(  - 58. Active Federal / Safety / Trade Certifications:) Tj T*
+(    CAGE_1AHA8_PRINCIPAL_IPC6012_DOD_RMF_MASTER \(k-Prefix 77AC5 | SEALED_UNALTERABLE\)) Tj T*
+(  - 59. Total Verified Continuing Training Hours: 1420 \(k-Prefix A02E0 |) Tj T*
+(    SEALED_UNALTERABLE\)) Tj T*
+(  - 60. Annual Company Evaluation Rating \(0.0 - 5.0\): 5.0 \(k-Prefix 62986 |) Tj T*
+(--- Page 2 of 3 ---) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 9 0 R /Resources << /Font << /F1 3 0 R >> >> >>
+endobj
+9 0 obj
+<< /Length 3182 >>
+stream
+BT
+/F1 8.5 Tf
+36 758 Td
+11 TL
+(    SEALED_UNALTERABLE\)) Tj T*
+(  - 61. Active Dark-Web Honeypot Canary \(XXX-XX-7777\): XXX-XX-7777 \(QUARANTINED\)) Tj T*
 (    \(k-Prefix 98506 | DARKWEB_LEAK_INTERCEPTED\)) Tj T*
 () Tj T*
 (========================================================================================) Tj T*
@@ -156,19 +202,6 @@ BT
 (    CEO_PREAUTHORIZED_COMMERCIAL_HARDWARE_CREDIT_LINE ->) Tj T*
 (    AUTHORIZED_BY_CEO_CRYPTOGRAPHIC_UNFREEZE_TOKEN) Tj T*
 () Tj T*
-(--- Page 2 of 3 ---) Tj ET
-endstream
-endobj
-8 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 9 0 R /Resources << /Font << /F1 3 0 R >> >> >>
-endobj
-9 0 obj
-<< /Length 1077 >>
-stream
-BT
-/F1 8.5 Tf
-36 758 Td
-11 TL
 (========================================================================================) Tj T*
 () Tj T*
 (3. Physical ID & 3-Modal Biometric Sign-In / Sign-Out WORM Audit Ledger) Tj T*
@@ -183,7 +216,7 @@ BT
 () Tj T*
 (========================================================================================) Tj T*
 (WORM WP-7 16-Factor Identity, Credit, Loan, & Deed Shield Master Seal \(SHA-256\):) Tj T*
-(    e077d929387f79e86d0a8190eb73ef8251993207ccf69da5122420ce53378f96) Tj T*
+(    b27e240f69745c4e99467d532d578fd197c5fa966c9ace7652eca40dbe9ab840) Tj T*
 (--- Page 3 of 3 ---) Tj ET
 endstream
 endobj
@@ -197,10 +230,10 @@ xref
 0000000329 00000 n 
 0000004699 00000 n 
 0000004825 00000 n 
-0000008991 00000 n 
-0000009117 00000 n 
+0000009146 00000 n 
+0000009272 00000 n 
 trailer
 << /Size 10 /Root 1 0 R >>
 startxref
-10246
+12506
 %%EOF
