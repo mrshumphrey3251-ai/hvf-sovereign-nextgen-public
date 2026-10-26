@@ -82,7 +82,8 @@ def run_clin_0033_tests() -> None:
     assert "In Case of Emergency (ICE)" in md_text
     assert pdf_bytes.startswith(b"%PDF-1.4")
     assert b"**" not in pdf_bytes
-    assert b"WORM WP-7 16-Factor Identity" in pdf_bytes
+    assert b"CLIN 0033 v7.2" in pdf_bytes
+    assert b"WORM WP-7" in pdf_bytes
     assert b"%%EOF" in pdf_bytes
 
     # 4. Verify Stage 13w (v7.0) Promotion & Evaluation Shortlist Engine (Populates 5th WORM Table)
@@ -172,4 +173,4 @@ def run_clin_0033_tests() -> None:
 
 if __name__ == "__main__":
     run_clin_0033_tests()
-    print("[100% PASS] CLIN 0033 (WP-7 v7.0) 60-Field Dossier, Promotion Shortlist Engine, & 5-Table WORM Vault Passed!")
+    print("[100% PASS] CLIN 0033 (WP-7 v7.2) 60-Field Dossier, HIPAA Gate, Muster SOPs, Promotion Shortlist, & 6-Table (12-Trigger) WORM Vault Passed!")

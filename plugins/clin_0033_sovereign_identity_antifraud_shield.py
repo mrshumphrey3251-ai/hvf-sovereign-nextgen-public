@@ -25,7 +25,7 @@ IDENTITY_VAULT_PEPPER = "PUBLIC_IDENTITY_CREDIT_PEPPER_REDACTED_DFARS_252_227_70
 
 class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     """
-    WP-7 / CLIN 0033 v5.0 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
+    WP-7 / CLIN 0033 v7.2 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
       1. 42 Atomic Application Fields (Strictly 1 single response per box; zero pipe-concatenated fields)
          covering Legal Identity, Vital Stats, Physical Description, Job/I-9/Clearance, Government IDs,
          Next of Kin (NOK), In Case of Emergency (ICE), 3-Modal Biometrics, and Financial/Asset Locks.
@@ -1896,7 +1896,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "# HUMPHREY VIRTUAL FARMS LLC // WP-7: 42-FIELD PERSONNEL ONBOARDING, NOK/ICE, PROOF-OF-IDENTITY, & CREDIT SHIELD",
             "**Entity:** Humphrey Virtual Farms LLC (`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`)",
             "**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect",
-            f"**Plug-In Module:** `CLIN 0033 v5.0 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
+            f"**Plug-In Module:** `CLIN 0033 v7.2 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
             f"**Host Ebony Baseline Merkle Root:** `{FROZEN_EBONY_MERKLE_ROOT}`",
             "",
             "---",
@@ -1933,7 +1933,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             f"* **Event #1 ({ev1['Action']}):** `{ev1['Operator_Name']}` (`{ev1['Masked_SSN_DOB_Bind']}`) -> `{ev1['Access_Decision']}`",
             f"* **Event #2 ({ev2['Action']} - Fraud Blocked):** `{ev2['Operator_Name']}` -> **`{ev2['Access_Decision']}`** (`{ev2['Security_Reason']}`)",
             f"* **Event #3 ({ev3['Action']}):** `{ev3['Operator_Name']}` (`{ev3['Masked_SSN_DOB_Bind']}`) -> `{ev3['Access_Decision']}`",
-            f"* **WORM Profile Revisions Logged:** `{worm_db_stats['worm_profile_revision_rows']}` (`6` Active SQLite WORM Triggers)",
+            f"* **WORM Profile Revisions Logged:** `{worm_db_stats['worm_profile_revision_rows']}` (`6` WORM Tables / `12` Active SQLite WORM Triggers)",
             "",
             "---",
             f"**WORM WP-7 16-Factor Identity, Credit, Loan, & Deed Shield Master Seal (SHA-256):** `{worm_seal}`",

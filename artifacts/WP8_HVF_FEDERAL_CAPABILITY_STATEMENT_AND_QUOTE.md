@@ -9,7 +9,7 @@
 ## 1. Core Competencies & Sovereign Technical Differentiators
 * **100% Bare-Metal Air-Gapped C2 (`Project Ebony` TRL 7):** `631` compiled Python modules, `83` test suites, `54` WORM SQLite audit tables, `0` cloud dependencies (`>42.5%` 5-year lifecycle cost avoidance).
 * **36.75ns SiC MOSFET Hardware Interlock (`CLIN 0006` & `CLIN 0028`):** `18.50ns + 12.00ns + 6.25ns = 36.75ns` physical actuator cutoff (`0.0551 um` stop at `1,500 mm/s` vs `225.0 mm` legacy PLC).
-* **60-Field Proof-of-Identity, Emergency ICE Triage, & Dual-Compartment Credit Shield (`CLIN 0033 v7.0`):** 0-click Emergency ICE Triage Roster, User Agreement Gate, Employee Personal Credit/Loan Compartment (hidden from Employer), & Employer Internal HR/I-9/Clearance Compartment (unalterable lock).
+* **60-Field Proof-of-Identity, Emergency ICE Triage, & Dual-Compartment Credit Shield (`CLIN 0033 v7.2`):** 0-click Emergency ICE Triage Roster, User Agreement Gate, Employee Personal Credit/Loan Compartment (hidden from Employer), & Employer Internal HR/I-9/Clearance Compartment (unalterable lock).
 * **Sovereign Field Academy (`CLIN 0011` & `CLIN 0032`):** `1,420` verified exam questions (`800` Ch.1 + `620` Ch.5), `4` offline textbooks, and DoD RMF / NIST 800-53 Rev 5 ATO (`0` CAT I/II/III findings).
 
 ---

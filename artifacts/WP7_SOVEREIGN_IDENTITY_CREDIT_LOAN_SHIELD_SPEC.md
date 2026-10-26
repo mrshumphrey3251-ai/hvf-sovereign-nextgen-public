@@ -1,7 +1,7 @@
 # HUMPHREY VIRTUAL FARMS LLC // WP-7: 42-FIELD PERSONNEL ONBOARDING, NOK/ICE, PROOF-OF-IDENTITY, & CREDIT SHIELD
 **Entity:** Humphrey Virtual Farms LLC (`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`)
 **Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect
-**Plug-In Module:** `CLIN 0033 v5.0 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `PUBLIC`
+**Plug-In Module:** `CLIN 0033 v7.2 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `PUBLIC`
 **Host Ebony Baseline Merkle Root:** `cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e18e9150949a`
 
 ---
@@ -94,7 +94,7 @@
 * **Event #1 (SIGN_IN):** `JEFFERY SOVEREIGN HUMPHREY` (`XXX-XX-1234 | XXXX-XX-15`) -> `AUTHORIZED_SIGN_IN_RECORDED`
 * **Event #2 (SIGN_IN - Fraud Blocked):** `IMPOSTOR_WITH_STOLEN_SSN_AND_CLONED_BADGE` -> **`ACCESS_DENIED_FRAUD_INTERLOCK_TRIPPED`** (`REPLAYED_NONCE_OR_STOLEN_SSN_DOB_BIOMETRIC_MISMATCH`)
 * **Event #3 (SIGN_OUT):** `JEFFERY SOVEREIGN HUMPHREY` (`XXX-XX-1234 | XXXX-XX-15`) -> `AUTHORIZED_SIGN_OUT_RECORDED`
-* **WORM Profile Revisions Logged:** `4` (`6` Active SQLite WORM Triggers)
+* **WORM Profile Revisions Logged:** `4` (`6` WORM Tables / `12` Active SQLite WORM Triggers)
 
 ---
 **WORM WP-7 16-Factor Identity, Credit, Loan, & Deed Shield Master Seal (SHA-256):** `b27e240f69745c4e99467d532d578fd197c5fa966c9ace7652eca40dbe9ab840`
