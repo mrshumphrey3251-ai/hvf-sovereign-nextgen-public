@@ -179,18 +179,17 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     # =========================================================================
     USER_AGREEMENT_TEXT: str = (
         "SOVEREIGN IDENTITY, HIPAA/ADA MEDICAL CONFIDENTIALITY, & DUAL-COMPARTMENT PRIVACY CHARTER "
-        "(HIPAA 45 CFR 164.502 / ADA 42 U.S.C. 12112(d)(3)(B) / FCRA 15 U.S.C. 1681 / PRIVACY ACT OF 1974): "
+        "(HIPAA 45 CFR 164.502 / ADA 42 U.S.C. 12112(d)(3)(B) / OSHA 29 CFR 1910.38 / FCRA 15 U.S.C. 1681): "
         "(1) 100% GATE-LOCKED PHI & PII: To comply with federal HIPAA and ADA medical confidentiality mandates, zero personal "
         "employee information, blood types, allergies, medical history, or Next-of-Kin (NOK) / ICE contacts are displayed on "
         "the unauthenticated screen. All personal and medical data is strictly locked behind this cryptographic gate. "
-        "(2) AUTHENTICATED HR & EMERGENCY MEDICAL/ICE ACCESS: Once authenticated through the gate, both the Employee and "
-        "authorized HR / Emergency Command Personnel have immediate access to the employee's Blood Type, Drug/Environmental "
-        "Allergies, Medical History & Medications, Primary Physician, and NOK/ICE Emergency Contacts (logged to an immutable "
-        "HIPAA WORM audit table). "
-        "(3) EMPLOYEE FINANCIAL PRIVACY WALL: Personal credit bureau inquiries, personal loans, and personal bank/deed locks "
-        "are the exclusive property of the Employee. The Employer/HR is 100% blocked from viewing Employee credit or loans. "
-        "(4) EMPLOYER INTERNAL COMPARTMENT: Internal security clearance adjudication, I-9 E-Verify seals, employer personnel "
-        "notes, and promotion board evaluations are restricted strictly to the Employer / HR Authority."
+        "(2) PATH A (EMPLOYEE PERSONAL VAULT -- MUSTER POINTS, EMERGENCY SOPs, MEDICAL/ICE & CREDIT SHIELD): Once unlocked by "
+        "the Employee, Path A displays the employee's assigned Primary & Secondary Muster Points, Shelter-in-Place Bunker, "
+        "AED/Trauma Kit location, 5-Step Emergency Evacuation Procedures, Medical/ICE Card, 7-Channel Credit/Loan Shield, and 60-Field Dossier. "
+        "(3) PATH B (EMPLOYER / HR EMERGENCY & INTERNAL VAULT): Once unlocked by HR / Commanding Authority, Path B unseals the "
+        "employee's Blood Type, Drug/Environmental Allergies, Medical History & Medications, Primary Physician, NOK/ICE Contacts, "
+        "and Muster Roll-Call Zone (logged to an immutable HIPAA WORM audit table), plus Employer Notes and the Promotion Shortlist -- "
+        "while 100% blocking the Employer/HR from viewing Employee personal credit or loans."
     )
 
     COMPANY_EMERGENCY_CONTACTS: List[Dict[str, str]] = [
@@ -316,7 +315,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         },
     }
 
-    def get_instant_emergency_triage_card(self, roster_key: str) -> Dict[str, str]:
+    def get_instant_emergency_triage_card(self, roster_key: str) -> Dict[str, Any]:
         person = self.PERSONNEL_EMERGENCY_ROSTER.get(
             roster_key,
             next(iter(self.PERSONNEL_EMERGENCY_ROSTER.values())),
@@ -363,6 +362,65 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "EMP-003": "Norman Regional HealthPlex Trauma Center // Pulmonary Specialist: 405-555-0833",
             "EMP-004": "INTEGRIS Health Edmond Hospital // FAA Aviation Medical Examiner: 405-555-0844",
         }
+        muster_map = {
+            "EMP-001": {
+                "primary_muster_point": "MUSTER ALPHA-1 // North Helipad Command Perimeter (Gate 1)",
+                "secondary_muster_point": "MUSTER BRAVO-1 // West Silo Access Road Mobile TOC Staging",
+                "shelter_in_place_bunker": "VAULT BUNKER B1-COMMAND // Sub-Level Reinforced Faraday & Tornado Core",
+                "nearest_aed_trauma_kit": "AED & Level-1 Trauma Kit #01 // Executive Command Corridor (10m East)",
+                "evacuation_route_and_warden": "Route Red-Alpha via Armored Stairwell 1 // Warden: Capt. M. Vance (Ch. 1)",
+                "emergency_procedures_rows": [
+                    {"Step": "STEP 01 (Immediate Kinetic/Grid Cutoff)", "Procedure_Action": "Engage 36.75ns SiC MOSFET Hardware Guillotine E-Stop (CLIN 0006/0028) & Island 60Hz Microgrid Relay if electrical/kinetic hazard is present.", "Target_SLA": "< 1.0 Second"},
+                    {"Step": "STEP 02 (Credential & WORM Lock)", "Procedure_Action": "Lock active Port 8501/8502 Watch-Floor console session and secure physical DoD CAC / PIV & REAL-ID badge for Muster scanner.", "Target_SLA": "15 Seconds"},
+                    {"Step": "STEP 03 (Primary Evacuation / Shelter)", "Procedure_Action": "Proceed via Route Red-Alpha to MUSTER ALPHA-1 (North Helipad Gate 1). If tornado/CBRN alarm sounds, descend to VAULT BUNKER B1-COMMAND.", "Target_SLA": "90 Seconds"},
+                    {"Step": "STEP 04 (Muster Roll-Call Check-In)", "Procedure_Action": "Scan badge with Duty Watch Officer at Muster Alpha-1 or report status on Tactical Radio Channel 1 (405-555-0100).", "Target_SLA": "180 Seconds"},
+                    {"Step": "STEP 05 (Medical / EMS Triage Handoff)", "Procedure_Action": "If injured, HR/Warden unseals HIPAA Emergency Medical Packet (Blood Type, Allergies, Medical History & NOK/ICE) for EMS arrival at Helipad Bay.", "Target_SLA": "Immediate"},
+                ],
+            },
+            "EMP-002": {
+                "primary_muster_point": "MUSTER ALPHA-1 // North Helipad Command Perimeter (Roll-Call Warden Station)",
+                "secondary_muster_point": "MUSTER BRAVO-1 // West Silo Access Road Mobile TOC Staging",
+                "shelter_in_place_bunker": "VAULT BUNKER B1-WATCH // TOC Sub-Floor Reinforced Storm & Blast Shelter",
+                "nearest_aed_trauma_kit": "AED & Trauma Kit #02 (Contains Epinephrine Auto-Injector) // Watch Desk Wall",
+                "evacuation_route_and_warden": "Route Red-Bravo via Watch-Floor Double Doors // Role: Primary Muster Warden",
+                "emergency_procedures_rows": [
+                    {"Step": "STEP 01 (Watch-Floor E-Stop & Alarm)", "Procedure_Action": "Trigger Master Watch-Floor Klaxon, trip 36.75ns SiC breaker interlock, and open emergency exit mag-locks.", "Target_SLA": "< 1.0 Second"},
+                    {"Step": "STEP 02 (Grab Emergency Muster Tablet & EpiPen)", "Procedure_Action": "Retrieve air-gapped Muster Roll-Call Tablet and personal Epinephrine Auto-Injector from Watch Desk Kit #02.", "Target_SLA": "15 Seconds"},
+                    {"Step": "STEP 03 (Sweep TOC & Evacuate)", "Procedure_Action": "Conduct 10-second visual sweep of Watch Floor and lead Shift Alpha personnel via Route Red-Bravo to MUSTER ALPHA-1.", "Target_SLA": "90 Seconds"},
+                    {"Step": "STEP 04 (Execute Personnel Headcount)", "Procedure_Action": "Account for all on-shift operators at Muster Alpha-1 and report headcount to CEO / Sovereign Command.", "Target_SLA": "180 Seconds"},
+                    {"Step": "STEP 05 (Coordinate EMS & NOK/ICE)", "Procedure_Action": "Provide unsealed HIPAA Allergy/Blood/Medical History telemetry to arriving Base EMS and initiate NOK/ICE notifications.", "Target_SLA": "Immediate"},
+                ],
+            },
+            "EMP-003": {
+                "primary_muster_point": "MUSTER CHARLIE-2 // South Power Electronics & Hardware Lab Assembly Pad",
+                "secondary_muster_point": "MUSTER ALPHA-1 // North Helipad Command Perimeter (Gate 1)",
+                "shelter_in_place_bunker": "VAULT BUNKER B2-LAB // Reinforced Concrete Substation & Storm Vault",
+                "nearest_aed_trauma_kit": "High-Voltage AED, Non-Latex Trauma Kit #03 & Albuterol Locker B4 // SiC Lab Exit",
+                "evacuation_route_and_warden": "Route Yellow-Charlie via High-Bay Roll-Up Door 3 // Warden: Dr. Sarah Lin",
+                "emergency_procedures_rows": [
+                    {"Step": "STEP 01 (480V / SiC Capacitor Discharge)", "Procedure_Action": "Trip 36.75ns SiC MOSFET solid-state breaker & verify 480V 3-phase contactor zero-energy discharge indicator.", "Target_SLA": "< 1.0 Second"},
+                    {"Step": "STEP 02 (Personal Medical & Badge Grab)", "Procedure_Action": "Secure Lab Locker B4 Albuterol inhaler and CAC/REAL-ID badge prior to exiting High-Bay.", "Target_SLA": "15 Seconds"},
+                    {"Step": "STEP 03 (Lab Evacuation / Bunker)", "Procedure_Action": "Exit via Route Yellow-Charlie to MUSTER CHARLIE-2 (South Pad). For severe weather/blast, enter VAULT BUNKER B2-LAB.", "Target_SLA": "90 Seconds"},
+                    {"Step": "STEP 04 (Muster Check-In)", "Procedure_Action": "Confirm Hardware Lab clear status with Watch Officer on Tactical Channel 1 (405-555-0111).", "Target_SLA": "180 Seconds"},
+                    {"Step": "STEP 05 (Non-Latex EMS Protocol)", "Procedure_Action": "Ensure EMS observes Non-Latex / Sulfonamide allergy flag in HIPAA Medical Triage Card if treatment is required.", "Target_SLA": "Immediate"},
+                ],
+            },
+            "EMP-004": {
+                "primary_muster_point": "MUSTER DELTA-3 // East Airfield Apron & UAS Flight Line Perimeter",
+                "secondary_muster_point": "MUSTER BRAVO-1 // West Silo Access Road Mobile TOC Staging",
+                "shelter_in_place_bunker": "VAULT BUNKER B3-HANGAR // Reinforced Hangar Concrete Culvert & Storm Shelter",
+                "nearest_aed_trauma_kit": "Field Trauma & Burn Kit #04 + Portable AED // UAS Command Trailer Bay 1",
+                "evacuation_route_and_warden": "Route Green-Delta via Flight Line Service Road // Warden: Caleb Ross",
+                "emergency_procedures_rows": [
+                    {"Step": "STEP 01 (UAS Auto-Land / Return-to-Home)", "Procedure_Action": "Execute immediate Return-to-Home (RTH) or emergency ditching command on active UAS sorties & cut LiPo charging banks.", "Target_SLA": "< 2.0 Seconds"},
+                    {"Step": "STEP 02 (Secure Survey & Flight Logs)", "Procedure_Action": "Lock field ruggedized terminal and grab portable Field Trauma Kit #04 from UAS Trailer.", "Target_SLA": "20 Seconds"},
+                    {"Step": "STEP 03 (Flight Line Evacuation)", "Procedure_Action": "Evacuate via Route Green-Delta to MUSTER DELTA-3 (East Airfield Apron) or shelter in VAULT BUNKER B3-HANGAR.", "Target_SLA": "90 Seconds"},
+                    {"Step": "STEP 04 (Field Muster Check-In)", "Procedure_Action": "Transmit GPS coordinates and Muster Delta-3 check-in to TOC Watch Desk (405-555-0100).", "Target_SLA": "180 Seconds"},
+                    {"Step": "STEP 05 (Medical & ICE Standby)", "Procedure_Action": "Stand by on Channel 1 for all-clear or EMS/NOK dispatch instructions from Command.", "Target_SLA": "Immediate"},
+                ],
+            },
+        }
+        m_info = muster_map.get(emp_id, muster_map["EMP-001"])
         return {
             "employee_id": emp_id,
             "full_name": person["full_name"],
@@ -386,6 +444,12 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "allergies_detailed": allergies_map.get(emp_id, med_clean),
             "medical_history_detailed": med_history_map.get(emp_id, "Cleared for Full Duty"),
             "physician_and_hospital": physician_hospital_map.get(emp_id, "Regional Level-1 Trauma Center"),
+            "primary_muster_point": m_info["primary_muster_point"],
+            "secondary_muster_point": m_info["secondary_muster_point"],
+            "shelter_in_place_bunker": m_info["shelter_in_place_bunker"],
+            "nearest_aed_trauma_kit": m_info["nearest_aed_trauma_kit"],
+            "evacuation_route_and_warden": m_info["evacuation_route_and_warden"],
+            "emergency_procedures_rows": m_info["emergency_procedures_rows"],
         }
 
     def record_hipaa_emergency_triage_access(
@@ -394,7 +458,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         employee_id: str,
         employee_name: str,
         accessor_role: str,
-        access_purpose: str = "AUTHORIZED_GATE_MEDICAL_AND_ICE_READINESS_VIEW",
+        access_purpose: str = "AUTHORIZED_GATE_MEDICAL_MUSTER_AND_ICE_VIEW",
     ) -> Dict[str, Any]:
         self.init_worm_sqlite_ledger(db_path)
         conn = sqlite3.connect(str(db_path), timeout=30.0)
@@ -421,7 +485,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     employee_name,
                     accessor_role,
                     access_purpose,
-                    "HIPAA_45_CFR_164_502_AND_ADA_CONFIDENTIAL_MEDICAL_GATE",
+                    "HIPAA_45_CFR_164_502_AND_OSHA_1910_38_MUSTER_GATE",
                     prev_hash,
                     log_sha,
                 ),
@@ -763,21 +827,25 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         access_key_or_pin: str,
         out_dir: pathlib.Path,
         credit_freeze_locked: bool = True,
-        emergency_purpose: str = "AUTHORIZED_HIPAA_MEDICAL_AND_ICE_ACCESS",
+        emergency_purpose: str = "AUTHORIZED_HIPAA_MEDICAL_MUSTER_AND_ICE_ACCESS",
     ) -> Dict[str, Any]:
         """
-        Enforces strict HIPAA / ADA / Privacy Act Gate Locking & Dual-Compartment Separation:
+        Enforces strict HIPAA / ADA / OSHA Gate Locking & Dual-Compartment Separation:
           - If user_agreement_accepted is False or PIN/Key is invalid -> GATE_LOCKED:
               * emergency_medical_ice_card = None (Zero PHI or personal PII exposed on locked screen!)
+              * emergency_procedures_muster = None
               * credit_report = None
               * employer_internal_records = None
               * proof_of_id_rows = None
-          - If viewer_role == "EMPLOYEE" (Valid Employee PIN):
+          - Path A (viewer_role == "EMPLOYEE", Valid Employee PIN):
+              * Unseals emergency_procedures_muster (Primary/Secondary Muster Points, Shelter-in-Place Bunker,
+                Nearest AED/Trauma Kit, Evacuation Route, & 5-Step Emergency Action Plan)
               * Unseals emergency_medical_ice_card (Blood Type, Allergies, Medical History, Physician, NOK/ICE)
               * Unseals Employee Personal Credit/Loan Shield & 60-Field Dossier
               * BLOCKS Employer Internal HR/Clearance records & Employer Notes
-          - If viewer_role == "EMPLOYER" (Valid Employer/HR Master Key):
-              * Unseals emergency_medical_ice_card for HR / Emergency Triage (Blood Type, Allergies, Medical History, Physician, NOK/ICE)
+          - Path B (viewer_role == "EMPLOYER", Valid Employer/HR Master Key):
+              * Unseals emergency_medical_ice_card & Muster Accountability for HR / Emergency Triage
+                (Blood Type, Allergies, Medical History, Physician, NOK/ICE, & Assigned Muster Point)
                 and logs the access to worm_hipaa_emergency_triage_log
               * Unseals Employer Proof-of-Identity, Internal HR Records, Employer Notes, & Promotion Shortlist
               * BLOCKS Employee Personal Credit/Loans & Personal Bank/Deed Accounts
@@ -788,6 +856,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 "gate_status": "GATE_LOCKED_HIPAA_AND_USER_AGREEMENT_AUTHORIZATION_REQUIRED",
                 "viewer_role": viewer_role,
                 "emergency_medical_ice_card": None,
+                "emergency_procedures_muster": None,
                 "credit_report": None,
                 "employer_internal_records": None,
                 "employer_personnel_notes": None,
@@ -847,6 +916,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     "gate_status": "GATE_DENIED_INVALID_EMPLOYEE_PERSONAL_PIN",
                     "viewer_role": "EMPLOYEE",
                     "emergency_medical_ice_card": None,
+                    "emergency_procedures_muster": None,
                     "credit_report": None,
                     "employer_internal_records": None,
                     "employer_personnel_notes": None,
@@ -857,20 +927,28 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 db_path=db_file,
                 employee_id=person["employee_id"],
                 employee_name=person["full_name"],
-                accessor_role="EMPLOYEE_SELF_VAULT_ACCESS",
+                accessor_role="PATH_A_EMPLOYEE_SELF_VAULT_AND_MUSTER_SOP",
                 access_purpose=emergency_purpose,
             )
             cred = self.evaluate_credit_and_loan_activity(credit_freeze_locked=credit_freeze_locked)
             return {
                 "gate_open": True,
-                "gate_status": "EMPLOYEE_PERSONAL_SOVEREIGN_VAULT_OPEN",
+                "gate_status": "PATH_A_EMPLOYEE_PERSONAL_VAULT_AND_MUSTER_SOP_OPEN",
                 "viewer_role": "EMPLOYEE",
                 "privacy_notice": (
-                    "EMPLOYEE PERSONAL COMPARTMENT ACTIVE: Your Medical History, Allergies, Blood Type, NOK/ICE Contacts, "
-                    "60-Field Dossier, and 7-Channel Credit/Loan Shield are unsealed. Your Employer/HR is strictly blocked "
-                    "from viewing your personal credit or loan telemetry."
+                    "PATH A (EMPLOYEE PERSONAL COMPARTMENT) ACTIVE: Your Assigned Muster Points, 5-Step Emergency "
+                    "Evacuation Procedures, Medical History/Allergies/Blood Type, NOK/ICE Contacts, 60-Field Dossier, "
+                    "and 7-Channel Credit/Loan Shield are unsealed. Employer/HR is 100% blocked from your credit/loans."
                 ),
                 "emergency_medical_ice_card": med_ice,
+                "emergency_procedures_muster": {
+                    "primary_muster_point": med_ice["primary_muster_point"],
+                    "secondary_muster_point": med_ice["secondary_muster_point"],
+                    "shelter_in_place_bunker": med_ice["shelter_in_place_bunker"],
+                    "nearest_aed_trauma_kit": med_ice["nearest_aed_trauma_kit"],
+                    "evacuation_route_and_warden": med_ice["evacuation_route_and_warden"],
+                    "emergency_procedures_rows": med_ice["emergency_procedures_rows"],
+                },
                 "hipaa_audit_seal": hipaa_log["worm_hipaa_sha256"],
                 "credit_report": cred,
                 "employer_internal_records": None,
@@ -886,6 +964,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     "gate_status": "GATE_DENIED_INVALID_EMPLOYER_HR_MASTER_KEY",
                     "viewer_role": "EMPLOYER",
                     "emergency_medical_ice_card": None,
+                    "emergency_procedures_muster": None,
                     "credit_report": None,
                     "employer_internal_records": None,
                     "employer_personnel_notes": None,
@@ -896,7 +975,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 db_path=db_file,
                 employee_id=person["employee_id"],
                 employee_name=person["full_name"],
-                accessor_role="EMPLOYER_HR_EMERGENCY_AND_VETTING_AUTHORITY",
+                accessor_role="PATH_B_EMPLOYER_HR_EMERGENCY_MEDICAL_AND_MUSTER_AUTHORITY",
                 access_purpose=emergency_purpose,
             )
             employer_allowed_rows = [
@@ -905,15 +984,23 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             ]
             return {
                 "gate_open": True,
-                "gate_status": "EMPLOYER_HR_AND_EMERGENCY_MEDICAL_ICE_VAULT_OPEN",
+                "gate_status": "PATH_B_EMPLOYER_HR_AND_EMERGENCY_MEDICAL_ICE_VAULT_OPEN",
                 "viewer_role": "EMPLOYER",
                 "privacy_notice": (
-                    "EMPLOYER / HR COMPARTMENT ACTIVE: Unsealed Employee Emergency Medical History, Allergies, Blood Type, "
-                    "Primary Physician, & NOK/ICE Triage Packet (Logged to HIPAA WORM Audit Table), plus Unalterable 60-Field "
-                    "Proof-of-Identity, Employer Notes, & Promotion Shortlist. [PRIVACY WALL ENFORCED: Employee Personal "
-                    "Credit Bureaus, Personal Loans, and Personal Financial Accounts Remain 100% Blocked]."
+                    "PATH B (EMPLOYER / HR COMPARTMENT) ACTIVE: Unsealed Employee Emergency Medical History, Allergies, "
+                    "Blood Type, Primary Physician, NOK/ICE Triage Packet, & Assigned Muster Zone (Logged to HIPAA WORM "
+                    "Audit Table), plus 60-Field Proof-of-Identity, Employer Notes, & Promotion Shortlist. "
+                    "[PRIVACY WALL ENFORCED: Employee Personal Credit Bureaus & Loans Remain 100% Blocked]."
                 ),
                 "emergency_medical_ice_card": med_ice,
+                "emergency_procedures_muster": {
+                    "primary_muster_point": med_ice["primary_muster_point"],
+                    "secondary_muster_point": med_ice["secondary_muster_point"],
+                    "shelter_in_place_bunker": med_ice["shelter_in_place_bunker"],
+                    "nearest_aed_trauma_kit": med_ice["nearest_aed_trauma_kit"],
+                    "evacuation_route_and_warden": med_ice["evacuation_route_and_warden"],
+                    "emergency_procedures_rows": med_ice["emergency_procedures_rows"],
+                },
                 "hipaa_audit_seal": hipaa_log["worm_hipaa_sha256"],
                 "credit_report": None,
                 "employer_internal_records": person["employer_internal_records"],
@@ -930,6 +1017,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "gate_status": "GATE_LOCKED_HIPAA_PROTECTED_SELECT_ROLE_TO_UNSEAL",
             "viewer_role": viewer_role,
             "emergency_medical_ice_card": None,
+            "emergency_procedures_muster": None,
             "credit_report": None,
             "employer_internal_records": None,
             "employer_personnel_notes": None,
@@ -941,7 +1029,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
             title="60-Field Atomic Personnel Dossier, NOK/ICE, Promotion Shortlist, & Credit Shield",
-            version="7.1.0",
+            version="7.2.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,

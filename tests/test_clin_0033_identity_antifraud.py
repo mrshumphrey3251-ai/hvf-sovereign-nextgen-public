@@ -17,7 +17,7 @@ def run_clin_0033_tests() -> None:
     shield = SovereignIdentityAntiFraudShield()
     manifest = reg.register(shield)
     assert manifest.clin_number == "CLIN 0033"
-    assert manifest.version == "7.1.0"
+    assert manifest.version == "7.2.0"
     assert manifest.per_node_annual_gov_usd == 95000
     assert manifest.compatible_host_merkle_root == FROZEN_EBONY_MERKLE_ROOT
 
@@ -130,8 +130,12 @@ def run_clin_0033_tests() -> None:
         g_emp = shield.open_compartment_gate(rk, "EMPLOYEE", True, p_pin, artifacts_dir)
         assert g_emp["gate_open"] is True and g_emp["credit_report"] is not None and g_emp["employer_personnel_notes"] is None
         assert g_emp["emergency_medical_ice_card"] is not None and "medical_history_detailed" in g_emp["emergency_medical_ice_card"]
+        assert g_emp["emergency_procedures_muster"] is not None and len(g_emp["emergency_procedures_muster"]["emergency_procedures_rows"]) == 5
+        assert g_emp["emergency_medical_ice_card"] is not None and "medical_history_detailed" in g_emp["emergency_medical_ice_card"]
         g_empr = shield.open_compartment_gate(rk, "EMPLOYER", True, "EMPLOYER-MASTER-1AHA8", artifacts_dir)
         assert g_empr["gate_open"] is True and g_empr["credit_report"] is None and g_empr["employer_personnel_notes"] is not None
+        assert g_empr["emergency_medical_ice_card"] is not None and "allergies_detailed" in g_empr["emergency_medical_ice_card"]
+        assert g_empr["emergency_procedures_muster"] is not None
         assert g_empr["emergency_medical_ice_card"] is not None and "allergies_detailed" in g_empr["emergency_medical_ice_card"]
 
     added_note = shield.append_employer_personnel_note(
