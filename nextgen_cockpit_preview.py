@@ -282,34 +282,50 @@ def render_nextgen_dashboard() -> None:
         )
 
     with tabs[7]:
-        st.markdown("### `WP-7` / `CLIN 0033`: Sovereign Identity, SSN/DOB, Credit Bureau, & Loan Fraud Sentinel")
+        st.markdown("### `WP-7` / `CLIN 0033`: 16-Factor Sovereign Identity, SSN/DOB, Biometric, Credit Bureau, Loan, Deed, & ID Access Shield")
         id1, id2, id3, id4 = st.columns(4)
-        op_name   = id1.text_input("Protected Principal / Operator:", value="JEFFERY HUMPHREY (CEO & ARCHITECT)", key="ng_c33_op")
-        ssn_in    = id2.text_input("SSN (Auto-Masked in Memory):", value="999-00-1234", type="password", key="ng_c33_ssn")
-        dob_in    = id3.text_input("Date of Birth (Auto-Masked):", value="1975-08-15", type="password", key="ng_c33_dob")
-        freeze_on = id4.checkbox("Enforce Hard Credit & Loan Freeze Lock", value=True, key="ng_c33_frz")
+        op_name   = id1.text_input("1. Protected Principal / Operator:", value="JEFFERY HUMPHREY (CEO & ARCHITECT)", key="ng_c33_op")
+        ssn_in    = id2.text_input("2. SSN (Auto-Masked XXX-XX-last4):", value="999-00-1234", type="password", key="ng_c33_ssn")
+        dob_in    = id3.text_input("3. Date of Birth (Masked XXXX-XX-DD):", value="1975-08-15", type="password", key="ng_c33_dob")
+        freeze_on = id4.checkbox("Enforce 7-Channel Credit, Loan, Deed & SIM Freeze", value=True, key="ng_c33_frz")
 
-        pii_r  = e33.scan_pii_and_biometric_darkweb_feed(raw_ssn=ssn_in, raw_dob=dob_in)
-        cred_r = e33.evaluate_credit_and_loan_activity(credit_freeze_locked=freeze_on)
-        exp33  = e33.generate_wp7_antifraud_dossier(artifacts_dir, operator_name=op_name, raw_ssn=ssn_in, raw_dob=dob_in, credit_freeze_locked=freeze_on)
+        id5, id6, id7, id8 = st.columns(4)
+        realid_in = id5.text_input("4. State REAL-ID / Driver Lic Serial:", value="OK-REALID-1AHA8-7741", key="ng_c33_dl")
+        pass_in   = id6.text_input("5. U.S. Passport / DoD CAC EDIPI:", value="US-PASS-558912044", key="ng_c33_pass")
+        smt_in    = id7.text_input("6. Physical Traits (Eyes/Height/SMT):", value="EYES:BRN|HGT:72IN|SMT:NONE-VERIFIED", key="ng_c33_smt")
+        unfrz_req = id8.text_input("7. Generate CEO Unfreeze Token For Inquiry ID:", value="REQ-HVF-EQUIP-2026-001", key="ng_c33_req")
+
+        exp33  = e33.generate_wp7_antifraud_dossier(
+            artifacts_dir,
+            operator_name=op_name,
+            raw_ssn=ssn_in,
+            raw_dob=dob_in,
+            physical_id_number=realid_in,
+            passport_number=pass_in,
+            physical_smt_features=smt_in,
+            credit_freeze_locked=freeze_on,
+        )
+        pii_r  = exp33["pii_report"]
+        cred_r = exp33["credit_report"]
+        ceo_tk = e33.generate_ceo_credit_unfreeze_token(unfrz_req)
 
         f1, f2, f3, f4 = st.columns(4)
         f1.metric("Masked SSN / DOB Bind", f"{pii_r['masked_ssn']} | {pii_r['masked_dob']}", "0 Plaintext Digits Stored")
-        f2.metric("PII & Biometric Vectors", f"{pii_r['clean_attributes']} / {pii_r['attributes_monitored']} Clean", "1 Honeypot Quarantined")
-        f3.metric("Fraudulent Loans Blocked", f"{cred_r['fraudulent_loans_and_pulls_blocked']} Blocked", "Equifax/Experian/TransUnion/UCC-1")
-        f4.metric("Physical ID Access Events", f"{len(exp33['access_events'])} Chained", f"Principal: {op_name[:18]}...")
+        f2.metric("16-Factor Identity Matrix", f"{pii_r['clean_attributes']} / {pii_r['core_identifying_features_count']} Clean", "+1 Dark-Web Canary Quarantined")
+        f3.metric("Loans/Deeds/SIMs Blocked", f"{cred_r['fraudulent_loans_and_pulls_blocked']} / {cred_r['total_inquiries_monitored']} Blocked", "Equifax/Experian/TU/Chex/Deed/SIM")
+        f4.metric("One-Time CEO Unfreeze Token", ceo_tk[:14] + "...", f"For {unfrz_req}")
 
-        st.markdown("#### 1. Credit Bureau, Bank/SBA Loan, & Commercial UCC-1 Lien Interceptor (`FCRA 605B` & `UCC Art. 9`)")
+        st.markdown("#### 1. 7-Channel Credit Bureau, SBA/Bank Loan, County Deed Title, ChexSystems/ACH, & SIM-Swap Interceptor")
         st.dataframe(cred_r["credit_loan_rows"], width="stretch", hide_index=True)
 
-        st.markdown("#### 2. 8-Factor Zero-Knowledge PII & Biometric Dark-Web Monitor (`SSN + DOB + REAL-ID + CAC + Biometric + UEI`)")
+        st.markdown("#### 2. 16-Factor Zero-Knowledge Personal, Physical (SMT), 3-Modal Biometric, & Asset Dark-Web Monitor")
         st.dataframe(pii_r["attribute_rows"], width="stretch", hide_index=True)
 
-        st.markdown("#### 3. Physical ID Sign-In / Sign-Out WORM Audit Ledger & Anti-Replay Gate")
+        st.markdown("#### 3. Physical ID & 3-Modal Biometric Sign-In / Sign-Out WORM Audit Ledger & Anti-Replay Gate")
         st.dataframe(exp33["access_events"], width="stretch", hide_index=True)
 
         st.download_button(
-            label=f"{ico_dl} Download WP-7 Sovereign Identity, SSN/DOB, Credit, & Loan Shield PDF",
+            label=f"{ico_dl} Download WP-7 16-Factor Identity, SSN/DOB, Biometric, Credit, Loan & Deed Shield PDF",
             data=pathlib.Path(exp33["pdf_path"]).read_bytes(),
             file_name=pathlib.Path(exp33["pdf_path"]).name,
             mime="application/pdf",
