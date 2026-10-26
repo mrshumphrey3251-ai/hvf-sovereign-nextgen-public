@@ -25,7 +25,7 @@ IDENTITY_VAULT_PEPPER = "PUBLIC_IDENTITY_CREDIT_PEPPER_REDACTED_DFARS_252_227_70
 
 class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     """
-    WP-7 / CLIN 0033 v7.5 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
+    WP-7 / CLIN 0033 v7.6 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
       1. 42 Atomic Application Fields (Strictly 1 single response per box; zero pipe-concatenated fields)
          covering Legal Identity, Vital Stats, Physical Description, Job/I-9/Clearance, Government IDs,
          Next of Kin (NOK), In Case of Emergency (ICE), 3-Modal Biometrics, and Financial/Asset Locks.
@@ -947,6 +947,103 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "all_evaluated_rows": all_evaluated_rows,
         }
 
+    def get_saved_user_60field_values(
+        self,
+        out_dir: pathlib.Path,
+        roster_key: str | None = None,
+    ) -> Dict[str, str]:
+        """
+        Returns the 60 atomic field values currently pre-populated or saved by the user/employee
+        so the 60-Field Interactive Input Form displays their exact current values.
+        """
+        base_vals = dict(self.DEFAULT_ATOMIC_42_VALUES)
+        if roster_key and roster_key in self.PERSONNEL_EMERGENCY_ROSTER:
+            person = self.PERSONNEL_EMERGENCY_ROSTER[roster_key]
+            name_parts = person["full_name"].split()
+            base_vals.update({
+                "f01_first_name": name_parts[0] if len(name_parts) >= 1 else "JEFFERY",
+                "f02_middle_name": name_parts[1] if len(name_parts) >= 3 else "SOVEREIGN",
+                "f03_last_name": name_parts[-1] if len(name_parts) >= 2 else "HUMPHREY",
+                "f15_primary_phone": person["direct_phone"],
+                "f16_email_address": person["email"].upper(),
+                "f21_job_title": person["role_title"].upper(),
+                "f22_department_unit": person["department"].upper(),
+                "f28_nok_full_name": person["nok_full_name"].upper(),
+                "f29_nok_relationship": person["nok_relationship"].upper(),
+                "f30_nok_phone": person["nok_phone"],
+                "f31_nok_address": person["nok_address"].upper(),
+                "f32_ice_full_name": person["ice_full_name"].upper(),
+                "f33_ice_relationship": person["ice_relationship"].upper(),
+                "f34_ice_phone": person["ice_phone"],
+                "f35_ice_medical_blood": person["blood_type_and_medical"],
+            })
+            cand_m = self.CANDIDATE_CAREER_AND_TRAINING_MATRIX.get(person["employee_id"])
+            if cand_m:
+                base_vals.update({
+                    "f43_prev_addr1_street": cand_m["prev_address_1"].upper(),
+                    "f47_prev_addr2_summary": cand_m["prev_address_2"].upper(),
+                    "f49_prior_emp1_org": cand_m["prior_job_1"].upper(),
+                    "f53_prior_emp2_org_role": cand_m["prior_job_2"].upper(),
+                    "f54_total_experience_yrs": str(cand_m["total_experience_yrs"]),
+                    "f55_highest_education": cand_m["highest_education"].upper(),
+                    "f56_academy_exam_score": str(cand_m["academy_exam_score_pct"]),
+                    "f57_completed_hvf_courses": cand_m["completed_hvf_modules"].upper(),
+                    "f58_active_certifications": cand_m["active_certifications"].upper(),
+                    "f59_training_hours_total": str(cand_m["training_hours"]),
+                    "f60_company_eval_rating": str(cand_m["company_eval_rating"]),
+                })
+        state = self.load_or_init_vault_lock_state(out_dir)
+        emp_id = self.PERSONNEL_EMERGENCY_ROSTER[roster_key]["employee_id"] if (roster_key and roster_key in self.PERSONNEL_EMERGENCY_ROSTER) else "EMP-001"
+        saved_by_emp = state.get("saved_profiles_by_emp", {})
+        if emp_id in saved_by_emp and isinstance(saved_by_emp[emp_id], dict):
+            base_vals.update(saved_by_emp[emp_id])
+        return base_vals
+
+    def submit_user_60field_onboarding_application(
+        self,
+        out_dir: pathlib.Path,
+        roster_key: str,
+        profile_60_inputs: Dict[str, str],
+        submitted_by_role: str = "EMPLOYEE_SELF_SERVICE_SUBMISSION",
+        submission_reason: str = "USER_60FIELD_ONBOARDING_AND_DOSSIER_SUBMISSION",
+    ) -> Dict[str, Any]:
+        """
+        Saves the user's 60-field input form values into persistent vault state, seals the
+        revision into the WORM SQLite ledger (worm_identity_profile_revisions), and locks
+        the updated Proof-of-Identity record.
+        """
+        state = self.load_or_init_vault_lock_state(out_dir)
+        person = self.PERSONNEL_EMERGENCY_ROSTER.get(
+            roster_key,
+            next(iter(self.PERSONNEL_EMERGENCY_ROSTER.values())),
+        )
+        emp_id = person["employee_id"]
+        saved_by_emp = state.get("saved_profiles_by_emp", {})
+        clean_inputs = {k: str(v).strip() for k, v in profile_60_inputs.items()}
+        saved_by_emp[emp_id] = clean_inputs
+        state["saved_profiles_by_emp"] = saved_by_emp
+        state["is_locked"] = True
+        state["revision_number"] = int(state.get("revision_number", 1)) + 1
+        state["last_approved_by"] = submitted_by_role
+        state["last_change_reason"] = submission_reason
+        (out_dir / "wp7_personnel_vault_state.json").write_text(json.dumps(state, indent=2), encoding="utf-8")
+
+        dossier_res = self.generate_wp7_antifraud_dossier(
+            out_dir,
+            raw_ssn=clean_inputs.get("f05_ssn", "999-00-1234"),
+            raw_dob=clean_inputs.get("f06_dob", "1975-08-15"),
+            operator_name=f"{clean_inputs.get('f01_first_name', 'JEFFERY')} {clean_inputs.get('f02_middle_name', 'SOVEREIGN')} {clean_inputs.get('f03_last_name', 'HUMPHREY')}",
+            update_reason=f"{submitted_by_role}: {submission_reason}",
+            profile_42_overrides=clean_inputs,
+        )
+        return {
+            "submitted": True,
+            "employee_id": emp_id,
+            "revision_number": state["revision_number"],
+            "composite_60field_seal": dossier_res["pii_report"]["composite_42field_application_seal"],
+            "worm_seal": dossier_res["worm_seal"],
+        }
+
     def open_compartment_gate(
         self,
         roster_key: str,
@@ -1034,6 +1131,8 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 "f59_training_hours_total": str(cand_m["training_hours"]),
                 "f60_company_eval_rating": str(cand_m["company_eval_rating"]),
             })
+        saved_vals = self.get_saved_user_60field_values(out_dir, roster_key)
+        person_overrides.update(saved_vals)
         app_eval = self.evaluate_atomic_42_application(person_overrides)
         db_file = out_dir / "wp7_identity_credit_worm_ledger.db"
 
@@ -1157,7 +1256,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
             title="60-Field Atomic Personnel Dossier, NOK/ICE, Promotion Shortlist, & Credit Shield",
-            version="7.5.0",
+            version="7.6.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,
@@ -2024,7 +2123,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "# HUMPHREY VIRTUAL FARMS LLC // WP-7: 42-FIELD PERSONNEL ONBOARDING, NOK/ICE, PROOF-OF-IDENTITY, & CREDIT SHIELD",
             "**Entity:** Humphrey Virtual Farms LLC (`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`)",
             "**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect",
-            f"**Plug-In Module:** `CLIN 0033 v7.5 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
+            f"**Plug-In Module:** `CLIN 0033 v7.6 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
             f"**Host Ebony Baseline Merkle Root:** `{FROZEN_EBONY_MERKLE_ROOT}`",
             "",
             "---",

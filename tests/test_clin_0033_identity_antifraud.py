@@ -17,7 +17,7 @@ def run_clin_0033_tests() -> None:
     shield = SovereignIdentityAntiFraudShield()
     manifest = reg.register(shield)
     assert manifest.clin_number == "CLIN 0033"
-    assert manifest.version == "7.5.0"
+    assert manifest.version == "7.6.0"
     assert manifest.per_node_annual_gov_usd == 95000
     assert manifest.compatible_host_merkle_root == FROZEN_EBONY_MERKLE_ROOT
 
@@ -82,7 +82,7 @@ def run_clin_0033_tests() -> None:
     assert "In Case of Emergency (ICE)" in md_text
     assert pdf_bytes.startswith(b"%PDF-1.4")
     assert b"**" not in pdf_bytes
-    assert b"CLIN 0033 v7.5" in pdf_bytes
+    assert b"CLIN 0033 v7.6" in pdf_bytes
     assert b"WORM WP-7" in pdf_bytes
     assert b"%%EOF" in pdf_bytes
 
@@ -144,6 +144,19 @@ def run_clin_0033_tests() -> None:
         assert g_empr["emergency_procedures_muster"] is not None
         assert g_empr["emergency_medical_ice_card"] is not None and "allergies_detailed" in g_empr["emergency_medical_ice_card"]
 
+    # Verify interactive 60-field user input submission persists and updates dossier
+    saved_60 = shield.get_saved_user_60field_values(artifacts_dir, roster_keys[0])
+    assert len(saved_60) == 60
+    saved_60["f58_active_certifications"] = "CAGE_1AHA8_MASTER_AND_STAGE_14D_USER_INPUT_VERIFIED"
+    sub_out = shield.submit_user_60field_onboarding_application(
+        out_dir=artifacts_dir,
+        roster_key=roster_keys[0],
+        profile_60_inputs=saved_60,
+        submitted_by_role="PATH_A_EMPLOYEE_EMP-001",
+    )
+    assert sub_out["submitted"] is True
+    reloaded_60 = shield.get_saved_user_60field_values(artifacts_dir, roster_keys[0])
+    assert reloaded_60["f58_active_certifications"] == "CAGE_1AHA8_MASTER_AND_STAGE_14D_USER_INPUT_VERIFIED"
     added_note = shield.append_employer_personnel_note(
         db_path=db_file,
         employee_id="EMP-001",
@@ -178,4 +191,4 @@ def run_clin_0033_tests() -> None:
 
 if __name__ == "__main__":
     run_clin_0033_tests()
-    print("[100% PASS] CLIN 0033 (WP-7 v7.5) 60-Field Dossier, HIPAA Gate, Muster SOPs, Promotion Shortlist, & 6-Table (12-Trigger) WORM Vault Passed!")
+    print("[100% PASS] CLIN 0033 (WP-7 v7.6) 60-Field Dossier, HIPAA Gate, Muster SOPs, Promotion Shortlist, & 6-Table (12-Trigger) WORM Vault Passed!")
