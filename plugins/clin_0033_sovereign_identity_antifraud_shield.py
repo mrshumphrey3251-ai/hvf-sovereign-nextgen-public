@@ -2,7 +2,7 @@
 HUMPHREY VIRTUAL FARMS LLC // CLIN 0033 (WP-7 v5.0): 42-FIELD ATOMIC PERSONNEL ONBOARDING, NOK/ICE, DIGITAL PROOF-OF-IDENTITY, & EMPLOYER LOCK VAULT
 Entity: Humphrey Virtual Farms LLC (CAGE: 1AHA8 | SAM.gov UEI: S1M4ENLHTDH5)
 Authority: Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect
-Work Package: WP-7 (42-Field Atomic Personnel Application, NOK/ICE Emergency Ledger, Unalterable Proof-of-Identity Lock, & 7-Channel Credit/Loan Shield)
+Work Package: WP-7 (60-Field Atomic Personnel Application, NOK/ICE Emergency Ledger, Unalterable Proof-of-Identity Lock, & 7-Channel Credit/Loan Shield)
 Host Compatibility: Frozen Project Ebony TRL 7 Baseline (cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e18e9150949a)
 """
 from __future__ import annotations
@@ -700,7 +700,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
           - If user_agreement_accepted is False -> GATE_LOCKED_AGREEMENT_REQUIRED
           - If viewer_role == "EMPLOYEE":
               Verifies Employee Personal PIN.
-              Opens Employee Personal Credit/Loan Shield, 42-Field Proof-of-Identity, & NOK/ICE.
+              Opens Employee Personal Credit/Loan Shield, 60-Field Proof-of-Identity, & NOK/ICE.
               BLOCKS Employer Internal HR/Clearance records (employer_internal_records = None).
           - If viewer_role == "EMPLOYER":
               Verifies Employer Master Key.
@@ -779,7 +779,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 "viewer_role": "EMPLOYEE",
                 "privacy_notice": (
                     "EMPLOYEE PERSONAL COMPARTMENT ACTIVE: You have full visibility into your 7-Channel Credit Bureau, "
-                    "Loan, Deed, & SIM-Swap Shield and your 42-Field Proof-of-Identity. Your Employer is strictly blocked "
+                    "Loan, Deed, & SIM-Swap Shield and your 60-Field Proof-of-Identity. Your Employer is strictly blocked "
                     "from viewing your personal credit or loan telemetry."
                 ),
                 "credit_report": cred,
@@ -836,7 +836,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         super().__init__(
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
-            title="42-Field Atomic Personnel Application, NOK/ICE, Proof-of-Identity Lock, & Credit Shield",
+            title="60-Field Atomic Personnel Dossier, NOK/ICE, Promotion Shortlist, & Credit Shield",
             version="7.0.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
@@ -1246,7 +1246,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         else:
             self._used_nonces.add(hardware_liveness_nonce)
             access_decision = f"AUTHORIZED_{action}_RECORDED"
-            reason = "42_FIELD_ID_SSN_DOB_AND_BIOMETRIC_LIVENESS_VERIFIED"
+            reason = "60_FIELD_ID_SSN_DOB_AND_BIOMETRIC_LIVENESS_VERIFIED"
 
         worm_entry_hash = hmac.new(
             IDENTITY_VAULT_PEPPER.encode("utf-8"),
@@ -1670,7 +1670,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         worm_seal = hashlib.sha256(seal_str.encode("utf-8")).hexdigest()
 
         if ENCLAVE_MODE == "PRIVATE":
-            pepper_desc = f"Active Sovereign 42-Field Pepper ({IDENTITY_VAULT_PEPPER[:18]}...)"
+            pepper_desc = f"Active Sovereign 60-Field Pepper ({IDENTITY_VAULT_PEPPER[:18]}...)"
         else:
             pepper_desc = "[REDACTED_42FIELD_PII_PEPPER_DFARS_252_227_7018]"
 
@@ -1678,16 +1678,16 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "# HUMPHREY VIRTUAL FARMS LLC // WP-7: 42-FIELD PERSONNEL ONBOARDING, NOK/ICE, PROOF-OF-IDENTITY, & CREDIT SHIELD",
             "**Entity:** Humphrey Virtual Farms LLC (`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`)",
             "**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect",
-            f"**Plug-In Module:** `CLIN 0033 v5.0 (WP-7 42-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
+            f"**Plug-In Module:** `CLIN 0033 v5.0 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
             f"**Host Ebony Baseline Merkle Root:** `{FROZEN_EBONY_MERKLE_ROOT}`",
             "",
             "---",
             "",
-            "## 1. Unalterable 42-Field Personnel Proof-of-Identity, Employment, & NOK/ICE Application Dossier",
+            "## 1. Unalterable 60-Field Personnel Proof-of-Identity, Employment, & NOK/ICE Application Dossier",
             f"* **Verified Applicant / Employee:** `{pii_report['full_legal_name']}` | **Reason:** `{update_reason}`",
             f"* **Masked SSN & DOB Binding:** `{pii_report['masked_ssn']}` | `{pii_report['masked_dob']}` (`0` Plaintext Sensitive Digits Stored)",
-            f"* **Atomic Onboarding Fields Sealed:** `{pii_report['atomic_fields_count']} / 42` (`100% Atomic 1-Response-Per-Box`) + `1 Active Dark-Web Canary`",
-            f"* **Composite 42-Field Proof-of-Identity Seal (HMAC-SHA256):** `{pii_report['composite_42field_application_seal']}`",
+            f"* **Atomic Onboarding Fields Sealed:** `{pii_report['atomic_fields_count']} / 60` (`100% Atomic 1-Response-Per-Box`) + `1 Active Dark-Web Canary`",
+            f"* **Composite 60-Field Proof-of-Identity Seal (HMAC-SHA256):** `{pii_report['composite_42field_application_seal']}`",
             f"* **Cryptographic Pepper Binding:** `{pepper_desc}`",
         ]
         for arow in pii_report["attribute_rows"]:

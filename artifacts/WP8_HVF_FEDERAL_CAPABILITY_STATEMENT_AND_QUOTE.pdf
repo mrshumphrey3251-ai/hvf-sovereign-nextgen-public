@@ -37,8 +37,8 @@ BT
 (  - 36.75ns SiC MOSFET Hardware Interlock \(CLIN 0006 & CLIN 0028\): 18.50ns + 12.00ns +) Tj T*
 (    6.25ns = 36.75ns physical actuator cutoff \(0.0551 um stop at 1,500 mm/s vs 225.0 mm) Tj T*
 (    legacy PLC\).) Tj T*
-(  - 42-Field Proof-of-Identity, Emergency ICE Triage, & Dual-Compartment Credit Shield) Tj T*
-(    \(CLIN 0033 v6.1\): 0-click Emergency ICE Triage Roster, User Agreement Gate, Employee) Tj T*
+(  - 60-Field Proof-of-Identity, Emergency ICE Triage, & Dual-Compartment Credit Shield) Tj T*
+(    \(CLIN 0033 v7.0\): 0-click Emergency ICE Triage Roster, User Agreement Gate, Employee) Tj T*
 (    Personal Credit/Loan Compartment \(hidden from Employer\), & Employer Internal) Tj T*
 (    HR/I-9/Clearance Compartment \(unalterable lock\).) Tj T*
 (  - Sovereign Field Academy \(CLIN 0011 & CLIN 0032\): 1,420 verified exam questions \(800) Tj T*
@@ -61,7 +61,7 @@ BT
 (    $24,500.00) Tj T*
 (  - CLIN 0028 \(WP-2: 36.75ns SiC MOSFET Breaker Board & BOM\): $65,000.00 x 1 Node\(s\) =) Tj T*
 (    $65,000.00) Tj T*
-(  - CLIN 0033 \(WP-7: 42-Field Proof-of-Identity, Emergency ICE, & Dual-Compartment) Tj T*
+(  - CLIN 0033 \(WP-7: 60-Field Proof-of-Identity, Emergency ICE, & Dual-Compartment) Tj T*
 (    Credit Shield\): $95,000.00 x 1 Node\(s\) = $95,000.00) Tj T*
 () Tj T*
 (========================================================================================) Tj T*

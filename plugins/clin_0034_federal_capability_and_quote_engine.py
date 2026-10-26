@@ -46,7 +46,7 @@ class FederalCapabilityAndQuoteEngine(SovereignExpansionModule):
         "CLIN 0030 (WP-4: UAS Optical GLI & Title 61 GIS Boundary Engine)": 75000,
         "CLIN 0031 (WP-5: Command Watch-Floor Bitwise RBAC & Shift PDF)": 45000,
         "CLIN 0032 (WP-6: DoD RMF / eMASS ATO & 50-Seat Cohort Provisioner)": 125000,
-        "CLIN 0033 (WP-7: 42-Field Proof-of-Identity, Emergency ICE, & Dual-Compartment Credit Shield)": 95000,
+        "CLIN 0033 (WP-7: 60-Field Proof-of-Identity, Emergency ICE, & Dual-Compartment Credit Shield)": 95000,
         "CLIN 0034 (WP-8: Federal Capability Statement & FFP Quote Compiler)": 30000,
         "CLIN 1004-A (Turnkey 26-Module Single-Node TOC Enclave Bundle)": 895000,
         "CLIN 1004-B (25-Node Military Base / Enterprise Fleet License)": 2450000,
@@ -79,7 +79,7 @@ class FederalCapabilityAndQuoteEngine(SovereignExpansionModule):
             selected_clin_keys = [
                 "CLIN 0001 (Sovereign Command Base Entry Pilot - 1 Node)",
                 "CLIN 0028 (WP-2: 36.75ns SiC MOSFET Breaker Board & BOM)",
-                "CLIN 0033 (WP-7: 42-Field Proof-of-Identity, Emergency ICE, & Dual-Compartment Credit Shield)",
+                "CLIN 0033 (WP-7: 60-Field Proof-of-Identity, Emergency ICE, & Dual-Compartment Credit Shield)",
             ]
 
         line_items: List[Dict[str, Any]] = []
@@ -135,7 +135,7 @@ class FederalCapabilityAndQuoteEngine(SovereignExpansionModule):
             "I am proud to announce that alongside our frozen TRL 7 Project Ebony Operating Console (DoD CDAO Tradewinds Dockets 10-26-3952 & 9-26-3703), "
             "we have completed and sealed our Post-Award TRL 8/9 Expansion Forge (WP-1 through WP-8 / CLIN 0027 - CLIN 0034).\n\n"
             "1. 36.75ns SiC MOSFET Kinetic Guillotine (CLIN 0006 & CLIN 0028): Stops a 1,500 mm/s robotic arm in 0.0551 microns (vs. 225.0 mm on a 150ms PLC).\n"
-            "2. Zero-Second Emergency ICE Triage & Dual-Compartment Identity/Credit Vault (CLIN 0033 v6.1): Provides 0-click Next-of-Kin (NOK) and ICE medical triage "
+            "2. Zero-Second Emergency ICE Triage & Dual-Compartment Identity/Credit Vault (CLIN 0033 v7.0): Provides 0-click Next-of-Kin (NOK) and ICE medical triage "
             "during site emergencies, while locking Employee personal credit/loan protection and Employer internal HR/I-9/clearance records into mutually isolated cryptographic compartments.\n"
             "3. 100% Air-Gapped Bare-Metal Sovereignty: 631 Core Modules (Merkle: cc1ee1c8...949a), 83 Core + 8 Next-Gen Unit Test Suites, & 1,420 Field Academy Exam Questions.\n\n"
             "Public Verification Mirrors:\n"
@@ -150,7 +150,7 @@ class FederalCapabilityAndQuoteEngine(SovereignExpansionModule):
             "for the HVF Level-5 Sovereign Command & Control Operating Console (Project Ebony - Tradewinds Dockets 10-26-3952 & 9-26-3703) and our TRL 8/9 Expansion Suite (CLIN 0027 - CLIN 0034).\n\n"
             "- Frozen TRL 7 Core Baseline (Port 8501): 631 Compiled Modules, 83 Passing Test Suites, 54 WORM SQLite Tables, 36.75ns SiC MOSFET Hardware Interlock, & 1,420 Field Academy Questions.\n"
             "- Pre-Engineered TRL 8/9 Expansion Suite (Port 8502): Day-1 License & WAWF Generator (CLIN 0027), 36.75ns SiC Board (CLIN 0028), PLC/60Hz SCADA/J1939 Mapper (CLIN 0029), "
-            "UAS GLI & OK Title 61 GIS (CLIN 0030), Watch-Floor Bitwise RBAC (CLIN 0031), DoD RMF ATO & 50-Seat Academy (CLIN 0032), and 42-Field Proof-of-Identity, Emergency ICE Triage, & Dual-Compartment Credit Shield (CLIN 0033 v6.1).\n\n"
+            "UAS GLI & OK Title 61 GIS (CLIN 0030), Watch-Floor Bitwise RBAC (CLIN 0031), DoD RMF ATO & 50-Seat Academy (CLIN 0032), and 60-Field Proof-of-Identity, Emergency ICE Triage, & Dual-Compartment Credit Shield (CLIN 0033 v7.0).\n\n"
             "Every individual module is licensed per physical hardware node strictly below the $250,000 Simplified Acquisition Threshold (with CLIN 0001 Entry Pilot at $24,500/yr).\n\n"
             "Respectfully,\nJeffery Humphrey -- Founder, CEO, & Principal Sovereign Architect\nHumphrey Virtual Farms LLC | CAGE: 1AHA8 | UEI: S1M4ENLHTDH5 | humphreyvirtualfarm@gmail.com"
         )
@@ -186,7 +186,7 @@ class FederalCapabilityAndQuoteEngine(SovereignExpansionModule):
             "## 1. Core Competencies & Sovereign Technical Differentiators",
             "* **100% Bare-Metal Air-Gapped C2 (`Project Ebony` TRL 7):** `631` compiled Python modules, `83` test suites, `54` WORM SQLite audit tables, `0` cloud dependencies (`>42.5%` 5-year lifecycle cost avoidance).",
             "* **36.75ns SiC MOSFET Hardware Interlock (`CLIN 0006` & `CLIN 0028`):** `18.50ns + 12.00ns + 6.25ns = 36.75ns` physical actuator cutoff (`0.0551 um` stop at `1,500 mm/s` vs `225.0 mm` legacy PLC).",
-            "* **42-Field Proof-of-Identity, Emergency ICE Triage, & Dual-Compartment Credit Shield (`CLIN 0033 v6.1`):** 0-click Emergency ICE Triage Roster, User Agreement Gate, Employee Personal Credit/Loan Compartment (hidden from Employer), & Employer Internal HR/I-9/Clearance Compartment (unalterable lock).",
+            "* **60-Field Proof-of-Identity, Emergency ICE Triage, & Dual-Compartment Credit Shield (`CLIN 0033 v7.0`):** 0-click Emergency ICE Triage Roster, User Agreement Gate, Employee Personal Credit/Loan Compartment (hidden from Employer), & Employer Internal HR/I-9/Clearance Compartment (unalterable lock).",
             "* **Sovereign Field Academy (`CLIN 0011` & `CLIN 0032`):** `1,420` verified exam questions (`800` Ch.1 + `620` Ch.5), `4` offline textbooks, and DoD RMF / NIST 800-53 Rev 5 ATO (`0` CAT I/II/III findings).",
             "",
             "---",

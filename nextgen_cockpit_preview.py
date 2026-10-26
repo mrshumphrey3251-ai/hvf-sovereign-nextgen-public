@@ -613,7 +613,7 @@ def render_nextgen_dashboard() -> None:
             default=[
                 "CLIN 0001 (Sovereign Command Base Entry Pilot - 1 Node)",
                 "CLIN 0028 (WP-2: 36.75ns SiC MOSFET Breaker Board & BOM)",
-                "CLIN 0033 (WP-7: 42-Field Proof-of-Identity, Emergency ICE, & Dual-Compartment Credit Shield)",
+                "CLIN 0033 (WP-7: 60-Field Proof-of-Identity, Emergency ICE, & Dual-Compartment Credit Shield)",
             ],
             key="ng_c34_clins",
         )
