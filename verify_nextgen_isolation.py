@@ -26,6 +26,7 @@ from tests.test_clin_0029_plc_scada_canbus import run_clin_0029_tests
 from tests.test_clin_0030_uas_gli_title61 import run_clin_0030_tests
 from tests.test_clin_0031_watchfloor_rbac_pdf import run_clin_0031_tests
 from tests.test_clin_0032_dod_rmf_ato_academy import run_clin_0032_tests
+from tests.test_nextgen_cockpit_ui import run_nextgen_cockpit_ui_tests
 
 
 def main() -> None:
@@ -44,6 +45,7 @@ def main() -> None:
     run_clin_0030_tests()
     run_clin_0031_tests()
     run_clin_0032_tests()
+    run_nextgen_cockpit_ui_tests()
 
     # Gate 3: Compile all Python files in Next-Gen repo & verify 0 tracked .pyc files
     py_files = sorted(here.rglob("*.py"))
