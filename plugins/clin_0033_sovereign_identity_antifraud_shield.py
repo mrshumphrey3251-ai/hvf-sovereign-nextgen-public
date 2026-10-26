@@ -1,13 +1,14 @@
 """
-HUMPHREY VIRTUAL FARMS LLC // CLIN 0033 (WP-7): 16-FACTOR SOVEREIGN IDENTITY, SSN/DOB, BIOMETRIC, CREDIT, LOAN, DEED, & ID ACCESS SHIELD
+HUMPHREY VIRTUAL FARMS LLC // CLIN 0033 (WP-7 v4.0): FULL-PAGE 16-FACTOR SOVEREIGN IDENTITY, BIOMETRIC, CREDIT, LOAN, DEED, & PROFILE UPDATE SHIELD
 Entity: Humphrey Virtual Farms LLC (CAGE: 1AHA8 | SAM.gov UEI: S1M4ENLHTDH5)
 Authority: Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect
-Work Package: WP-7 (16-Factor Zero-Knowledge Identity Matrix, 7-Channel Credit/Loan/Deed/SIM Interceptor, & Physical ID Sign-In/Sign-Out WORM Ledger)
+Work Package: WP-7 (16-Factor Interactive Identity Matrix, Versioned WORM Profile Updater, 7-Channel Credit/Loan/Deed/SIM Interceptor, & ID Access Ledger)
 Host Compatibility: Frozen Project Ebony TRL 7 Baseline (cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e18e9150949a)
 """
 from __future__ import annotations
 import hashlib
 import hmac
+import json
 import pathlib
 import sqlite3
 from typing import Any, Dict, List
@@ -24,37 +25,40 @@ IDENTITY_VAULT_PEPPER = "PUBLIC_IDENTITY_CREDIT_PEPPER_REDACTED_DFARS_252_227_70
 
 class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     """
-    WP-7 / CLIN 0033 Complete 3-Pillar Identity Security Fortress:
-      Pillar 1 (16-Factor Zero-Knowledge Identifying Feature Matrix):
-        1. SSN (9-Digit Federal Tax ID, masked XXX-XX-last4)
-        2. Date of Birth & Birth Certificate Seal (ISO-8601, masked XXXX-XX-DD)
-        3. Place of Birth & Mother's Maiden Name KBA Vector
-        4. State Driver's License / REAL-ID & PDF417 Barcode Hash
-        5. U.S. Passport Book/Card Number & MRZ Hash
-        6. DoD CAC / FIPS 201 PIV Smartcard 10-Digit EDIPI
-        7. Physical Distinguishing Features (Eye/Height/Scars, Marks, & Tattoos SMT Hash)
-        8. Biometric #1: Fingerprint Minutiae (ISO/IEC 19794-2)
-        9. Biometric #2: Iris & Retinal Vascular Pattern (ISO/IEC 19794-6)
-        10. Biometric #3: 3D Facial Geometry & Voiceprint Liveness Hash
-        11. Real-Estate Home/Land Deed Parcel APN (County Title Lock)
-        12. Bank Routing & Treasury Account (ABA/ACH/SWIFT Wire Lock)
-        13. Mobile SIM / IMEI Carrier Port-Out Lock (Anti-SIM-Swap 2FA Shield)
-        14. Medical / Medicare / Health Insurance Beneficiary ID Lock
-        15. Vehicle / Equipment Chassis VIN Title Lock
-        16. Corporate Federal EIN, SAM.gov UEI (S1M4ENLHTDH5), & CAGE (1AHA8)
-      Pillar 2 (7-Channel Credit Bureau, Bank Loan, Home Deed, ACH, & SIM Interceptor):
-        Monitors Equifax, Experian, TransUnion, ChexSystems/EWS, County Recorder Deeds,
-        SBA/Commercial UCC-1 Liens, and Mobile Carrier Port-Outs under a cryptographic CEO Freeze Lock.
-      Pillar 3 (Physical ID Sign-In / Sign-Out WORM Audit Ledger & Anti-Replay Gate):
-        Records tamper-evident Sign-In and Sign-Out events bound to the 16-factor identity seal.
+    WP-7 / CLIN 0033 v4.0 Complete 4-Pillar Identity Security & Profile Update Fortress:
+      Pillar 1: Full 16-Factor Zero-Knowledge Personal, Physical (SMT), 3-Modal Biometric, & Asset Identity Matrix.
+      Pillar 2: Versioned Cryptographic Profile Update Engine (worm_identity_profile_revisions) allowing operators
+                to update any of the 16+ identifiers while chaining every revision in an immutable WORM SQLite ledger.
+      Pillar 3: 7-Channel Credit Bureau, SBA/Bank Loan, County Deed Title, ChexSystems/ACH, & SIM-Swap Interceptor.
+      Pillar 4: Physical ID & 3-Modal Biometric Sign-In / Sign-Out WORM Audit Ledger & Anti-Replay Gate.
     """
+
+    DEFAULT_16_PROFILE: Dict[str, str] = {
+        "operator_name": "JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)",
+        "raw_ssn": "999-00-1234",
+        "raw_dob": "1975-08-15",
+        "pob_and_maiden_kba": "OKLAHOMA-KBA-SEAL-991",
+        "physical_id_number": "OK-REALID-1AHA8-7741",
+        "passport_number": "US-PASS-558912044",
+        "dod_cac_piv_serial": "CAC-EDIPI-1099482210",
+        "physical_smt_features": "EYES:BRN|HGT:72IN|SMT:NONE-VERIFIED",
+        "fingerprint_minutiae": "BIO-FINGER-ISO19794-2-V1",
+        "iris_vascular_hash": "BIO-IRIS-ISO19794-6-V1",
+        "face_voice_liveness": "BIO-3DFACE-VOICE-LIVENESS-V1",
+        "home_deed_parcel_apn": "OK-APN-DEED-LOCK-44019",
+        "bank_ach_aba_routing": "ABA-103000648-ACH-LOCKED",
+        "mobile_sim_imei_lock": "IMEI-35988109-SIMLOCK-ON",
+        "medical_npi_beneficiary": "MED-SHIELD-ID-88310",
+        "vehicle_fleet_vin": "1HVF882910SOVEREIGN",
+        "corporate_ein_uei": "UEI:S1M4ENLHTDH5|CAGE:1AHA8",
+    }
 
     def __init__(self) -> None:
         super().__init__(
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
             title="16-Factor Sovereign Identity, SSN/DOB, Biometric, Credit/Loan/Deed, & ID Access Shield",
-            version="2.0.0",
+            version="4.0.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,
@@ -141,7 +145,6 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             ("16_CORP_EIN_UEI_CAGE", corporate_ein_uei, f"16. Corporate EIN/UEI ({corporate_ein_uei})"),
         ]
 
-        # Also evaluate 1 synthetic dark-web honeypot vector to prove active quarantine trigger
         honeypot_raw = "DARKWEB-LEAKED-SSN-CLONE-999-88-7777"
         leaked_digest = self.hash_identity_zero_knowledge("HONEYPOT_TRAP", honeypot_raw)["full_salted_hmac_sha256"]
         threat_feed = {leaked_digest}
@@ -160,7 +163,6 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 "Automated_Defense": "PROTECTED_IN_16FACTOR_VAULT",
             })
 
-        # Append active Honeypot Trap verification row
         hp_zk = self.hash_identity_zero_knowledge("HONEYPOT_TRAP", honeypot_raw)
         hp_hit = hp_zk["full_salted_hmac_sha256"] in threat_feed
         rows.append({
@@ -178,6 +180,8 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             hashlib.sha256,
         ).hexdigest()
 
+        masked_summary = {r["Attribute_Class"]: r["Identifying_Feature"] for r in rows[:16]}
+
         return {
             "masked_ssn": masked_ssn,
             "masked_dob": masked_dob,
@@ -187,6 +191,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "compromised_vectors_quarantined": 1 if hp_hit else 0,
             "composite_8factor_identity_seal": composite_16factor_seal,
             "composite_16factor_identity_seal": composite_16factor_seal,
+            "masked_summary": masked_summary,
             "attribute_rows": rows,
         }
 
@@ -406,18 +411,139 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                     SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: DELETE PROHIBITED ON worm_credit_loan_intercept_log');
                 END;
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS worm_identity_profile_revisions (
+                    rev_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    operator_name TEXT NOT NULL,
+                    update_reason TEXT NOT NULL,
+                    masked_ssn_dob TEXT NOT NULL,
+                    composite_16factor_seal TEXT NOT NULL,
+                    masked_profile_json TEXT NOT NULL,
+                    previous_revision_hash TEXT NOT NULL,
+                    worm_revision_sha256 TEXT NOT NULL UNIQUE
+                )
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_profile_rev_no_update
+                BEFORE UPDATE ON worm_identity_profile_revisions
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: UPDATE PROHIBITED ON worm_identity_profile_revisions');
+                END;
+            """)
+            cur.execute("""
+                CREATE TRIGGER IF NOT EXISTS trg_worm_profile_rev_no_delete
+                BEFORE DELETE ON worm_identity_profile_revisions
+                BEGIN
+                    SELECT RAISE(ABORT, 'WORM_IMMUTABILITY_VIOLATION: DELETE PROHIBITED ON worm_identity_profile_revisions');
+                END;
+            """)
             conn.commit()
         finally:
             conn.close()
-        return {"db_path": str(db_path), "worm_triggers_active": 4}
+        return {"db_path": str(db_path), "worm_triggers_active": 6}
+
+    def commit_profile_update_revision(
+        self,
+        db_path: pathlib.Path,
+        operator_name: str,
+        update_reason: str,
+        pii_report: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        self.init_worm_sqlite_ledger(db_path)
+        conn = sqlite3.connect(str(db_path))
+        try:
+            cur = conn.cursor()
+            last_row = cur.execute(
+                "SELECT rev_id, worm_revision_sha256 FROM worm_identity_profile_revisions ORDER BY rev_id DESC LIMIT 1"
+            ).fetchone()
+            prev_hash = last_row[1] if last_row else ("0" * 64)
+            next_rev_num = (last_row[0] + 1) if last_row else 1
+
+            masked_json = json.dumps(pii_report.get("masked_summary", {}), sort_keys=True)
+            comp_seal = pii_report["composite_16factor_identity_seal"]
+            masked_ssn_dob = f"{pii_report['masked_ssn']} | {pii_report['masked_dob']}"
+
+            rev_sha = hmac.new(
+                IDENTITY_VAULT_PEPPER.encode("utf-8"),
+                f"{prev_hash}|{operator_name}|{update_reason}|{comp_seal}|{masked_json}|{FROZEN_EBONY_MERKLE_ROOT}".encode("utf-8"),
+                hashlib.sha256,
+            ).hexdigest()
+
+            cur.execute(
+                """
+                INSERT OR IGNORE INTO worm_identity_profile_revisions (
+                    operator_name, update_reason, masked_ssn_dob, composite_16factor_seal,
+                    masked_profile_json, previous_revision_hash, worm_revision_sha256
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    operator_name,
+                    update_reason,
+                    masked_ssn_dob,
+                    comp_seal,
+                    masked_json,
+                    prev_hash,
+                    rev_sha,
+                ),
+            )
+            conn.commit()
+            total_revs = cur.execute("SELECT COUNT(*) FROM worm_identity_profile_revisions").fetchone()[0]
+        finally:
+            conn.close()
+        return {
+            "revision_number": total_revs or next_rev_num,
+            "operator_name": operator_name,
+            "update_reason": update_reason,
+            "composite_16factor_seal": comp_seal,
+            "previous_revision_hash": prev_hash,
+            "worm_revision_sha256": rev_sha,
+        }
+
+    def get_profile_revision_history(self, db_path: pathlib.Path) -> List[Dict[str, Any]]:
+        self.init_worm_sqlite_ledger(db_path)
+        conn = sqlite3.connect(str(db_path))
+        try:
+            cur = conn.cursor()
+            rows = cur.execute(
+                """
+                SELECT rev_id, operator_name, update_reason, masked_ssn_dob,
+                       composite_16factor_seal, previous_revision_hash, worm_revision_sha256
+                FROM worm_identity_profile_revisions
+                ORDER BY rev_id DESC
+                """
+            ).fetchall()
+        finally:
+            conn.close()
+        return [
+            {
+                "Revision": f"Rev #{r[0]:02d}",
+                "Principal": r[1],
+                "Update_Reason": r[2],
+                "Masked_SSN_DOB": r[3],
+                "16Factor_Seal": r[4][:20] + "...",
+                "Prev_Rev_Hash": r[5][:16] + "...",
+                "WORM_Revision_SHA256": r[6][:20] + "...",
+            }
+            for r in rows
+        ]
 
     def sync_events_to_worm_sqlite(
         self,
         db_path: pathlib.Path,
         access_events: List[Dict[str, Any]],
         credit_rows: List[Dict[str, str]],
+        operator_name: str = "JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)",
+        pii_report: Dict[str, Any] | None = None,
+        update_reason: str = "INITIAL_16FACTOR_BASELINE_ENROLLMENT",
     ) -> Dict[str, int]:
         self.init_worm_sqlite_ledger(db_path)
+        if pii_report is not None:
+            self.commit_profile_update_revision(
+                db_path=db_path,
+                operator_name=operator_name,
+                update_reason=update_reason,
+                pii_report=pii_report,
+            )
         conn = sqlite3.connect(str(db_path))
         try:
             cur = conn.cursor()
@@ -465,9 +591,15 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             conn.commit()
             id_cnt = cur.execute("SELECT COUNT(*) FROM worm_id_access_log").fetchone()[0]
             cr_cnt = cur.execute("SELECT COUNT(*) FROM worm_credit_loan_intercept_log").fetchone()[0]
+            rv_cnt = cur.execute("SELECT COUNT(*) FROM worm_identity_profile_revisions").fetchone()[0]
         finally:
             conn.close()
-        return {"worm_id_access_rows": id_cnt, "worm_credit_intercept_rows": cr_cnt}
+        return {
+            "worm_id_access_rows": id_cnt,
+            "worm_credit_intercept_rows": cr_cnt,
+            "worm_profile_revision_rows": rv_cnt,
+            "worm_triggers_active": 6,
+        }
 
     def generate_wp7_antifraud_dossier(
         self,
@@ -475,18 +607,41 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         operator_name: str = "JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)",
         raw_ssn: str = "999-00-1234",
         raw_dob: str = "1975-08-15",
+        pob_and_maiden_kba: str = "OKLAHOMA-KBA-SEAL-991",
         physical_id_number: str = "OK-REALID-1AHA8-7741",
         passport_number: str = "US-PASS-558912044",
+        dod_cac_piv_serial: str = "CAC-EDIPI-1099482210",
         physical_smt_features: str = "EYES:BRN|HGT:72IN|SMT:NONE-VERIFIED",
+        fingerprint_minutiae: str = "BIO-FINGER-ISO19794-2-V1",
+        iris_vascular_hash: str = "BIO-IRIS-ISO19794-6-V1",
+        face_voice_liveness: str = "BIO-3DFACE-VOICE-LIVENESS-V1",
+        home_deed_parcel_apn: str = "OK-APN-DEED-LOCK-44019",
+        bank_ach_aba_routing: str = "ABA-103000648-ACH-LOCKED",
+        mobile_sim_imei_lock: str = "IMEI-35988109-SIMLOCK-ON",
+        medical_npi_beneficiary: str = "MED-SHIELD-ID-88310",
+        vehicle_fleet_vin: str = "1HVF882910SOVEREIGN",
+        corporate_ein_uei: str = "UEI:S1M4ENLHTDH5|CAGE:1AHA8",
         credit_freeze_locked: bool = True,
+        update_reason: str = "INITIAL_16FACTOR_BASELINE_ENROLLMENT",
     ) -> Dict[str, Any]:
         out_dir.mkdir(parents=True, exist_ok=True)
         pii_report = self.scan_pii_and_biometric_darkweb_feed(
             raw_ssn=raw_ssn,
             raw_dob=raw_dob,
+            pob_and_maiden_kba=pob_and_maiden_kba,
             physical_id_number=physical_id_number,
             passport_number=passport_number,
+            dod_cac_piv_serial=dod_cac_piv_serial,
             physical_smt_features=physical_smt_features,
+            fingerprint_minutiae=fingerprint_minutiae,
+            iris_vascular_hash=iris_vascular_hash,
+            face_voice_liveness=face_voice_liveness,
+            home_deed_parcel_apn=home_deed_parcel_apn,
+            bank_ach_aba_routing=bank_ach_aba_routing,
+            mobile_sim_imei_lock=mobile_sim_imei_lock,
+            medical_npi_beneficiary=medical_npi_beneficiary,
+            vehicle_fleet_vin=vehicle_fleet_vin,
+            corporate_ein_uei=corporate_ein_uei,
         )
         credit_report = self.evaluate_credit_and_loan_activity(credit_freeze_locked=credit_freeze_locked)
 
@@ -496,6 +651,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             physical_id_serial=physical_id_number,
             raw_ssn=raw_ssn,
             raw_dob=raw_dob,
+            biometric_liveness_hash=f"{fingerprint_minutiae}|{iris_vascular_hash}|{face_voice_liveness}",
             action="SIGN_IN",
             hardware_liveness_nonce="NONCE-HVF-20261026-0001",
         )
@@ -515,10 +671,22 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             physical_id_serial=physical_id_number,
             raw_ssn=raw_ssn,
             raw_dob=raw_dob,
+            biometric_liveness_hash=f"{fingerprint_minutiae}|{iris_vascular_hash}|{face_voice_liveness}",
             action="SIGN_OUT",
             hardware_liveness_nonce="NONCE-HVF-20261026-0002",
             previous_ledger_hash=ev2["WORM_Ledger_SHA256"],
         )
+
+        db_file = out_dir / "wp7_identity_credit_worm_ledger.db"
+        worm_db_stats = self.sync_events_to_worm_sqlite(
+            db_path=db_file,
+            access_events=[ev1, ev2, ev3],
+            credit_rows=credit_report["credit_loan_rows"],
+            operator_name=operator_name,
+            pii_report=pii_report,
+            update_reason=update_reason,
+        )
+        revision_history = self.get_profile_revision_history(db_file)
 
         seal_str = (
             f"WP7|{pii_report['composite_16factor_identity_seal']}|"
@@ -537,12 +705,13 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "# HUMPHREY VIRTUAL FARMS LLC // WP-7: 16-FACTOR IDENTITY, SSN/DOB, BIOMETRIC, CREDIT, LOAN, & DEED SHIELD",
             "**Entity:** Humphrey Virtual Farms LLC (`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`)",
             "**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect",
-            f"**Plug-In Module:** `CLIN 0033 v2.0 (WP-7 16-Factor Identity & Credit Fortress)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
+            f"**Plug-In Module:** `CLIN 0033 v4.0 (WP-7 16-Factor Identity & Profile Revision Fortress)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
             f"**Host Ebony Baseline Merkle Root:** `{FROZEN_EBONY_MERKLE_ROOT}`",
             "",
             "---",
             "",
             "## 1. 16-Factor Zero-Knowledge Personal, Physical, Biometric, & Asset Identity Matrix",
+            f"* **Protected Principal:** `{operator_name}` | **Latest Update Reason:** `{update_reason}`",
             f"* **Masked SSN & DOB Binding:** `{pii_report['masked_ssn']}` | `{pii_report['masked_dob']}` (`0` Plaintext Digits Stored)",
             f"* **Core Identifying Features Protected:** `{pii_report['core_identifying_features_count']} / 16` (`100% Clean`) + `1 Active Dark-Web Honeypot Canary Quarantined`",
             f"* **Composite 16-Factor Identity Seal (HMAC-SHA256):** `{pii_report['composite_16factor_identity_seal']}`",
@@ -573,6 +742,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             f"* **Event #1 ({ev1['Action']}):** `{ev1['Operator_Name']}` (`{ev1['Masked_SSN_DOB_Bind']}`) -> `{ev1['Access_Decision']}`",
             f"* **Event #2 ({ev2['Action']} - Fraud Blocked):** `{ev2['Operator_Name']}` -> **`{ev2['Access_Decision']}`** (`{ev2['Security_Reason']}`)",
             f"* **Event #3 ({ev3['Action']}):** `{ev3['Operator_Name']}` (`{ev3['Masked_SSN_DOB_Bind']}`) -> `{ev3['Access_Decision']}`",
+            f"* **WORM Profile Revisions Logged:** `{worm_db_stats['worm_profile_revision_rows']}` (`6` Active SQLite WORM Triggers)",
             "",
             "---",
             f"**WORM WP-7 16-Factor Identity, Credit, Loan, & Deed Shield Master Seal (SHA-256):** `{worm_seal}`",
@@ -585,14 +755,12 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
         pdf_bytes = build_minimal_iso_pdf(lines)
         pdf_file.write_bytes(pdf_bytes)
 
-        db_file = out_dir / "wp7_identity_credit_worm_ledger.db"
-        worm_db_stats = self.sync_events_to_worm_sqlite(db_file, [ev1, ev2, ev3], credit_report["credit_loan_rows"])
-
         return {
             "pii_report": pii_report,
             "credit_report": credit_report,
             "access_events": [ev1, ev2, ev3],
             "worm_db_stats": worm_db_stats,
+            "revision_history": revision_history,
             "worm_seal": worm_seal,
             "md_path": str(md_file),
             "pdf_path": str(pdf_file),

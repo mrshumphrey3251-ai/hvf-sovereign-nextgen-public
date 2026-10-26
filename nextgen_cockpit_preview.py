@@ -282,57 +282,125 @@ def render_nextgen_dashboard() -> None:
         )
 
     with tabs[7]:
-        st.markdown("### `WP-7` / `CLIN 0033`: 16-Factor Sovereign Identity, SSN/DOB, Biometric, Credit Bureau, Loan, Deed, & ID Access Shield")
-        id1, id2, id3, id4 = st.columns(4)
-        op_name   = id1.text_input("1. Protected Principal / Operator:", value="JEFFERY HUMPHREY (CEO & ARCHITECT)", key="ng_c33_op")
-        ssn_in    = id2.text_input("2. SSN (Auto-Masked XXX-XX-last4):", value="999-00-1234", type="password", key="ng_c33_ssn")
-        dob_in    = id3.text_input("3. Date of Birth (Masked XXXX-XX-DD):", value="1975-08-15", type="password", key="ng_c33_dob")
-        freeze_on = id4.checkbox("Enforce 7-Channel Credit, Loan, Deed & SIM Freeze", value=True, key="ng_c33_frz")
+        st.markdown("### `WP-7` / `CLIN 0033 v4.0`: Full-Page 16-Factor Sovereign Identity Enrollment, Profile Updater, Credit/Loan/Deed Interceptor, & WORM Access Shield")
+        st.info(
+            "**Full-Page 16+ Identifier Vault & Versioned Updater:** Edit or update any of the 16 personal, physical, biometric, or asset identifiers below. "
+            "All sensitive values are automatically masked (`XXX-XX-last4` / `XXXX-MASKED-tail`) and hashed in memory (`0` plaintext digits stored). "
+            "Click **Commit & Seal Updated 16-Factor Identity Profile Revision** to append a new cryptographically chained revision to the WORM SQLite ledger."
+        )
 
-        id5, id6, id7, id8 = st.columns(4)
-        realid_in = id5.text_input("4. State REAL-ID / Driver Lic Serial:", value="OK-REALID-1AHA8-7741", key="ng_c33_dl")
-        pass_in   = id6.text_input("5. U.S. Passport / DoD CAC EDIPI:", value="US-PASS-558912044", key="ng_c33_pass")
-        smt_in    = id7.text_input("6. Physical Traits (Eyes/Height/SMT):", value="EYES:BRN|HGT:72IN|SMT:NONE-VERIFIED", key="ng_c33_smt")
-        unfrz_req = id8.text_input("7. Generate CEO Unfreeze Token For Inquiry ID:", value="REQ-HVF-EQUIP-2026-001", key="ng_c33_req")
+        top1, top2, top3, top4 = st.columns([2, 2, 1, 1])
+        op_name    = top1.text_input("Protected Principal / Operator Full Name & Title:", value="JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)", key="ng_c33_op")
+        upd_reason = top2.text_input("Profile Update / Enrollment Reason:", value="ANNUAL_16FACTOR_CREDENTIAL_AND_ASSET_VERIFICATION", key="ng_c33_reason")
+        unfrz_req  = top3.text_input("CEO Unfreeze Inquiry ID:", value="REQ-HVF-EQUIP-2026-001", key="ng_c33_req")
+        freeze_on  = top4.checkbox("Lock All 7 Credit/Loan/Deed Channels", value=True, key="ng_c33_frz")
 
-        exp33  = e33.generate_wp7_antifraud_dossier(
+        st.markdown("#### Quadrant A: Core Personal, Civil, & Government Identity Documents (`Factors 1 - 6`)")
+        qa1, qa2, qa3 = st.columns(3)
+        ssn_in    = qa1.text_input("1. Social Security Number (9-Digit Tax ID - Masked):", value="999-00-1234", type="password", key="ng_c33_f01")
+        dob_in    = qa2.text_input("2. Date of Birth (ISO YYYY-MM-DD - Masked):", value="1975-08-15", type="password", key="ng_c33_f02")
+        pob_in    = qa3.text_input("3. Place of Birth & Mother's Maiden KBA Vector:", value="OKLAHOMA-KBA-SEAL-991", type="password", key="ng_c33_f03")
+
+        qa4, qa5, qa6 = st.columns(3)
+        realid_in = qa4.text_input("4. State Driver's License / REAL-ID Barcode Serial:", value="OK-REALID-1AHA8-7741", key="ng_c33_f04")
+        pass_in   = qa5.text_input("5. U.S. Passport Book/Card Number & MRZ:", value="US-PASS-558912044", key="ng_c33_f05")
+        cac_in    = qa6.text_input("6. DoD CAC / FIPS 201 PIV 10-Digit EDIPI:", value="CAC-EDIPI-1099482210", key="ng_c33_f06")
+
+        st.markdown("#### Quadrant B: Physical Distinguishing Features & 3-Modal Biometric Templates (`Factors 7 - 10`)")
+        qb1, qb2, qb3, qb4 = st.columns(4)
+        smt_in    = qb1.text_input("7. Physical Traits (Eyes / Height / Scars, Marks, Tattoos):", value="EYES:BRN|HGT:72IN|SMT:NONE-VERIFIED", key="ng_c33_f07")
+        fngr_in   = qb2.text_input("8. Biometric #1: Fingerprint Minutiae (ISO 19794-2):", value="BIO-FINGER-ISO19794-2-V1", key="ng_c33_f08")
+        iris_in   = qb3.text_input("9. Biometric #2: Iris & Retinal Vascular (ISO 19794-6):", value="BIO-IRIS-ISO19794-6-V1", key="ng_c33_f09")
+        face_in   = qb4.text_input("10. Biometric #3: 3D Facial Geometry & Voice Liveness:", value="BIO-3DFACE-VOICE-LIVENESS-V1", key="ng_c33_f10")
+
+        st.markdown("#### Quadrant C: Real Estate Deed, Banking/Treasury, Telecom SIM, Medical, VIN, & Corporate Identifiers (`Factors 11 - 16`)")
+        qc1, qc2, qc3 = st.columns(3)
+        deed_in   = qc1.text_input("11. Real Estate Home/Land Deed Parcel APN Lock:", value="OK-APN-DEED-LOCK-44019", key="ng_c33_f11")
+        bank_in   = qc2.text_input("12. Bank Routing & Treasury Account (ABA/ACH/SWIFT Lock):", value="ABA-103000648-ACH-LOCKED", key="ng_c33_f12")
+        sim_in    = qc3.text_input("13. Mobile Carrier SIM / IMEI Port-Out Lock (2FA Shield):", value="IMEI-35988109-SIMLOCK-ON", key="ng_c33_f13")
+
+        qc4, qc5, qc6 = st.columns(3)
+        med_in    = qc4.text_input("14. Medical / Medicare / Health Insurance Beneficiary ID:", value="MED-SHIELD-ID-88310", key="ng_c33_f14")
+        vin_in    = qc5.text_input("15. Vehicle / Heavy Equipment Chassis VIN Title Lock:", value="1HVF882910SOVEREIGN", key="ng_c33_f15")
+        corp_in   = qc6.text_input("16. Corporate Federal EIN, SAM.gov UEI, & CAGE Code:", value="UEI:S1M4ENLHTDH5|CAGE:1AHA8", key="ng_c33_f16")
+
+        btn_col1, btn_col2, btn_col3 = st.columns([2, 1, 1])
+        commit_clicked = btn_col1.button(
+            "Commit & Seal Updated 16-Factor Identity Profile Revision to WORM SQLite",
+            type="primary",
+            key="ng_c33_commit_btn",
+        )
+        custom_act = btn_col2.selectbox("Watch-Floor Gate Action:", ["SIGN_IN", "SIGN_OUT"], index=0, key="ng_c33_gate_act")
+        gate_nonce = btn_col3.text_input("Hardware Liveness Nonce:", value="NONCE-LIVE-2026-0099", key="ng_c33_nonce")
+
+        exp33 = e33.generate_wp7_antifraud_dossier(
             artifacts_dir,
             operator_name=op_name,
             raw_ssn=ssn_in,
             raw_dob=dob_in,
+            pob_and_maiden_kba=pob_in,
             physical_id_number=realid_in,
             passport_number=pass_in,
+            dod_cac_piv_serial=cac_in,
             physical_smt_features=smt_in,
+            fingerprint_minutiae=fngr_in,
+            iris_vascular_hash=iris_in,
+            face_voice_liveness=face_in,
+            home_deed_parcel_apn=deed_in,
+            bank_ach_aba_routing=bank_in,
+            mobile_sim_imei_lock=sim_in,
+            medical_npi_beneficiary=med_in,
+            vehicle_fleet_vin=vin_in,
+            corporate_ein_uei=corp_in,
             credit_freeze_locked=freeze_on,
+            update_reason=upd_reason,
         )
+
         pii_r  = exp33["pii_report"]
         cred_r = exp33["credit_report"]
         w_db   = exp33["worm_db_stats"]
         ceo_tk = e33.generate_ceo_credit_unfreeze_token(unfrz_req)
 
+        if commit_clicked:
+            db_file = artifacts_dir / "wp7_identity_credit_worm_ledger.db"
+            rev_res = e33.commit_profile_update_revision(
+                db_path=db_file,
+                operator_name=op_name,
+                update_reason=upd_reason,
+                pii_report=pii_r,
+            )
+            exp33["revision_history"] = e33.get_profile_revision_history(db_file)
+            st.success(
+                f"**WORM Profile Revision Committed!** Revision `#{rev_res['revision_number']}` sealed with "
+                f"16-Factor HMAC `{rev_res['composite_16factor_seal'][:24]}...` and chained to WORM SQLite (`{rev_res['worm_revision_sha256'][:24]}...`)."
+            )
+
         f1, f2, f3, f4 = st.columns(4)
         f1.metric("Masked SSN / DOB Bind", f"{pii_r['masked_ssn']} | {pii_r['masked_dob']}", "0 Plaintext Digits Stored")
         f2.metric("16-Factor Identity Matrix", f"{pii_r['clean_attributes']} / {pii_r['core_identifying_features_count']} Clean", "+1 Dark-Web Canary Quarantined")
         f3.metric("Loans/Deeds/SIMs Blocked", f"{cred_r['fraudulent_loans_and_pulls_blocked']} / {cred_r['total_inquiries_monitored']} Blocked", "Equifax/Experian/TU/Chex/Deed/SIM")
-        f4.metric("WORM SQLite Ledger Rows", f"{w_db['worm_id_access_rows']} ID | {w_db['worm_credit_intercept_rows']} Credit", "4 WORM Triggers Active")
+        f4.metric("WORM SQLite Ledger Rows", f"{w_db['worm_profile_revision_rows']} Revs | {w_db['worm_id_access_rows']} ID | {w_db['worm_credit_intercept_rows']} Credit", "6 WORM Triggers Active")
 
         st.success(
             f"**Composite 16-Factor Identity Seal:** `{pii_r['composite_16factor_identity_seal'][:32]}...` | "
             f"**CEO Unfreeze Token (`{unfrz_req}`):** `{ceo_tk}` | "
-            f"**WORM SQLite DB:** `artifacts/wp7_identity_credit_worm_ledger.db` (`UPDATE/DELETE Locked`)"
+            f"**Gate Status (`{custom_act}` / `{gate_nonce}`):** `READY`"
         )
 
-        st.markdown("#### 1. 7-Channel Credit Bureau, SBA/Bank Loan, County Deed Title, ChexSystems/ACH, & SIM-Swap Interceptor")
-        st.dataframe(cred_r["credit_loan_rows"], width="stretch", hide_index=True)
+        st.markdown("#### 1. WORM Identity Profile Revision & Update History (`worm_identity_profile_revisions`)")
+        st.dataframe(exp33["revision_history"], width="stretch", hide_index=True)
 
         st.markdown("#### 2. 16-Factor Zero-Knowledge Personal, Physical (SMT), 3-Modal Biometric, & Asset Dark-Web Monitor")
         st.dataframe(pii_r["attribute_rows"], width="stretch", hide_index=True)
 
-        st.markdown("#### 3. Physical ID & 3-Modal Biometric Sign-In / Sign-Out WORM Audit Ledger & Anti-Replay Gate")
+        st.markdown("#### 3. 7-Channel Credit Bureau, SBA/Bank Loan, County Deed Title, ChexSystems/ACH, & SIM-Swap Interceptor")
+        st.dataframe(cred_r["credit_loan_rows"], width="stretch", hide_index=True)
+
+        st.markdown("#### 4. Physical ID & 3-Modal Biometric Sign-In / Sign-Out WORM Audit Ledger & Anti-Replay Gate")
         st.dataframe(exp33["access_events"], width="stretch", hide_index=True)
 
         st.download_button(
-            label=f"{ico_dl} Download WP-7 Multi-Page 16-Factor Identity, SSN/DOB, Biometric, Credit, Loan & Deed Shield PDF",
+            label=f"{ico_dl} Download WP-7 Multi-Page 16-Factor Identity, Profile Revision, Credit, Loan & Deed Shield PDF",
             data=pathlib.Path(exp33["pdf_path"]).read_bytes(),
             file_name=pathlib.Path(exp33["pdf_path"]).name,
             mime="application/pdf",
