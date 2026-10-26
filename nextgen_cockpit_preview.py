@@ -285,28 +285,55 @@ def render_nextgen_dashboard() -> None:
         )
 
     with tabs[7]:
-        st.markdown("### `WP-7` / `CLIN 0033 v7.2`: HIPAA-Gated 60-Field Personnel Dossier, Path A Muster/Emergency SOPs, Path B HR Medical/ICE Triage, & Credit Shield")
+        st.markdown("### `WP-7` / `CLIN 0033 v7.3`: Front-Screen OSHA Muster Points & Emergency Procedures + HIPAA-Gated 60-Field Dossier, Medical/ICE Triage, & Credit Shield")
 
         # =====================================================================
-        # SECTION 1 (UNAUTHENTICATED LANDING SCREEN -- ZERO PERSONAL PII/PHI):
-        # ONLY OFFICIAL COMPANY / 911 DISPATCH DESKS ARE SHOWN BEFORE GATE LOGIN
+        # SECTION 1 (ALWAYS VISIBLE ON FRONT SCREEN -- NO LOGIN REQUIRED):
+        # 1A. COMPANY COMMAND / 911 DISPATCH DESKS
+        # 1B. SITE MUSTER POINTS, SHELTER BUNKERS, AED/TRAUMA KITS & 5-STEP SOPs
+        #     (Zero personal employee PII or HIPAA medical PHI exposed here!)
         # =====================================================================
-        st.markdown("#### 1. Official Company Command & 911 Emergency Dispatch Desks (Zero Personal PHI/PII Exposed Prior to Gate Authentication)")
+        st.markdown("#### 1A. Official Company Command & 911 Emergency Dispatch Desks (Always Accessible -- No Login Required)")
         st.dataframe(e33.COMPANY_EMERGENCY_CONTACTS, width="stretch", hide_index=True)
 
-        # =====================================================================
-        # SECTION 2: MANDATORY HIPAA / ADA / OSHA / FCRA USER AGREEMENT & GATE
-        # =====================================================================
-        st.markdown("#### 2. Sovereign User Agreement, HIPAA/ADA Medical Confidentiality Charter, & Compartment Authorization Gate")
-        st.info(e33.USER_AGREEMENT_TEXT)
+        st.markdown("#### 1B. Site-Wide Primary & Secondary Muster Points, Shelter-in-Place Bunkers, AED/Trauma Kits, & 5-Step Emergency Procedures (`OSHA 29 CFR 1910.38` -- No Login Required)")
+        st.dataframe(e33.SITE_MUSTER_AND_BUNKER_SUMMARY, width="stretch", hide_index=True)
 
         roster_options = list(e33.PERSONNEL_EMERGENCY_ROSTER.keys())
         sel_person_key = st.selectbox(
-            "Select Personnel Dossier to Authenticate & Unseal Behind Gate (All PHI/PII Locked Until Gate Opens):",
+            "Select Facility Zone / Duty Station to View Immediate 5-Step Emergency Evacuation & Muster SOP (And Select Dossier for Gate Authentication Below):",
             options=roster_options,
             index=0,
             key="ng_c33_roster_sel",
         )
+        pub_muster = e33.get_public_emergency_muster_and_sops(sel_person_key)
+
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("Primary Muster Point", pub_muster["primary_muster_point"].split("//")[0].strip(), pub_muster["primary_muster_point"].split("//")[-1].strip()[:32])
+        m2.metric("Secondary Muster Point", pub_muster["secondary_muster_point"].split("//")[0].strip(), pub_muster["secondary_muster_point"].split("//")[-1].strip()[:32])
+        m3.metric("Shelter-in-Place Bunker", pub_muster["shelter_in_place_bunker"].split("//")[0].strip(), pub_muster["shelter_in_place_bunker"].split("//")[-1].strip()[:32])
+        m4.metric("Nearest AED & Trauma Kit", pub_muster["nearest_aed_trauma_kit"].split("//")[0].strip(), pub_muster["nearest_aed_trauma_kit"].split("//")[-1].strip()[:32])
+
+        front_muster_banner = nl.join([
+            f"[MUSTER ZONE]      : {pub_muster['department_zone']}",
+            f"[PRIMARY MUSTER]   : {pub_muster['primary_muster_point']} | Secondary: {pub_muster['secondary_muster_point']}",
+            f"[SHELTER BUNKER]   : {pub_muster['shelter_in_place_bunker']}",
+            f"[NEAREST AED/KIT]  : {pub_muster['nearest_aed_trauma_kit']}",
+            f"[EVACUATION ROUTE] : {pub_muster['evacuation_route_and_warden']}",
+        ])
+        st.code(front_muster_banner, language="text")
+        st.dataframe(pub_muster["emergency_procedures_rows"], width="stretch", hide_index=True)
+
+        st.markdown("---")
+
+        # =====================================================================
+        # SECTION 2: MANDATORY HIPAA / ADA / FCRA USER AGREEMENT & GATE
+        # (Locks 100% of personal employee PII, Blood Type, Allergies, Medical
+        #  History, NOK/ICE contacts, Credit/Loans, and Internal HR Records!)
+        # =====================================================================
+        st.markdown("#### 2. Sovereign User Agreement, HIPAA/ADA Medical Confidentiality Charter, & Compartment Authorization Gate")
+        st.info(e33.USER_AGREEMENT_TEXT)
+
         person_obj = e33.PERSONNEL_EMERGENCY_ROSTER[sel_person_key]
         emp_id_code = person_obj["employee_id"]
         emp_pin_val = person_obj["employee_pin"]
@@ -326,11 +353,11 @@ def render_nextgen_dashboard() -> None:
 
         g1, g2, g3 = st.columns([2, 2, 1])
         role_mode = g1.radio(
-            "Select Authorization Compartment Path to Unseal:",
+            "Select Authorization Compartment Path to Unseal Personal/Medical/Vault Data:",
             options=[
-                "GATE_LOCKED (100% of Personal PII, Medical PHI, NOK/ICE & Vaults Hidden)",
-                "PATH A: EMPLOYEE_PERSONAL_VAULT (My Muster Points & Emergency SOPs, My Medical/ICE, My Credit/Loans & 60-Field Dossier)",
-                "PATH B: EMPLOYER_HR_AND_EMERGENCY_VAULT (HR Emergency Medical/Allergies/Blood/ICE, Muster Zone, Notes & Promotion Shortlist)",
+                "GATE_LOCKED (Front-Screen Muster SOPs Active // 100% of Personal PII, Medical PHI, NOK/ICE & Vaults Hidden)",
+                "PATH A: EMPLOYEE_PERSONAL_VAULT (My Medical/ICE, My 7-Channel Credit/Loan Shield & My 60-Field Dossier)",
+                "PATH B: EMPLOYER_HR_AND_EMERGENCY_VAULT (HR Emergency Medical/Allergies/Blood/ICE, Employer Notes & Promotion Shortlist)",
             ],
             index=0,
             key="ng_c33_role_radio",
@@ -345,7 +372,7 @@ def render_nextgen_dashboard() -> None:
             value=default_pin_hint,
             key=dyn_key_id,
         )
-        freeze_toggle = g3.checkbox("Credit/Loan Freeze ON", value=True, key="ng_c33_frz_v72")
+        freeze_toggle = g3.checkbox("Credit/Loan Freeze ON", value=True, key="ng_c33_frz_v73")
 
         gate_res = e33.open_compartment_gate(
             roster_key=sel_person_key,
@@ -359,7 +386,8 @@ def render_nextgen_dashboard() -> None:
         if not gate_res["gate_open"]:
             st.warning(
                 f"**[HIPAA / ADA / FCRA GATE LOCKED // STATUS: `{gate_res['gate_status']}`]** -- "
-                f"Zero personal employee information, Blood Type, Allergies, Medical History, Next-of-Kin (NOK), ICE contacts, "
+                f"Site Muster Points, Shelter Bunkers, AED Locations, and 5-Step Emergency Evacuation Procedures are openly accessible above. "
+                f"However, zero personal employee PII, Blood Type, Allergies, Medical History, Next-of-Kin (NOK), ICE contacts, "
                 f"credit bureaus, or HR records are exposed while this gate is locked. "
                 f"To unseal: (1) Check the **I have read and accept the Sovereign User Agreement & HIPAA/ADA Charter** box above, and "
                 f"(2) Select either **PATH A: EMPLOYEE_PERSONAL_VAULT** (Auto-Key: `{emp_pin_val}`) or "
@@ -367,51 +395,38 @@ def render_nextgen_dashboard() -> None:
             )
         else:
             triage = gate_res["emergency_medical_ice_card"]
-            muster = gate_res["emergency_procedures_muster"]
             st.success(
                 f"**[{gate_res['gate_status']} // {triage['employee_id']} ({triage['full_name']})]** -- "
                 f"{gate_res['privacy_notice']} | **HIPAA WORM Audit Seal:** `{gate_res['hipaa_audit_seal'][:20]}...`"
             )
 
             # =================================================================
-            # SHARED AUTHENTICATED EMERGENCY MUSTER, MEDICAL HISTORY, ALLERGIES,
-            # BLOOD TYPE & NOK/ICE TRIAGE PANEL (UNSEALED BEHIND GATE)
+            # SHARED AUTHENTICATED HIPAA MEDICAL HISTORY, ALLERGIES, BLOOD TYPE
+            # & NOK/ICE TRIAGE PACKET (UNSEALED ONLY AFTER GATE AUTHENTICATION)
             # =================================================================
-            st.markdown(f"#### Authenticated Emergency Muster Assignment, Medical History, Allergies, Blood Type, & NOK/ICE Packet (`{triage['employee_id']} // {triage['full_name']}`)")
+            st.markdown(f"#### Authenticated HIPAA Emergency Medical History, Allergies, Blood Type, Physician, & NOK/ICE Packet (`{triage['employee_id']} // {triage['full_name']}`)")
             e1, e2, e3, e4 = st.columns(4)
-            e1.metric("Assigned Primary Muster", muster["primary_muster_point"].split("//")[0].strip(), muster["primary_muster_point"].split("//")[-1].strip()[:32])
-            e2.metric("Blood Type & Rh Factor", triage["blood_type_clean"], triage["medical_alert_clean"])
-            e3.metric("Next of Kin (NOK) Phone", triage["nok_phone"], triage["nok_short"])
-            e4.metric("Emergency (ICE) Direct Phone", triage["ice_phone"], triage["ice_short"])
+            e1.metric("Blood Type & Rh Factor", triage["blood_type_clean"], triage["medical_alert_clean"])
+            e2.metric("Next of Kin (NOK) Phone", triage["nok_phone"], triage["nok_short"])
+            e3.metric("Emergency (ICE) Direct Phone", triage["ice_phone"], triage["ice_short"])
+            e4.metric("Employee Direct Phone", triage["direct_phone"], triage["role_short"])
 
             triage_card_text = nl.join([
                 f"[01] AUTHENTICATED SUBJECT    : {triage['employee_id']} -- {triage['full_name']} ({triage['department']})",
-                f"[02] PRIMARY MUSTER POINT     : {muster['primary_muster_point']} | Secondary: {muster['secondary_muster_point']}",
-                f"[03] SHELTER BUNKER & AED KIT : {muster['shelter_in_place_bunker']} | Nearest AED/Trauma: {muster['nearest_aed_trauma_kit']}",
-                f"[04] BLOOD TYPE & ALLERGIES   : {triage['blood_type_clean']} // ALLERGIES: {triage['allergies_detailed']}",
-                f"[05] MEDICAL HISTORY & RX     : {triage['medical_history_detailed']}",
-                f"[06] PHYSICIAN & TRAUMA HOSP  : {triage['physician_and_hospital']}",
-                f"[07] NEXT OF KIN (NOK)        : {triage['nok_full_name']} ({triage['nok_relationship']}) | Phone: {triage['nok_phone']} | Address: {triage['nok_address']}",
-                f"[08] IN CASE OF EMERGENCY     : {triage['ice_full_name']} ({triage['ice_relationship']}) | Direct Phone: {triage['ice_phone']} | Employee Phone: {triage['direct_phone']}",
+                f"[02] BLOOD TYPE & ALLERGIES   : {triage['blood_type_clean']} // ALLERGIES: {triage['allergies_detailed']}",
+                f"[03] MEDICAL HISTORY & RX     : {triage['medical_history_detailed']}",
+                f"[04] PHYSICIAN & TRAUMA HOSP  : {triage['physician_and_hospital']}",
+                f"[05] NEXT OF KIN (NOK)        : {triage['nok_full_name']} ({triage['nok_relationship']}) | Phone: {triage['nok_phone']} | Address: {triage['nok_address']}",
+                f"[06] IN CASE OF EMERGENCY     : {triage['ice_full_name']} ({triage['ice_relationship']}) | Direct Phone: {triage['ice_phone']} | Employee Phone: {triage['direct_phone']}",
             ])
             st.code(triage_card_text, language="text")
+
+            st.markdown("---")
 
             if gate_res["viewer_role"] == "EMPLOYEE":
                 # =============================================================
                 # PATH A: EMPLOYEE PERSONAL VAULT
-                # (1. Emergency Procedures & Muster Points SOP Table
-                #  2. Private 7-Channel Credit/Loan Shield
-                #  3. Sealed 60-Field Personal Dossier)
                 # =============================================================
-                st.markdown("#### 1. My Site Emergency Evacuation Procedures, Muster Points, Shelter-in-Place Bunker, & Roll-Call Protocol (`OSHA 29 CFR 1910.38`)")
-                st.info(
-                    f"**Evacuation Route & Warden:** `{muster['evacuation_route_and_warden']}` | "
-                    f"**Primary Muster:** `{muster['primary_muster_point']}` | "
-                    f"**Bunker:** `{muster['shelter_in_place_bunker']}`"
-                )
-                st.dataframe(muster["emergency_procedures_rows"], width="stretch", hide_index=True)
-
-                st.markdown("---")
                 cred_r = gate_res["credit_report"]
                 unfrz_id = st.text_input("Generate My Personal One-Time Credit/Loan Unfreeze Token For Inquiry ID:", value="REQ-HVF-EQUIP-2026-001", key="ng_c33_emp_unfrz")
                 my_tok = e33.generate_ceo_credit_unfreeze_token(unfrz_id)
@@ -421,19 +436,16 @@ def render_nextgen_dashboard() -> None:
                 ec2.metric("Fraudulent Loans/Pulls Blocked", f"{cred_r['fraudulent_loans_and_pulls_blocked']} / {cred_r['total_inquiries_monitored']} Blocked", "Equifax/Experian/TU/Chex/Deed/SIM")
                 ec3.metric("My One-Time Unfreeze Token", my_tok, f"For {unfrz_id}")
 
-                st.markdown("#### 2. My Private 7-Channel Credit Bureau, Bank/SBA Loan, Home Deed Title, ACH, & SIM-Swap Shield (Visible ONLY to Employee)")
+                st.markdown("#### 1. My Private 7-Channel Credit Bureau, Bank/SBA Loan, Home Deed Title, ACH, & SIM-Swap Shield (Visible ONLY to Employee)")
                 st.dataframe(cred_r["credit_loan_rows"], width="stretch", hide_index=True)
 
-                st.markdown("#### 3. My Sealed 60-Field Personal Identity, Address/Job History, Training, & NOK/ICE Dossier")
+                st.markdown("#### 2. My Sealed 60-Field Personal Identity, Address/Job History, Training, & NOK/ICE Dossier")
                 st.dataframe(gate_res["proof_of_id_rows"], width="stretch", hide_index=True)
 
             elif gate_res["viewer_role"] == "EMPLOYER":
                 # =============================================================
                 # PATH B: EMPLOYER / HR INTERNAL & EMERGENCY VAULT
                 # =============================================================
-                st.markdown("#### 1. Employee Assigned Muster Accountability & 5-Step Emergency Evacuation Protocol")
-                st.dataframe(muster["emergency_procedures_rows"], width="stretch", hide_index=True)
-
                 st.markdown("#### 1A. Employer/HR Internal Security Clearance, I-9 E-Verify, & Watch-Floor RBAC Records (Hidden From Employee View)")
                 st.dataframe(gate_res["employer_internal_records"], width="stretch", hide_index=True)
 
@@ -614,7 +626,7 @@ def render_nextgen_dashboard() -> None:
 
             exp_dl = e33.generate_wp7_antifraud_dossier(artifacts_dir)
             st.download_button(
-                label=f"{ico_dl} Download WP-7 Multi-Page HIPAA-Gated 60-Field Dossier, Muster SOPs, Medical/ICE & Compartment Spec PDF",
+                label=f"{ico_dl} Download WP-7 Multi-Page Front-Screen Muster SOPs & HIPAA-Gated 60-Field Dossier PDF",
                 data=pathlib.Path(exp_dl["pdf_path"]).read_bytes(),
                 file_name=pathlib.Path(exp_dl["pdf_path"]).name,
                 mime="application/pdf",

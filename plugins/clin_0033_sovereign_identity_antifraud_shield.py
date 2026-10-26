@@ -25,7 +25,7 @@ IDENTITY_VAULT_PEPPER = "PUBLIC_IDENTITY_CREDIT_PEPPER_REDACTED_DFARS_252_227_70
 
 class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     """
-    WP-7 / CLIN 0033 v7.2 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
+    WP-7 / CLIN 0033 v7.3 Sovereign Personnel Onboarding, Proof-of-Identity, NOK/ICE, & Anti-Fraud Vault:
       1. 42 Atomic Application Fields (Strictly 1 single response per box; zero pipe-concatenated fields)
          covering Legal Identity, Vital Stats, Physical Description, Job/I-9/Clearance, Government IDs,
          Next of Kin (NOK), In Case of Emergency (ICE), 3-Modal Biometrics, and Financial/Asset Locks.
@@ -178,18 +178,19 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
     # GATE, & DUAL-COMPARTMENT PRIVACY WALL (EMPLOYEE vs. EMPLOYER)
     # =========================================================================
     USER_AGREEMENT_TEXT: str = (
-        "SOVEREIGN IDENTITY, HIPAA/ADA MEDICAL CONFIDENTIALITY, & DUAL-COMPARTMENT PRIVACY CHARTER "
-        "(HIPAA 45 CFR 164.502 / ADA 42 U.S.C. 12112(d)(3)(B) / OSHA 29 CFR 1910.38 / FCRA 15 U.S.C. 1681): "
-        "(1) 100% GATE-LOCKED PHI & PII: To comply with federal HIPAA and ADA medical confidentiality mandates, zero personal "
-        "employee information, blood types, allergies, medical history, or Next-of-Kin (NOK) / ICE contacts are displayed on "
-        "the unauthenticated screen. All personal and medical data is strictly locked behind this cryptographic gate. "
-        "(2) PATH A (EMPLOYEE PERSONAL VAULT -- MUSTER POINTS, EMERGENCY SOPs, MEDICAL/ICE & CREDIT SHIELD): Once unlocked by "
-        "the Employee, Path A displays the employee's assigned Primary & Secondary Muster Points, Shelter-in-Place Bunker, "
-        "AED/Trauma Kit location, 5-Step Emergency Evacuation Procedures, Medical/ICE Card, 7-Channel Credit/Loan Shield, and 60-Field Dossier. "
-        "(3) PATH B (EMPLOYER / HR EMERGENCY & INTERNAL VAULT): Once unlocked by HR / Commanding Authority, Path B unseals the "
-        "employee's Blood Type, Drug/Environmental Allergies, Medical History & Medications, Primary Physician, NOK/ICE Contacts, "
-        "and Muster Roll-Call Zone (logged to an immutable HIPAA WORM audit table), plus Employer Notes and the Promotion Shortlist -- "
-        "while 100% blocking the Employer/HR from viewing Employee personal credit or loans."
+        "SOVEREIGN IDENTITY, OSHA FRONT-SCREEN MUSTER ACCESS, & HIPAA/ADA MEDICAL CONFIDENTIALITY CHARTER "
+        "(OSHA 29 CFR 1910.38 / HIPAA 45 CFR 164.502 / ADA 42 U.S.C. 12112(d)(3)(B) / FCRA 15 U.S.C. 1681): "
+        "(1) ZERO-SECOND FRONT-SCREEN MUSTER POINTS & EMERGENCY PROCEDURES: In compliance with OSHA 29 CFR 1910.38 life-safety "
+        "mandates, all Company Command / 911 Dispatch Desks, Primary & Secondary Muster Points, Shelter-in-Place Bunkers, "
+        "AED/Trauma Kit Locations, Evacuation Routes, and 5-Step Emergency Action Procedures are displayed openly on the "
+        "front screen with zero login required. "
+        "(2) 100% GATE-LOCKED PERSONAL PII & HIPAA PHI: To comply with federal HIPAA and ADA medical confidentiality laws, "
+        "zero personal employee information, blood types, allergies, medical history, or personal Next-of-Kin (NOK) / ICE "
+        "contacts are displayed on the unauthenticated screen. All personal and medical data is locked behind this gate. "
+        "(3) PATH A (EMPLOYEE PERSONAL VAULT): Unseals the Employee's personal Medical/ICE card, 7-Channel Credit/Loan Shield, "
+        "and 60-Field Dossier (Employer/HR is 100% blocked from viewing Employee credit or loans). "
+        "(4) PATH B (EMPLOYER / HR EMERGENCY & INTERNAL VAULT): Unseals Employee Blood Type, Allergies, Medical History, "
+        "Primary Physician, & NOK/ICE Contacts for HR/EMS response (WORM-logged), plus Employer Notes & Promotion Shortlist."
     )
 
     COMPANY_EMERGENCY_CONTACTS: List[Dict[str, str]] = [
@@ -314,6 +315,58 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             ],
         },
     }
+
+    SITE_MUSTER_AND_BUNKER_SUMMARY: List[Dict[str, str]] = [
+        {
+            "Facility_Zone": "ZONE 01 // Executive Command & TOC Core",
+            "Primary_Muster_Point": "MUSTER ALPHA-1 (North Helipad Gate 1)",
+            "Secondary_Muster_Point": "MUSTER BRAVO-1 (West Silo Access Road)",
+            "Shelter_In_Place_Bunker": "VAULT BUNKER B1-COMMAND (Sub-Level Faraday Core)",
+            "Nearest_AED_And_Trauma_Kit": "AED & Level-1 Trauma Kit #01 (Command Corridor 10m E)",
+            "Evacuation_Route_And_Channel": "Route Red-Alpha (Stairwell 1) // Radio Ch. 1",
+        },
+        {
+            "Facility_Zone": "ZONE 02 // Watch Floor & 60Hz Microgrid Dispatch",
+            "Primary_Muster_Point": "MUSTER ALPHA-1 (North Helipad Roll-Call Station)",
+            "Secondary_Muster_Point": "MUSTER BRAVO-1 (West Silo Access Road)",
+            "Shelter_In_Place_Bunker": "VAULT BUNKER B1-WATCH (TOC Sub-Floor Blast Shelter)",
+            "Nearest_AED_And_Trauma_Kit": "AED & Trauma Kit #02 (Watch Desk Wall Cabinet)",
+            "Evacuation_Route_And_Channel": "Route Red-Bravo (Watch Double Doors) // Radio Ch. 1",
+        },
+        {
+            "Facility_Zone": "ZONE 03 // 36.75ns SiC MOSFET & 480V Hardware Lab",
+            "Primary_Muster_Point": "MUSTER CHARLIE-2 (South Power Lab Assembly Pad)",
+            "Secondary_Muster_Point": "MUSTER ALPHA-1 (North Helipad Gate 1)",
+            "Shelter_In_Place_Bunker": "VAULT BUNKER B2-LAB (Reinforced Substation Vault)",
+            "Nearest_AED_And_Trauma_Kit": "High-Voltage AED & Non-Latex Trauma Kit #03 (Lab Exit)",
+            "Evacuation_Route_And_Channel": "Route Yellow-Charlie (High-Bay Door 3) // Radio Ch. 1",
+        },
+        {
+            "Facility_Zone": "ZONE 04 // East Airfield Apron, UAS & Title 61 GIS",
+            "Primary_Muster_Point": "MUSTER DELTA-3 (East Airfield Apron Perimeter)",
+            "Secondary_Muster_Point": "MUSTER BRAVO-1 (West Silo Access Road)",
+            "Shelter_In_Place_Bunker": "VAULT BUNKER B3-HANGAR (Reinforced Hangar Culvert)",
+            "Nearest_AED_And_Trauma_Kit": "Field Trauma & Burn Kit #04 + Mobile AED (UAS Bay 1)",
+            "Evacuation_Route_And_Channel": "Route Green-Delta (Flight Service Rd) // Radio Ch. 1",
+        },
+    ]
+
+    def get_public_emergency_muster_and_sops(self, roster_key: str) -> Dict[str, Any]:
+        """
+        Returns non-personal, OSHA 29 CFR 1910.38 facility Muster Points, Shelter-in-Place
+        Bunkers, AED/Trauma Kit locations, and 5-Step Emergency Evacuation Procedures for
+        immediate front-screen display (Zero login required; zero personal PII/PHI exposed).
+        """
+        card = self.get_instant_emergency_triage_card(roster_key)
+        return {
+            "department_zone": card["department"],
+            "primary_muster_point": card["primary_muster_point"],
+            "secondary_muster_point": card["secondary_muster_point"],
+            "shelter_in_place_bunker": card["shelter_in_place_bunker"],
+            "nearest_aed_trauma_kit": card["nearest_aed_trauma_kit"],
+            "evacuation_route_and_warden": card["evacuation_route_and_warden"],
+            "emergency_procedures_rows": card["emergency_procedures_rows"],
+        }
 
     def get_instant_emergency_triage_card(self, roster_key: str) -> Dict[str, Any]:
         person = self.PERSONNEL_EMERGENCY_ROSTER.get(
@@ -856,7 +909,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
                 "gate_status": "GATE_LOCKED_HIPAA_AND_USER_AGREEMENT_AUTHORIZATION_REQUIRED",
                 "viewer_role": viewer_role,
                 "emergency_medical_ice_card": None,
-                "emergency_procedures_muster": None,
+                "emergency_procedures_muster": self.get_public_emergency_muster_and_sops(roster_key),
                 "credit_report": None,
                 "employer_internal_records": None,
                 "employer_personnel_notes": None,
@@ -1029,7 +1082,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             plugin_id="HVF-NG-CLIN-0033",
             clin_number="CLIN 0033",
             title="60-Field Atomic Personnel Dossier, NOK/ICE, Promotion Shortlist, & Credit Shield",
-            version="7.2.0",
+            version="7.3.0",
             target_trl="TRL 8/9",
             per_node_annual_gov_usd=95000,
             per_node_monthly_comm_usd=8500,
@@ -1896,7 +1949,7 @@ class SovereignIdentityAntiFraudShield(SovereignExpansionModule):
             "# HUMPHREY VIRTUAL FARMS LLC // WP-7: 42-FIELD PERSONNEL ONBOARDING, NOK/ICE, PROOF-OF-IDENTITY, & CREDIT SHIELD",
             "**Entity:** Humphrey Virtual Farms LLC (`CAGE: 1AHA8` | `SAM.gov UEI: S1M4ENLHTDH5`)",
             "**Controlling Authority:** Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect",
-            f"**Plug-In Module:** `CLIN 0033 v7.2 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
+            f"**Plug-In Module:** `CLIN 0033 v7.3 (WP-7 60-Field Proof-of-Identity & NOK/ICE Vault)` | **Enclave Tier:** `{ENCLAVE_MODE}`",
             f"**Host Ebony Baseline Merkle Root:** `{FROZEN_EBONY_MERKLE_ROOT}`",
             "",
             "---",
