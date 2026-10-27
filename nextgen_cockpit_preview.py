@@ -7,6 +7,7 @@ Isolation Mandate: Runs strictly on Port 8502 from C:\hvf_c2_nextgen while Froze
 """
 from __future__ import annotations
 import pathlib
+from typing import Any, Dict, List
 import sys
 
 sys.dont_write_bytecode = True
@@ -68,6 +69,7 @@ def render_nextgen_dashboard() -> None:
     )
 
     reg, e27, e28, e29, e30, e31, e32, e33, e34 = build_registry_and_engines()
+    e34_hr = EnterpriseHRMusterHipaaPromotionEngine()
     artifacts_dir = HERE / "artifacts"
     artifacts_dir.mkdir(parents=True, exist_ok=True)
 
@@ -88,11 +90,19 @@ def render_nextgen_dashboard() -> None:
 
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Post-Award Work Packages", "9 / 9 (WP-1..WP-9)", "100% Pre-Engineered")
-    c2.metric("Next-Gen Expansion Value", "$545,000 / yr / Node", "CLIN 0027 - CLIN 0035")
-    c3.metric("Combined Catalog Value", "$2,175,000 / yr / Node", "CLIN 0001 - CLIN 0035")
+    c2.metric("Next-Gen Expansion Value", "$600,000 / yr / Node", "CLIN 0027 - CLIN 0035")
+    c3.metric("Combined Catalog Value", "$2,230,000 / yr / Node", "CLIN 0001 - CLIN 0035")
     c4.metric("Frozen Ebony Core Status", "0 Bytes Modified", "Merkle cc1ee1c8...949a")
 
-    ico_hr = chr(0x1F3E2)
+    ico_shield = chr(0x1F6E1)
+    ico_key    = chr(0x1F511)
+    ico_bolt   = chr(0x26A1)
+    ico_gear   = chr(0x2699)
+    ico_ufo    = chr(0x1F6F8)
+    ico_lock   = chr(0x1F512)
+    ico_medal  = chr(0x1F396)
+    ico_hr     = chr(0x1F3E2)
+    ico_dl     = chr(0x1F4E5)
     tabs = st.tabs([
         f"{ico_shield} 0. Master Registry (WP-1..9)",
         f"{ico_key} 1. WP-1: Day-1 License & WAWF (CLIN 0027)",
