@@ -28,6 +28,7 @@ from plugins.clin_0030_uas_optical_gli_title61_gis import UASOpticalGLIAndTitle6
 from plugins.clin_0031_command_watchfloor_rbac_pdf_engine import CommandWatchFloorRBACAndPDFEngine
 from plugins.clin_0032_dod_rmf_ato_academy_cohort_engine import DoDRMFATOAndAcademyCohortEngine
 from plugins.clin_0033_sovereign_identity_antifraud_shield import SovereignIdentityAntiFraudShield
+from plugins.clin_0034_enterprise_hr_muster_hipaa_promotion_engine import EnterpriseHRMusterHipaaPromotionEngine
 from plugins.clin_0034_federal_capability_and_quote_engine import FederalCapabilityAndQuoteEngine
 
 
@@ -40,8 +41,9 @@ def build_registry_and_engines():
     e31 = CommandWatchFloorRBACAndPDFEngine()
     e32 = DoDRMFATOAndAcademyCohortEngine()
     e33 = SovereignIdentityAntiFraudShield()
+    e34_hr = EnterpriseHRMusterHipaaPromotionEngine()
     e34 = FederalCapabilityAndQuoteEngine()
-    for eng in (e27, e28, e29, e30, e31, e32, e33, e34):
+    for eng in (e27, e28, e29, e30, e31, e32, e33, e34_hr, e34):
         reg.register(eng)
     return reg, e27, e28, e29, e30, e31, e32, e33, e34
 
@@ -85,21 +87,23 @@ def render_nextgen_dashboard() -> None:
     )
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Post-Award Work Packages", "8 / 8 (WP-1..WP-8)", "100% Pre-Engineered")
-    c2.metric("Next-Gen Expansion Value", "$545,000 / yr / Node", "CLIN 0027 - CLIN 0034")
-    c3.metric("Combined Catalog Value", "$2,175,000 / yr / Node", "CLIN 0001 - CLIN 0034")
+    c1.metric("Post-Award Work Packages", "9 / 9 (WP-1..WP-9)", "100% Pre-Engineered")
+    c2.metric("Next-Gen Expansion Value", "$545,000 / yr / Node", "CLIN 0027 - CLIN 0035")
+    c3.metric("Combined Catalog Value", "$2,175,000 / yr / Node", "CLIN 0001 - CLIN 0035")
     c4.metric("Frozen Ebony Core Status", "0 Bytes Modified", "Merkle cc1ee1c8...949a")
 
+    ico_hr = chr(0x1F3E2)
     tabs = st.tabs([
-        f"{ico_shield} 0. Master Registry (WP-1..8)",
+        f"{ico_shield} 0. Master Registry (WP-1..9)",
         f"{ico_key} 1. WP-1: Day-1 License & WAWF (CLIN 0027)",
         f"{ico_bolt} 2. WP-2: 36.75ns SiC Board (CLIN 0028)",
         f"{ico_gear} 3. WP-3: PLC/SCADA/J1939 (CLIN 0029)",
-        f"{ico_drone} 4. WP-4: UAS GLI & Title 61 (CLIN 0030)",
+        f"{ico_ufo} 4. WP-4: UAS GLI & Title 61 (CLIN 0030)",
         f"{ico_lock} 5. WP-5: Watch-Floor RBAC (CLIN 0031)",
         f"{ico_medal} 6. WP-6: DoD RMF ATO & Academy (CLIN 0032)",
-        f"{ico_shield} 7. WP-7: SSN/DOB, Credit/Loan & ID Shield (CLIN 0033)",
-        f"{ico_medal} 8. WP-8: Capability Statement, Quote & Outreach (CLIN 0034)",
+        f"{ico_shield} 7. WP-7: Personal Credit/Loan/Deed Shield & B2C (CLIN 0033)",
+        f"{ico_hr} 8. WP-8: Enterprise HR, Muster, HIPAA & Promotion (CLIN 0034)",
+        f"{ico_medal} 9. WP-9: Capability Statement & 35-CLIN Quote (CLIN 0035)",
     ])
 
     with tabs[0]:
@@ -285,27 +289,123 @@ def render_nextgen_dashboard() -> None:
         )
 
     with tabs[7]:
-        st.markdown("### `WP-7` / `CLIN 0033 v7.7`: Front-Screen OSHA Muster Points & Emergency Procedures + HIPAA-Gated 60-Field User Input Console, Medical/ICE Triage, & Credit Shield")
+        st.markdown("### `WP-7` / `CLIN 0033 v8.0`: Standalone Personal Sovereign Identity, 7-Channel Credit/Loan/Deed/SIM Anti-Fraud Shield & B2C Subscription Engine")
+        st.info(e33.PERSONAL_PRIVACY_CHARTER)
 
-        # =====================================================================
-        # SECTION 1 (ALWAYS VISIBLE ON FRONT SCREEN -- NO LOGIN REQUIRED):
-        # 1A. COMPANY COMMAND / 911 DISPATCH DESKS
-        # 1B. SITE MUSTER POINTS, SHELTER BUNKERS, AED/TRAUMA KITS & 5-STEP SOPs
-        # =====================================================================
+        st.markdown("#### 1. Standalone Personal User (`B2C`) & Enterprise Benefit (`B2B2C`) Pricing & Revenue Projections")
+        st.dataframe(e33.B2C_AND_SEAT_PRICING_TIERS, width="stretch", hide_index=True)
+
+        rc1, rc2, rc3, rc4 = st.columns(4)
+        b2c_ind_in = rc1.number_input("B2C Single Subscribers ($350/yr):", min_value=0, max_value=100000, value=500, step=50, key="ng_c33_b2c_ind")
+        b2c_fam_in = rc2.number_input("B2C Family 5-Packs ($1,250/yr):", min_value=0, max_value=50000, value=120, step=10, key="ng_c33_b2c_fam")
+        b2c_vip_in = rc3.number_input("Executive VIP Vaults ($2,500/yr):", min_value=0, max_value=10000, value=40, step=5, key="ng_c33_b2c_vip")
+        ent_nod_in = rc4.number_input("Enterprise 50-Seat Packs ($65K/yr):", min_value=0, max_value=500, value=2, step=1, key="ng_c33_ent_nod")
+
+        rev_m = e33.calculate_b2c_and_enterprise_revenue(
+            b2c_individual_subscribers=int(b2c_ind_in),
+            b2c_family_packs=int(b2c_fam_in),
+            exec_vip_subscribers=int(b2c_vip_in),
+            enterprise_50seat_nodes=int(ent_nod_in),
+        )
+        rv1, rv2, rv3 = st.columns(3)
+        rv1.metric("Direct Personal User (B2C) ARR", f"${rev_m['b2c_direct_total_arr_usd']:,.2f} / yr", f"Ind: ${rev_m['b2c_individual_arr_usd']:,.0f} | Fam: ${rev_m['b2c_family_arr_usd']:,.0f}")
+        rv2.metric("Enterprise 50-Seat Benefit ARR", f"${rev_m['enterprise_nodes_arr_usd']:,.2f} / yr", f"{int(ent_nod_in)} Node Pack(s) @ $65,000/yr")
+        rv3.metric("Combined WP-7 Annual Revenue", f"${rev_m['combined_wp7_annual_revenue_usd']:,.2f} / yr", f"{rev_m['total_protected_individuals']:,} Protected Individuals")
+
+        st.markdown("---")
+        st.markdown("#### 2. Personal Subscriber Anti-Fraud Vault Gate (Zero Employer / Zero HR Access)")
+        sub_options = list(e33.PERSONAL_SUBSCRIBER_PROFILES.keys())
+        sel_sub_key = st.selectbox(
+            "Select Personal Subscriber Vault to Unlock:",
+            options=sub_options,
+            index=0,
+            key="ng_c33_sub_sel",
+        )
+        sub_obj = e33.PERSONAL_SUBSCRIBER_PROFILES[sel_sub_key]
+        sub_id = sub_obj["subscriber_id"]
+        sub_pin = sub_obj["personal_pin"]
+
+        st.caption(f"**Demo Personal Subscriber PIN for `{sub_id}`:** `{sub_pin}` *(Auto-loaded below -- 100% Private to the Individual)*")
+        p_agree = st.checkbox(
+            "I accept the Sovereign Personal Anti-Fraud Charter (I confirm I am the individual owner of this personal credit/deed vault).",
+            value=False,
+            key="ng_c33_p_agree",
+        )
+        pg1, pg2 = st.columns([3, 1])
+        p_pin_in = pg1.text_input("Personal Subscriber Vault PIN:", value=sub_pin, key=f"ng_c33_pin_{sub_id}")
+        p_frz_in = pg2.checkbox("7-Channel Credit/Deed Freeze ON", value=True, key="ng_c33_p_frz")
+
+        p_gate = e33.open_personal_subscriber_gate(
+            subscriber_key=sel_sub_key,
+            privacy_charter_accepted=p_agree,
+            provided_personal_pin=p_pin_in,
+            out_dir=artifacts_dir,
+            credit_freeze_locked=p_frz_in,
+        )
+
+        if not p_gate["gate_open"]:
+            st.warning(
+                f"**[PERSONAL ANTI-FRAUD VAULT LOCKED // `{p_gate['gate_status']}`]** -- "
+                f"Check the Personal Charter box above to unseal your private 7-Channel Credit Bureau, Loan, Home Deed, ACH, & SIM-Swap Shield (Auto-PIN: `{sub_pin}`)."
+            )
+        else:
+            cred_r = p_gate["credit_report"]
+            st.success(
+                f"**[{p_gate['gate_status']}]** -- Tier: `{sub_obj['subscription_tier']}` | "
+                f"**Employer / HR Access:** `0% (PHYSICALLY DECOUPLED FROM CLIN 0034)`"
+            )
+            unfrz_id = st.text_input("Generate My Personal 15-Minute Credit/Loan Unfreeze Token For Inquiry ID:", value="REQ-HVF-EQUIP-2026-001", key="ng_c33_unfrz_id")
+            my_tok = e33.generate_ceo_credit_unfreeze_token(unfrz_id)
+
+            pc1, pc2, pc3 = st.columns(3)
+            pc1.metric("My Credit, Loan & Deed Freeze", "LOCKED (Protected)" if cred_r["credit_freeze_locked"] else "TEMPORARY UNFREEZE", "Employer/HR Access: 0% (DECOUPLED)")
+            pc2.metric("Fraudulent Loans/Pulls Blocked", f"{cred_r['fraudulent_loans_and_pulls_blocked']} / {cred_r['total_inquiries_monitored']} Blocked", "Equifax/Experian/TU/Chex/Deed/SIM")
+            pc3.metric("My One-Time Unfreeze Token", my_tok, f"For {unfrz_id}")
+
+            st.markdown("#### 2A. My 7-Channel Credit Bureau, Bank/SBA Loan, Home/Land Deed APN, Treasury ACH, & SIM-Swap Intercept Ledger")
+            st.dataframe(cred_r["credit_loan_rows"], width="stretch", hide_index=True)
+
+            st.markdown("#### 2B. My Personal 18-Field Identity, Bureau Freeze PIN, Bank Routing, Home Deed APN, & SIM-Lock Input Console")
+            cur_18 = p_gate["current_18_values"]
+            in_18: Dict[str, str] = {}
+            p_cols = st.columns(3)
+            for idx, (pk, plabel, is_sec) in enumerate(e33.PERSONAL_18_SCHEMA):
+                in_18[pk] = p_cols[idx % 3].text_input(plabel, value=cur_18[pk], type="password" if is_sec else "default", key=f"p18_{sub_id}_{pk}")
+
+            if st.button("Save & Seal My Personal 18-Field Anti-Fraud Vault (WORM SQLite)", type="primary", key=f"save_p18_{sub_id}"):
+                s_out = e33.save_personal_subscriber_18_fields(artifacts_dir, sel_sub_key, in_18)
+                st.success(f"**Personal 18-Field Anti-Fraud Vault Sealed for `{sub_id}`!** Composite Seal: `{s_out['composite_seal'][:24]}...`")
+                st.rerun()
+
+            st.markdown("#### 2C. My Sealed 18-Field Personal Anti-Fraud & Asset Lock Verification Table")
+            st.dataframe(p_gate["personal_vault_rows"], width="stretch", hide_index=True)
+
+        exp33 = e33.generate_wp7_antifraud_dossier(artifacts_dir)
+        st.download_button(
+            label=f"{ico_dl} Download WP-7 (CLIN 0033 v8.0) Standalone Personal Credit/Loan/Deed Shield & B2C Pricing Spec PDF",
+            data=pathlib.Path(exp33["pdf_path"]).read_bytes(),
+            file_name=pathlib.Path(exp33["pdf_path"]).name,
+            mime="application/pdf",
+            key="dl_c33_pdf",
+        )
+
+    with tabs[8]:
+        st.markdown("### `WP-8` / `CLIN 0034 v8.0`: Enterprise HR, Front-Screen OSHA Muster SOPs, HIPAA Medical/ICE Triage, Zero-Trust Dual-Custody (`NIST AC-5`) 60-Field Dossier & Promotion Board")
+
         st.markdown("#### 1A. Official Company Command & 911 Emergency Dispatch Desks (Always Accessible -- No Login Required)")
-        st.dataframe(e33.COMPANY_EMERGENCY_CONTACTS, width="stretch", hide_index=True)
+        st.dataframe(e34_hr.COMPANY_EMERGENCY_CONTACTS, width="stretch", hide_index=True)
 
         st.markdown("#### 1B. Site-Wide Primary & Secondary Muster Points, Shelter-in-Place Bunkers, AED/Trauma Kits, & 5-Step Emergency Procedures (`OSHA 29 CFR 1910.38` -- No Login Required)")
-        st.dataframe(e33.SITE_MUSTER_AND_BUNKER_SUMMARY, width="stretch", hide_index=True)
+        st.dataframe(e34_hr.SITE_MUSTER_AND_BUNKER_SUMMARY, width="stretch", hide_index=True)
 
-        zone_options = list(e33.FACILITY_ZONE_TO_ROSTER_KEY.keys())
+        zone_options = list(e34_hr.FACILITY_ZONE_TO_ROSTER_KEY.keys())
         sel_zone_key = st.selectbox(
             "Select Facility Operational Zone to View Immediate 5-Step Emergency Evacuation & Muster SOP (No Login Required):",
             options=zone_options,
             index=0,
-            key="ng_c33_zone_sel",
+            key="ng_c34_hr_zone_sel",
         )
-        pub_muster = e33.get_public_emergency_muster_and_sops(sel_zone_key)
+        pub_muster = e34_hr.get_public_emergency_muster_and_sops(sel_zone_key)
 
         m1, m2, m3, m4 = st.columns(4)
         m1.metric("Primary Muster Point", pub_muster["primary_muster_title"], pub_muster["primary_muster_sub"])
@@ -317,91 +417,62 @@ def render_nextgen_dashboard() -> None:
         st.dataframe(pub_muster["emergency_procedures_rows"], width="stretch", hide_index=True)
 
         st.markdown("---")
+        st.markdown("#### 2. Enterprise HR, HIPAA/ADA Medical Confidentiality, & Zero-Trust Two-Person Integrity Gate (`CLIN 0034`)")
+        st.info(e34_hr.ENTERPRISE_HR_AND_HIPAA_CHARTER)
 
-        # =====================================================================
-        # SECTION 2: MANDATORY HIPAA / ADA / FCRA USER AGREEMENT & GATE
-        # =====================================================================
-        st.markdown("#### 2. Sovereign User Agreement, HIPAA/ADA Medical Confidentiality Charter, & Compartment Authorization Gate")
-        st.info(e33.USER_AGREEMENT_TEXT)
-
-        roster_options = list(e33.PERSONNEL_EMERGENCY_ROSTER.keys())
+        roster_options = list(e34_hr.PERSONNEL_EMERGENCY_ROSTER.keys())
         sel_person_key = st.selectbox(
-            "Select Personnel Dossier to Authenticate, Input Information, or Unseal Behind Gate (All Personal PII & Medical PHI Locked Until Gate Opens):",
+            "Select Personnel Dossier to Authenticate & Unseal Behind HR/HIPAA Gate (All Personal PII & Medical PHI Locked Until Gate Opens):",
             options=roster_options,
             index=0,
-            key="ng_c33_roster_sel",
+            key="ng_c34_hr_roster_sel",
         )
-        person_obj = e33.PERSONNEL_EMERGENCY_ROSTER[sel_person_key]
+        person_obj = e34_hr.PERSONNEL_EMERGENCY_ROSTER[sel_person_key]
         emp_id_code = person_obj["employee_id"]
-        emp_pin_val = person_obj["employee_pin"]
         empr_key_val = "EMPLOYER-MASTER-1AHA8"
 
-        st.caption(
-            f"**Console Demo Keys for `{emp_id_code}`:** "
-            f"Path A (Employee Personal Vault & 60-Field Input PIN) = `{emp_pin_val}` | Path B (Employer / HR Master Key) = `{empr_key_val}` "
-            f"*(Automatically loaded into the key box when you switch paths below)*"
-        )
+        st.caption(f"**Console Demo HR / Emergency Master Key:** `{empr_key_val}` *(Auto-loaded below -- Personal Credit/Loans are 100% separated into Tab 7 / CLIN 0033)*")
 
-        agree_chk = st.checkbox(
-            "I have read and accept the Sovereign User Agreement & HIPAA/ADA Medical Confidentiality Charter.",
+        hr_agree_chk = st.checkbox(
+            "I have read and accept the Enterprise HR, HIPAA/ADA Medical Confidentiality, & Zero-Trust Two-Person Integrity Charter.",
             value=False,
-            key="ng_c33_agree_chk",
+            key="ng_c34_hr_agree_chk",
+        )
+        hr_key_in = st.text_input(
+            "Active Enterprise HR & Emergency Triage Master Key:",
+            value=empr_key_val,
+            key=f"ng_c34_hr_key_{emp_id_code}",
         )
 
-        g1, g2, g3 = st.columns([2, 2, 1])
-        role_mode = g1.radio(
-            "Select Authorization Compartment Path to Unseal Personal/Medical/Vault Data & 60-Field Input Console:",
-            options=[
-                "GATE_LOCKED (Front-Screen Muster SOPs Active // 100% of Personal PII, Medical PHI, NOK/ICE & Vaults Hidden)",
-                "PATH A: EMPLOYEE_PERSONAL_VAULT (Input/Update My 60-Field Dossier, View My Medical/ICE & My 7-Channel Credit/Loan Shield)",
-                "PATH B: EMPLOYER_HR_AND_EMERGENCY_VAULT (HR Emergency Medical/Allergies/Blood/ICE, Employer Notes, Promotion Shortlist & HR Input Unlock)",
-            ],
-            index=0,
-            key="ng_c33_role_radio",
-        )
-
-        short_role = "EMPLOYEE" if "EMPLOYEE_PERSONAL_VAULT" in role_mode else ("EMPLOYER" if "EMPLOYER_HR_AND_EMERGENCY_VAULT" in role_mode else "LOCKED")
-        default_pin_hint = emp_pin_val if short_role == "EMPLOYEE" else (empr_key_val if short_role == "EMPLOYER" else "")
-
-        dyn_key_id = f"ng_c33_key_{emp_id_code}_{short_role}"
-        key_in = g2.text_input(
-            f"Active Authorization Key ({short_role} Path):",
-            value=default_pin_hint,
-            key=dyn_key_id,
-        )
-        freeze_toggle = g3.checkbox("Credit/Loan Freeze ON", value=True, key="ng_c33_frz_v76")
-
-        gate_res = e33.open_compartment_gate(
+        gate_res = e34_hr.open_hr_and_hipaa_gate(
             roster_key=sel_person_key,
-            viewer_role=short_role,
-            user_agreement_accepted=agree_chk,
-            access_key_or_pin=key_in,
+            charter_accepted=hr_agree_chk,
+            provided_hr_key=hr_key_in,
             out_dir=artifacts_dir,
-            credit_freeze_locked=freeze_toggle,
         )
 
         if not gate_res["gate_open"]:
             st.warning(
-                f"**[HIPAA / ADA / FCRA GATE LOCKED // STATUS: `{gate_res['gate_status']}`]** -- "
+                f"**[ENTERPRISE HR & HIPAA GATE LOCKED // STATUS: `{gate_res['gate_status']}`]** -- "
                 f"Site Muster Points, Shelter Bunkers, AED Locations, and 5-Step Emergency Evacuation Procedures are openly accessible above. "
-                f"However, zero personal employee PII, Blood Type, Allergies, Medical History, Next-of-Kin (NOK), ICE contacts, "
-                f"credit bureaus, or HR records are exposed while this gate is locked. "
-                f"To unseal or input information: (1) Check the **I have read and accept the Sovereign User Agreement & HIPAA/ADA Charter** box above, and "
-                f"(2) Select either **PATH A: EMPLOYEE_PERSONAL_VAULT** (Auto-Key: `{emp_pin_val}`) or "
-                f"**PATH B: EMPLOYER_HR_AND_EMERGENCY_VAULT** (Auto-Key: `{empr_key_val}`)."
+                f"Zero personal employee PII, Blood Type, Allergies, Medical History, NOK/ICE contacts, or HR dossiers are exposed while locked. "
+                f"Check the **Enterprise HR & HIPAA Charter** box above to unseal (Auto-Key: `{empr_key_val}`)."
             )
         else:
             triage = gate_res["emergency_medical_ice_card"]
+            lock_st = e34_hr.get_employee_dossier_lock_status(artifacts_dir, sel_person_key)
+            is_emp_locked = lock_st["is_locked"]
+            cur_emp_rev = lock_st["revision_number"]
+            hr_tok_ref = lock_st["hr_custodian_token"]
+            ver_tok_ref = lock_st["second_verifier_token"]
+
             st.success(
                 f"**[{gate_res['gate_status']} // {triage['employee_id']} ({triage['full_name']})]** -- "
-                f"{gate_res['privacy_notice']} | **HIPAA WORM Audit Seal:** `{gate_res['hipaa_audit_seal'][:20]}...`"
+                f"HIPAA WORM Audit Seal: `{gate_res['hipaa_audit_seal'][:24]}...` | "
+                f"**Personal Credit/Loans:** `0% PRESENT (100% Decoupled into Tab 7 / CLIN 0033)`"
             )
 
-            # =================================================================
-            # SHARED AUTHENTICATED HIPAA MEDICAL HISTORY, ALLERGIES, BLOOD TYPE
-            # & NOK/ICE TRIAGE PACKET (UNSEALED ONLY AFTER GATE AUTHENTICATION)
-            # =================================================================
-            st.markdown(f"#### Authenticated HIPAA Emergency Medical History, Allergies, Blood Type, Physician, & NOK/ICE Packet (`{triage['employee_id']} // {triage['full_name']}`)")
+            st.markdown(f"#### 2A. Authenticated HIPAA Emergency Medical History, Allergies, Blood Type, Physician, & NOK/ICE Packet (`{triage['employee_id']} // {triage['full_name']}`)")
             e1, e2, e3, e4 = st.columns(4)
             e1.metric("Blood Type & Rh Factor", triage["blood_type_clean"], triage["medical_alert_clean"])
             e2.metric("Next of Kin (NOK) Phone", triage["nok_phone"], triage["nok_short"])
@@ -409,332 +480,269 @@ def render_nextgen_dashboard() -> None:
             e4.metric("Employee Direct Phone", triage["direct_phone"], triage["role_short"])
 
             st.dataframe(triage["hipaa_triage_ledger_rows"], width="stretch", hide_index=True)
-            st.markdown("---")
 
-            if gate_res["viewer_role"] == "EMPLOYEE":
-                # =============================================================
-                # PATH A: EMPLOYEE PERSONAL VAULT & 60-FIELD USER INPUT CONSOLE
-                # =============================================================
-                cred_r = gate_res["credit_report"]
-                unfrz_id = st.text_input("Generate My Personal One-Time Credit/Loan Unfreeze Token For Inquiry ID:", value="REQ-HVF-EQUIP-2026-001", key="ng_c33_emp_unfrz")
-                my_tok = e33.generate_ceo_credit_unfreeze_token(unfrz_id)
+            st.markdown("#### 2B. Enterprise HR Security Clearance, I-9 E-Verify, & Watch-Floor RBAC Records")
+            st.dataframe(gate_res["employer_internal_records"], width="stretch", hide_index=True)
 
-                ec1, ec2, ec3 = st.columns(3)
-                ec1.metric("My Credit & Loan Freeze", "LOCKED (Protected)" if cred_r["credit_freeze_locked"] else "TEMPORARY UNFREEZE", "Employer/HR Access: BLOCKED")
-                ec2.metric("Fraudulent Loans/Pulls Blocked", f"{cred_r['fraudulent_loans_and_pulls_blocked']} / {cred_r['total_inquiries_monitored']} Blocked", "Equifax/Experian/TU/Chex/Deed/SIM")
-                ec3.metric("My One-Time Unfreeze Token", my_tok, f"For {unfrz_id}")
-
-                st.markdown("#### 1. My Private 7-Channel Credit Bureau, Bank/SBA Loan, Home Deed Title, ACH, & SIM-Swap Shield (Visible ONLY to Employee)")
-                st.dataframe(cred_r["credit_loan_rows"], width="stretch", hide_index=True)
-
-                st.markdown("---")
-                st.markdown(f"#### 2. Interactive 60-Field Personnel Onboarding & Self-Service Data Input Console (`{triage['employee_id']} // {triage['full_name']}`)")
-                emp_form_mode = st.radio(
-                    "Select My 60-Field Dossier Mode (Open Interactive Input Boxes vs. View Sealed Proof-of-Identity Table):",
-                    options=[
-                        "OPEN_60_FIELD_USER_INPUT_FORM (Type / Edit My Personal, NOK/ICE, Address, Job History & Training Information)",
-                        "VIEW_SEALED_60_FIELD_PROOF_OF_IDENTITY_TABLE (Read-Only Cryptographic Verification View)",
-                    ],
-                    index=0,
-                    key=f"ng_c33_emp_form_mode_{emp_id_code}",
+            st.markdown(f"#### 2C. Official HR Personnel File Notes for `{triage['employee_id']} // {triage['full_name']}` (WORM SQLite)")
+            n_col1, n_col2, n_col3 = st.columns([2, 2, 3])
+            note_auth = n_col1.text_input(
+                "Note Author & Verifying Co-Signer:",
+                value="HR: EMP-002 (CAPT. VANCE) // VERIFIED BY: EMP-003 (DR. LIN)",
+                key="ng_c34_note_auth",
+            )
+            note_cat = n_col2.selectbox(
+                "Personnel File Note Category:",
+                options=[
+                    "PERFORMANCE_COMM_AND_PROMOTION",
+                    "SECURITY_CLEARANCE_AND_VETTING_NOTE",
+                    "SAFETY_INTERLOCK_QUALIFICATION",
+                    "SHIFT_INCIDENT_OR_COUNSELING_RECORD",
+                    "CONTRACT_CLIN_ASSIGNMENT_MEMO",
+                ],
+                index=0,
+                key="ng_c34_note_cat",
+            )
+            note_txt = n_col3.text_input(
+                "Enter Verified HR Note to Seal into Employee File:",
+                value=f"Dual-custody verified annual security & operational readiness review for {triage['full_name']}.",
+                key=f"ng_c34_note_txt_{triage['employee_id']}",
+            )
+            if st.button("Seal & Append Verified HR Note to Employee File (WORM SQLite)", type="primary", key="ng_c34_add_note_btn"):
+                db_f = artifacts_dir / "wp8_enterprise_hr_triage_worm.db"
+                added_n = e34_hr.append_employer_personnel_note(
+                    db_path=db_f,
+                    employee_id=triage["employee_id"],
+                    employee_name=triage["full_name"],
+                    author_authority=note_auth,
+                    note_category=note_cat,
+                    confidential_note_text=note_txt,
+                )
+                gate_res["employer_personnel_notes"] = e34_hr.get_employer_personnel_notes(db_f, employee_id=triage["employee_id"])
+                st.success(
+                    f"**Verified HR Note Sealed to `{triage['employee_id']}` File!** WORM Note SHA-256: `{added_n['worm_note_sha256'][:24]}...` "
+                    f"(Total Notes for `{triage['employee_id']}`: `{added_n['total_notes_for_employee']}`)"
                 )
 
-                if emp_form_mode.startswith("OPEN_60_FIELD"):
-                    st.info(
-                        "**[60-FIELD USER DATA-ENTRY CONSOLE ACTIVE]** -- Enter 1 atomic response per box across all 8 sections below "
-                        "(Legal/Vital, Current Address/Contact, Job/I-9/IDs, NOK/ICE & Medical, Biometrics/Assets, Previous 7-Yr Addresses, "
-                        "Prior Job History, and Training/Certifications), then click **Submit & Seal My 60-Field Personnel Dossier** at the bottom."
-                    )
-                    emp_inputs: Dict[str, str] = {}
-                    cur_vals = e33.get_saved_user_60field_values(artifacts_dir, sel_person_key)
+            st.dataframe(gate_res["employer_personnel_notes"], width="stretch", hide_index=True)
 
-                    st.markdown("##### Section 1: Legal Identity & Vital Statistics (`Fields 01 - 10` // 1 Response Per Box)")
-                    s1_c = st.columns(5)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[0:10]):
-                        emp_inputs[fk] = s1_c[idx % 5].text_input(flabel, value=cur_vals[fk], type="password" if is_s else "default", key=f"emp60_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 2: Current Residential Address, Contact, & Physical Description (`Fields 11 - 20` // 1 Response Per Box)")
-                    s2_c = st.columns(5)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[10:20]):
-                        emp_inputs[fk] = s2_c[idx % 5].text_input(flabel, value=cur_vals[fk], type="password" if is_s else "default", key=f"emp60_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 3: Job Application, I-9 Work Eligibility, & Government IDs (`Fields 21 - 27` // 1 Response Per Box)")
-                    s3_c = st.columns(4)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[20:27]):
-                        emp_inputs[fk] = s3_c[idx % 4].text_input(flabel, value=cur_vals[fk], type="password" if is_s else "default", key=f"emp60_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 4: Next of Kin (NOK), In Case of Emergency (ICE), Blood Type & Allergies (`Fields 28 - 35` // 1 Response Per Box)")
-                    s4_c = st.columns(4)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[27:35]):
-                        emp_inputs[fk] = s4_c[idx % 4].text_input(flabel, value=cur_vals[fk], type="password" if is_s else "default", key=f"emp60_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 5: 3-Modal Biometrics & Financial/SIM Asset Locks (`Fields 36 - 42` // 1 Response Per Box)")
-                    s5_c = st.columns(4)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[35:42]):
-                        emp_inputs[fk] = s5_c[idx % 4].text_input(flabel, value=cur_vals[fk], type="password" if is_s else "default", key=f"emp60_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 6: Previous 7-Year Residential Address History (`Fields 43 - 48` // 1 Response Per Box)")
-                    s6_c = st.columns(3)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[42:48]):
-                        emp_inputs[fk] = s6_c[idx % 3].text_input(flabel, value=cur_vals[fk], type="password" if is_s else "default", key=f"emp60_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 7: Verified Prior Employment & Job History (`Fields 49 - 54` // 1 Response Per Box)")
-                    s7_c = st.columns(3)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[48:54]):
-                        emp_inputs[fk] = s7_c[idx % 3].text_input(flabel, value=cur_vals[fk], type="password" if is_s else "default", key=f"emp60_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 8: Sovereign Academy, Certifications, Training Hours, & Company Evaluation (`Fields 55 - 60` // 1 Response Per Box)")
-                    s8_c = st.columns(3)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[54:60]):
-                        emp_inputs[fk] = s8_c[idx % 3].text_input(flabel, value=cur_vals[fk], type="password" if is_s else "default", key=f"emp60_{emp_id_code}_{fk}")
-
-                    if st.button("Submit & Seal My 60-Field Personnel Dossier (Lock into WORM SQLite)", type="primary", key=f"emp_submit_60_{emp_id_code}"):
-                        sub_res = e33.submit_user_60field_onboarding_application(
-                            out_dir=artifacts_dir,
-                            roster_key=sel_person_key,
-                            profile_60_inputs=emp_inputs,
-                            submitted_by_role=f"PATH_A_EMPLOYEE_{emp_id_code}",
-                            submission_reason="EMPLOYEE_SELF_SERVICE_60FIELD_SUBMISSION",
-                        )
-                        st.success(
-                            f"**60-Field Dossier Sealed for `{emp_id_code}` (Revision #{sub_res['revision_number']:02d})!** "
-                            f"Composite 60-Field Seal: `{sub_res['composite_60field_seal'][:24]}...`"
-                        )
-
-                st.markdown("#### 3. My Sealed 60-Field Personal Identity, Address/Job History, Training, & NOK/ICE Dossier Table")
-                st.dataframe(gate_res["proof_of_id_rows"], width="stretch", hide_index=True)
-
-            elif gate_res["viewer_role"] == "EMPLOYER":
-                # =============================================================
-                # PATH B: EMPLOYER / HR INTERNAL & EMERGENCY VAULT
-                # =============================================================
-                st.markdown("#### 1A. Employer/HR Internal Security Clearance, I-9 E-Verify, & Watch-Floor RBAC Records (Hidden From Employee View)")
-                st.dataframe(gate_res["employer_internal_records"], width="stretch", hide_index=True)
-
-                st.markdown(f"#### 1B. Official Employer Personnel File Notes for `{triage['employee_id']} // {triage['full_name']}` (WORM SQLite -- Hidden From Employee)")
-                n_col1, n_col2, n_col3 = st.columns([2, 2, 3])
-                note_auth = n_col1.text_input(
-                    "Note Author / Commanding Authority:",
-                    value="JEFFERY HUMPHREY (CEO & SOVEREIGN ARCHITECT)",
-                    key="ng_c33_note_auth",
-                )
-                note_cat = n_col2.selectbox(
-                    "Personnel File Note Category:",
-                    options=[
-                        "PERFORMANCE_COMM_AND_PROMOTION",
-                        "SECURITY_CLEARANCE_AND_VETTING_NOTE",
-                        "SAFETY_INTERLOCK_QUALIFICATION",
-                        "SHIFT_INCIDENT_OR_COUNSELING_RECORD",
-                        "CONTRACT_CLIN_ASSIGNMENT_MEMO",
-                    ],
-                    index=0,
-                    key="ng_c33_note_cat",
-                )
-                note_txt = n_col3.text_input(
-                    "Enter Confidential Employer Note to Seal into Employee File:",
-                    value=f"Verified annual sovereign security & operational readiness review for {triage['full_name']}.",
-                    key=f"ng_c33_note_txt_{triage['employee_id']}",
-                )
-                if st.button("Seal & Append Official Employer Note to Employee File (WORM SQLite)", type="primary", key="ng_c33_add_note_btn"):
-                    db_f = artifacts_dir / "wp7_identity_credit_worm_ledger.db"
-                    added_n = e33.append_employer_personnel_note(
-                        db_path=db_f,
-                        employee_id=triage["employee_id"],
-                        employee_name=triage["full_name"],
-                        author_authority=note_auth,
-                        note_category=note_cat,
-                        confidential_note_text=note_txt,
-                    )
-                    gate_res["employer_personnel_notes"] = e33.get_employer_personnel_notes(db_f, employee_id=triage["employee_id"])
-                    st.success(
-                        f"**Employer Note Sealed to `{triage['employee_id']}` File!** WORM Note SHA-256: `{added_n['worm_note_sha256'][:24]}...` "
-                        f"(Total Notes for `{triage['employee_id']}`: `{added_n['total_notes_for_employee']}`)"
-                    )
-
-                st.dataframe(gate_res["employer_personnel_notes"], width="stretch", hide_index=True)
-
-                st.markdown("#### 1C. Employer Qualified Candidate Promotion & Company Evaluation Shortlist Puller (`worm_promotion_evaluation_board`)")
-                st.caption(
-                    "Filter across all personnel by verified prior job experience, HVF Field Academy exam score, "
-                    "continuing training hours, 7-year address verification, and annual company evaluation rating to pull a single ranked Promotion Shortlist:"
-                )
-                p_c1, p_c2, p_c3, p_c4 = st.columns(4)
-                min_exp_in  = p_c1.slider("Minimum Verified Experience (Yrs):", min_value=0, max_value=20, value=5, step=1, key="ng_c33_p_exp")
-                min_acad_in = p_c2.slider("Minimum HVF Academy Score (%):", min_value=70.0, max_value=100.0, value=90.0, step=1.0, key="ng_c33_p_acad")
-                min_eval_in = p_c3.slider("Minimum Company Eval Rating (0-5):", min_value=3.0, max_value=5.0, value=4.5, step=0.05, key="ng_c33_p_eval")
-                req_spec_in = p_c4.selectbox(
-                    "Required Technical Specialty Track:",
-                    options=["ALL", "EXECUTIVE_C2", "SIC_HARDWARE", "SCADA_PLC", "UAS_GIS", "RMF_CYBER"],
-                    index=0,
-                    key="ng_c33_p_spec",
-                )
-
-                promo_res = e33.evaluate_promotion_and_company_shortlist(
-                    out_dir=artifacts_dir,
-                    min_experience_years=int(min_exp_in),
-                    min_academy_score_pct=float(min_acad_in),
-                    min_eval_rating=float(min_eval_in),
-                    required_specialty=req_spec_in,
-                )
-
-                pm1, pm2, pm3 = st.columns(3)
-                pm1.metric("Qualified Candidates Pulled", f"{promo_res['qualified_candidates_count']} / {promo_res['total_personnel_evaluated']} Qualified", f"Track: {req_spec_in}")
-                pm2.metric("Top-Ranked Promotion Candidate", promo_res["top_ranked_candidate"], f"Readiness Index: {promo_res['top_pri_score']} / 100")
-                pm3.metric("WORM Promotion Board Seals", f"{promo_res['worm_board_rows_logged']} Sealed Rows", "12 Active SQLite WORM Triggers")
-
-                st.dataframe(promo_res["qualified_shortlist_rows"], width="stretch", hide_index=True)
-
-                st.markdown("---")
-                st.markdown(f"#### 2. Employer / HR 60-Field Onboarding Data-Entry Console & Unalterable Proof-of-Identity Lock (`{triage['employee_id']}`)")
-                vault_state = e33.load_or_init_vault_lock_state(artifacts_dir)
-                cur_rev = int(vault_state.get("revision_number", 1))
-                employer_approval_tok = e33.generate_employer_change_approval_token(cur_rev)
-
-                hr_view_mode = st.radio(
-                    "Select HR / Employer 60-Field Dossier Mode:",
-                    options=[
-                        "OPEN_60_FIELD_HR_INPUT_FORM_NOW (Input New Candidate / Edit 60 Atomic Onboarding, Address, Job & Training Fields)",
-                        "SEALED_UNALTERABLE_PROOF_OF_IDENTITY_VIEW (Read-Only Locked Record + Cryptographic Change-Approval Gate)",
-                    ],
-                    index=0,
-                    key=f"ng_c33_hr_form_mode_{emp_id_code}",
-                )
-
-                if hr_view_mode.startswith("OPEN_60_FIELD"):
-                    st.warning(
-                        f"**[EMPLOYER / HR 60-FIELD DATA-ENTRY CONSOLE ACTIVE // `{emp_id_code}`]** -- "
-                        f"Enter or update 1 atomic value per box across all 60 fields below, then click **Seal & Lock Sovereign Personnel Identity Application** to lock the record into WORM SQLite."
-                    )
-                    prof_inputs: Dict[str, str] = {}
-                    def_vals = e33.get_saved_user_60field_values(artifacts_dir, sel_person_key)
-
-                    st.markdown("##### Section 1: Legal Identity & Vital Statistics (`Fields 01 - 10` // 1 Response Per Box)")
-                    s1_cols = st.columns(5)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[0:10]):
-                        prof_inputs[fk] = s1_cols[idx % 5].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 2: Residential Address, Contact, & Physical Description (`Fields 11 - 20` // 1 Response Per Box)")
-                    s2_cols = st.columns(5)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[10:20]):
-                        prof_inputs[fk] = s2_cols[idx % 5].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 3: Job Application, I-9 Work Eligibility, & Government IDs (`Fields 21 - 27` // 1 Response Per Box)")
-                    s3_cols = st.columns(4)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[20:27]):
-                        prof_inputs[fk] = s3_cols[idx % 4].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 4: Next of Kin (NOK) & In Case of Emergency (ICE) Contacts (`Fields 28 - 35` // 1 Response Per Box)")
-                    s4_cols = st.columns(4)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[27:35]):
-                        prof_inputs[fk] = s4_cols[idx % 4].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 5: 3-Modal Biometrics & Asset Locks (`Fields 36 - 42` // 1 Response Per Box)")
-                    s5_cols = st.columns(4)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[35:42]):
-                        prof_inputs[fk] = s5_cols[idx % 4].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 6: Previous 7-Year Residential Address History (`Fields 43 - 48` // 1 Response Per Box)")
-                    s6_cols = st.columns(3)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[42:48]):
-                        prof_inputs[fk] = s6_cols[idx % 3].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 7: Verified Prior Employment & Job History (`Fields 49 - 54` // 1 Response Per Box)")
-                    s7_cols = st.columns(3)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[48:54]):
-                        prof_inputs[fk] = s7_cols[idx % 3].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{emp_id_code}_{fk}")
-
-                    st.markdown("##### Section 8: Sovereign Academy, Certifications, Training Hours, & Company Evaluation (`Fields 55 - 60` // 1 Response Per Box)")
-                    s8_cols = st.columns(3)
-                    for idx, (fk, flabel, _, is_s) in enumerate(e33.ATOMIC_42_SCHEMA[54:60]):
-                        prof_inputs[fk] = s8_cols[idx % 3].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng42_{emp_id_code}_{fk}")
-
-                    if st.button("Seal & Lock Sovereign Personnel Identity Application (Save 60 Fields into WORM SQLite)", type="primary", key=f"ng_c33_seal_lock_btn_{emp_id_code}"):
-                        sub_hr = e33.submit_user_60field_onboarding_application(
-                            out_dir=artifacts_dir,
-                            roster_key=sel_person_key,
-                            profile_60_inputs=prof_inputs,
-                            submitted_by_role="PATH_B_EMPLOYER_HR_AUTHORITY",
-                            submission_reason="EMPLOYER_VERIFIED_60FIELD_ONBOARDING_SEAL",
-                        )
-                        st.success(
-                            f"**60-Field Dossier Sealed & Locked (Revision #{sub_hr['revision_number']:02d})!** "
-                            f"Composite Seal: `{sub_hr['composite_60field_seal'][:24]}...`"
-                        )
-                else:
-                    st.info(
-                        f"**[UNALTERABLE DIGITAL PROOF-OF-IDENTITY STATE ACTIVE // REVISION #{cur_rev:02d} LOCKED]** -- "
-                        f"Input form is removed in this view. Employee Personal Credit & Loan Telemetry: **100% BLOCKED BY PRIVACY WALL**."
-                    )
-                    st.caption(f"Reference Employer HMAC Approval Token for Rev #{cur_rev:02d}: `{employer_approval_tok}`")
-
-                st.markdown("#### 3. Employee 60-Field Digital Proof-of-Identity, Career History, Training, & NOK/ICE Record Table")
-                st.dataframe(gate_res["proof_of_id_rows"], width="stretch", hide_index=True)
-
-                exp33 = e33.generate_wp7_antifraud_dossier(artifacts_dir)
-                st.markdown("#### 4. Physical ID & 3-Modal Biometric Sign-In / Sign-Out WORM Audit Ledger")
-                st.dataframe(exp33["access_events"], width="stretch", hide_index=True)
-                st.markdown("#### 5. WORM Profile Revision & Employer Approval Audit Trail")
-                st.dataframe(exp33["revision_history"], width="stretch", hide_index=True)
-
-            exp_dl = e33.generate_wp7_antifraud_dossier(artifacts_dir)
-            st.download_button(
-                label=f"{ico_dl} Download WP-7 Multi-Page Front-Screen Muster SOPs & HIPAA-Gated 60-Field Dossier PDF",
-                data=pathlib.Path(exp_dl["pdf_path"]).read_bytes(),
-                file_name=pathlib.Path(exp_dl["pdf_path"]).name,
-                mime="application/pdf",
-                key="dl_c33_pdf",
+            st.markdown("#### 2D. HR Qualified Candidate Promotion & Company Evaluation Shortlist Puller (`worm_promotion_evaluation_board`)")
+            p_c1, p_c2, p_c3, p_c4 = st.columns(4)
+            min_exp_in  = p_c1.slider("Minimum Verified Experience (Yrs):", min_value=0, max_value=20, value=5, step=1, key="ng_c34_p_exp")
+            min_acad_in = p_c2.slider("Minimum HVF Academy Score (%):", min_value=70.0, max_value=100.0, value=90.0, step=1.0, key="ng_c34_p_acad")
+            min_eval_in = p_c3.slider("Minimum Company Eval Rating (0-5):", min_value=3.0, max_value=5.0, value=4.5, step=0.05, key="ng_c34_p_eval")
+            req_spec_in = p_c4.selectbox(
+                "Required Technical Specialty Track:",
+                options=["ALL", "EXECUTIVE_C2", "SIC_HARDWARE", "SCADA_PLC", "UAS_GIS", "RMF_CYBER"],
+                index=0,
+                key="ng_c34_p_spec",
             )
 
-    with tabs[8]:
-        st.markdown("### `WP-8` / `CLIN 0034`: Federal Capability Statement, Custom CLIN Quote Compiler, & Outreach Generator")
-        q1, q2 = st.columns([2, 1])
-        target_org = q1.text_input("Target Contracting Command / Enterprise Buyer:", value="TINKER AFB // OC-ALC DEPOT MAINTENANCE DIRECTORATE", key="ng_c34_org")
-        node_qty   = q2.number_input("Hardware Node / Chassis Quantity:", min_value=1, max_value=250, value=1, step=1, key="ng_c34_nodes")
+            promo_res = e34_hr.evaluate_promotion_and_company_shortlist(
+                out_dir=artifacts_dir,
+                min_experience_years=int(min_exp_in),
+                min_academy_score_pct=float(min_acad_in),
+                min_eval_rating=float(min_eval_in),
+                required_specialty=req_spec_in,
+            )
 
-        sel_clins = st.multiselect(
-            "Select CLIN Modules to Include in Firm-Fixed-Price Quote:",
-            options=list(e34.KEY_CLIN_PRICES_USD.keys()),
-            default=[
-                "CLIN 0001 (Sovereign Command Base Entry Pilot - 1 Node)",
-                "CLIN 0028 (WP-2: 36.75ns SiC MOSFET Breaker Board & BOM)",
-                "CLIN 0033 (WP-7: 60-Field Proof-of-Identity, Emergency ICE, & Dual-Compartment Credit Shield)",
-            ],
-            key="ng_c34_clins",
-        )
+            pm1, pm2, pm3 = st.columns(3)
+            pm1.metric("Qualified Candidates Pulled", f"{promo_res['qualified_candidates_count']} / {promo_res['total_personnel_evaluated']} Qualified", f"Track: {req_spec_in}")
+            pm2.metric("Top-Ranked Promotion Candidate", promo_res["top_ranked_candidate"], f"Readiness Index: {promo_res['top_pri_score']} / 100")
+            pm3.metric("WORM Promotion Board Seals", f"{promo_res['worm_board_rows_logged']} Sealed Rows", "10 Active HR SQLite WORM Triggers")
 
-        exp34 = e34.generate_wp8_capability_and_quote_dossier(
-            artifacts_dir,
-            prospect_agency_or_company=target_org,
-            selected_clin_keys=sel_clins,
-            node_count=int(node_qty),
-        )
-        qt = exp34["quote"]
+            st.dataframe(promo_res["qualified_shortlist_rows"], width="stretch", hide_index=True)
 
-        k1, k2, k3 = st.columns(3)
-        k1.metric("Total Annual FFP Quote", f"${qt['total_annual_ffp_quote_usd']:,.2f} USD", f"Seal: {qt['quote_verification_seal']}")
-        k2.metric("Immediate Day-1 WAWF Invoice", f"${qt['day1_mobilization_invoice_usd']:,.2f} USD", qt["recommended_contract_vehicle"][:32] + "...")
-        k3.metric("Quoted Hardware Nodes", f"{qt['node_count']} Node(s)", f"{len(qt['line_items'])} CLIN Module(s)")
+            st.markdown("---")
+            st.markdown(f"#### 3. Zero-Trust 60-Field Dossier Lock & Two-Person Integrity (`HR Custodian + Second Verifier`) Gate (`{triage['employee_id']} // {triage['full_name']}`)")
 
-        st.dataframe(qt["line_items"], width="stretch", hide_index=True)
-        st.info(f"**Acquisition Vehicle:** `{qt['recommended_contract_vehicle']}` | **Executive Margin Telemetry:** `{qt['internal_margin_telemetry']}`")
+            if is_emp_locked:
+                st.info(
+                    f"**[UNALTERABLE 60-FIELD DOSSIER SEALED & LOCKED // REVISION #{cur_emp_rev:02d} // CO-SIGNED BY `{lock_st['last_actor']}`]** -- "
+                    f"All 60 input boxes are **100% REMOVED**. Under **Zero-Trust Separation of Duties (`NIST SP 800-53 AC-5`)**, "
+                    f"**no single person (neither CEO, HR, nor Employee) can approve or unlock this record alone**. "
+                    f"Unlocking requires **Two Distinct Officials** below: **Signer #1 (HR Custodian)** + **Signer #2 (Independent Second-Party Verifier)**."
+                )
+                st.markdown("#### 3A. Sealed 60-Field Digital Proof-of-Identity, Career History, Training, & NOK/ICE Record (Read-Only Unalterable State)")
+                st.dataframe(gate_res["proof_of_id_rows"], width="stretch", hide_index=True)
 
+                st.markdown(f"#### 3B. Zero-Trust Two-Person Integrity (`TPI`) Unlock Gate -- Requires HR Custodian (`Signer #1`) + Independent Verifier (`Signer #2`)")
+                st.caption(
+                    f"**Reference Dual-Custody Tokens for `{emp_id_code}` Rev #{cur_emp_rev:02d}:** "
+                    f"Signer #1 (HR Custody Token) = `{hr_tok_ref}` | Signer #2 (Independent Verifier Token) = `{ver_tok_ref}` "
+                    f"*(Anti-Self-Approval Active: Signer #1 and Signer #2 MUST be different officials, and Signer #2 cannot be `{emp_id_code}`!)*"
+                )
+                ver_options = e34_hr.AUTHORIZED_VERIFIER_OFFICERS
+                default_ver_idx = 1 if emp_id_code != "EMP-003" else 2
+
+                dc1, dc2 = st.columns(2)
+                hr_signer_in = dc1.selectbox(
+                    "Co-Signer #1: Initiating HR Records Custodian:",
+                    options=ver_options,
+                    index=0,
+                    key=f"ng_c34_hr_sig1_{emp_id_code}",
+                )
+                hr_tok_in = dc1.text_input(
+                    "Co-Signer #1 HR Custody HMAC Token:",
+                    value=hr_tok_ref,
+                    key=f"ng_c34_hr_tok_{emp_id_code}_rev_{cur_emp_rev}",
+                )
+                ver_signer_in = dc2.selectbox(
+                    "Co-Signer #2: Independent Second-Party Verifier (Must Not Be Signer #1 or Subject):",
+                    options=ver_options,
+                    index=default_ver_idx,
+                    key=f"ng_c34_ver_sig2_{emp_id_code}",
+                )
+                ver_tok_in = dc2.text_input(
+                    "Co-Signer #2 Independent Verifier HMAC Token:",
+                    value=ver_tok_ref,
+                    key=f"ng_c34_ver_tok_{emp_id_code}_rev_{cur_emp_rev}",
+                )
+
+                rsn_col, btn_col = st.columns([3, 1])
+                dual_rsn_in = rsn_col.text_input(
+                    "Verified Evidentiary Basis / Document Reference for Dossier Revision:",
+                    value="HR_AND_SECOND_VERIFIER_DOCUMENTS_INSPECTED_AND_CONFIRMED",
+                    key=f"ng_c34_dual_rsn_{emp_id_code}",
+                )
+                unlock_btn = btn_col.button(
+                    "Verify Dual-Custody & Unlock (1 Rev)",
+                    type="primary",
+                    key=f"ng_c34_dual_unlock_btn_{emp_id_code}",
+                )
+
+                if unlock_btn:
+                    res_un = e34_hr.request_dual_custody_unlock_for_employee(
+                        out_dir=artifacts_dir,
+                        roster_key=sel_person_key,
+                        hr_custodian_officer=hr_signer_in,
+                        provided_hr_token=hr_tok_in,
+                        second_verifier_officer=ver_signer_in,
+                        provided_verifier_token=ver_tok_in,
+                        change_reason=dual_rsn_in,
+                    )
+                    if res_un["unlocked"]:
+                        st.rerun()
+                    else:
+                        st.error(f"Zero-Trust Dual-Custody Unlock Denied: {res_un['status']}")
+            else:
+                st.warning(
+                    f"**[60-FIELD DOSSIER UNLOCKED VIA TWO-PERSON INTEGRITY (`{lock_st['last_actor']}`) FOR 1 REVISION // `{emp_id_code}`]** -- "
+                    f"Verified Basis: `{lock_st['last_reason']}`. Enter the verified updates across the 60 fields below, then click **Co-Sign, Seal & Lock 60-Field Dossier**. "
+                    f"The instant you click Seal & Lock, all 60 input boxes are removed and your updated name/scores immediately propagate to the Promotion Shortlist!"
+                )
+                prof_inputs: Dict[str, str] = {}
+                def_vals = e34_hr.get_saved_user_60field_values(artifacts_dir, sel_person_key)
+
+                st.markdown("##### Section 1: Legal Identity & Vital Statistics (`Fields 01 - 10` // 1 Response Per Box)")
+                s1_cols = st.columns(5)
+                for idx, (fk, flabel, _, is_s) in enumerate(e34_hr.ATOMIC_60_SCHEMA[0:10]):
+                    prof_inputs[fk] = s1_cols[idx % 5].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng60_{emp_id_code}_{fk}")
+
+                st.markdown("##### Section 2: Residential Address, Contact, & Physical Description (`Fields 11 - 20` // 1 Response Per Box)")
+                s2_cols = st.columns(5)
+                for idx, (fk, flabel, _, is_s) in enumerate(e34_hr.ATOMIC_60_SCHEMA[10:20]):
+                    prof_inputs[fk] = s2_cols[idx % 5].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng60_{emp_id_code}_{fk}")
+
+                st.markdown("##### Section 3: Job Application, I-9 Work Eligibility, & Government IDs (`Fields 21 - 27` // 1 Response Per Box)")
+                s3_cols = st.columns(4)
+                for idx, (fk, flabel, _, is_s) in enumerate(e34_hr.ATOMIC_60_SCHEMA[20:27]):
+                    prof_inputs[fk] = s3_cols[idx % 4].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng60_{emp_id_code}_{fk}")
+
+                st.markdown("##### Section 4: Next of Kin (NOK) & In Case of Emergency (ICE) Contacts (`Fields 28 - 35` // 1 Response Per Box)")
+                s4_cols = st.columns(4)
+                for idx, (fk, flabel, _, is_s) in enumerate(e34_hr.ATOMIC_60_SCHEMA[27:35]):
+                    prof_inputs[fk] = s4_cols[idx % 4].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng60_{emp_id_code}_{fk}")
+
+                st.markdown("##### Section 5: 3-Modal Biometrics & Duty Callsign Locks (`Fields 36 - 42` // 1 Response Per Box)")
+                s5_cols = st.columns(4)
+                for idx, (fk, flabel, _, is_s) in enumerate(e34_hr.ATOMIC_60_SCHEMA[35:42]):
+                    prof_inputs[fk] = s5_cols[idx % 4].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng60_{emp_id_code}_{fk}")
+
+                st.markdown("##### Section 6: Previous 7-Year Residential Address History (`Fields 43 - 48` // 1 Response Per Box)")
+                s6_cols = st.columns(3)
+                for idx, (fk, flabel, _, is_s) in enumerate(e34_hr.ATOMIC_60_SCHEMA[42:48]):
+                    prof_inputs[fk] = s6_cols[idx % 3].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng60_{emp_id_code}_{fk}")
+
+                st.markdown("##### Section 7: Verified Prior Employment & Job History (`Fields 49 - 54` // 1 Response Per Box)")
+                s7_cols = st.columns(3)
+                for idx, (fk, flabel, _, is_s) in enumerate(e34_hr.ATOMIC_60_SCHEMA[48:54]):
+                    prof_inputs[fk] = s7_cols[idx % 3].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng60_{emp_id_code}_{fk}")
+
+                st.markdown("##### Section 8: Sovereign Academy, Certifications, Training Hours, & Company Evaluation (`Fields 55 - 60` // 1 Response Per Box)")
+                s8_cols = st.columns(3)
+                for idx, (fk, flabel, _, is_s) in enumerate(e34_hr.ATOMIC_60_SCHEMA[54:60]):
+                    prof_inputs[fk] = s8_cols[idx % 3].text_input(flabel, value=def_vals[fk], type="password" if is_s else "default", key=f"ng60_{emp_id_code}_{fk}")
+
+                if st.button("Co-Sign, Seal & Lock 60-Field Dossier (Remove Input Boxes -- Requires 2-Person HR + Verifier Co-Sign to Re-Open)", type="primary", key=f"ng_c34_seal_lock_btn_{emp_id_code}"):
+                    e34_hr.submit_dual_custody_60field_dossier(
+                        out_dir=artifacts_dir,
+                        roster_key=sel_person_key,
+                        profile_60_inputs=prof_inputs,
+                        submitted_by_role=lock_st["last_actor"],
+                        submission_reason=lock_st["last_reason"],
+                    )
+                    st.rerun()
+
+            exp34_hr = e34_hr.generate_wp8_hr_dossier(artifacts_dir)
+            st.markdown("#### 4. Physical ID & 3-Modal Biometric Sign-In / Sign-Out WORM Audit Ledger")
+            st.dataframe(exp34_hr["access_events"], width="stretch", hide_index=True)
+            st.markdown("#### 5. WORM Profile Revision & Dual-Custody Two-Person Verification Audit Trail")
+            st.dataframe(exp34_hr["revision_history"], width="stretch", hide_index=True)
+
+        exp_dl_hr = e34_hr.generate_wp8_hr_dossier(artifacts_dir)
         st.download_button(
-            label=f"{ico_dl} Download Official Federal Capability Statement & FFP Quote PDF ({pathlib.Path(exp34['pdf_path']).name})",
-            data=pathlib.Path(exp34["pdf_path"]).read_bytes(),
-            file_name=pathlib.Path(exp34["pdf_path"]).name,
+            label=f"{ico_dl} Download WP-8 (CLIN 0034 v8.0) Enterprise HR, Muster SOPs, HIPAA Triage & Dual-Custody 60-Field Dossier PDF",
+            data=pathlib.Path(exp_dl_hr["pdf_path"]).read_bytes(),
+            file_name=pathlib.Path(exp_dl_hr["pdf_path"]).name,
             mime="application/pdf",
-            key="dl_c34_pdf",
+            key="dl_c34_hr_pdf",
         )
 
-        st.markdown("#### Ready-to-Send Contracting Officer Email & LinkedIn Broadcast (Click Copy Icon in Top-Right of Box)")
-        col_em, col_li = st.columns(2)
-        with col_em:
-            st.caption("Direct Contracting Officer / COR Email:")
-            st.code(exp34["outreach"]["contracting_officer_email"], language="text")
-        with col_li:
-            st.caption("LinkedIn Executive Broadcast:")
-            st.code(exp34["outreach"]["linkedin_broadcast"], language="text")
+    with tabs[9]:
+        st.markdown("### `WP-9` / `CLIN 0035 v8.0`: Automated Federal Capability Statement, 35-CLIN (`$2,230,000/yr/Node`) Custom Quote Compiler & Outreach Engine")
+        q_c1, q_c2, q_c3 = st.columns([2, 1, 1])
+        agency_in = q_c1.text_input(
+            "Target Procuring Agency / Contracting Office:",
+            value="U.S. Department of Defense / CDAO Tradewinds Contracting Office",
+            key="ng_c35_agency",
+        )
+        nodes_in = q_c2.number_input("Physical Node Quantity:", min_value=1, max_value=100, value=1, step=1, key="ng_c35_nodes")
+        inc_core = q_c3.checkbox("Include Frozen 26-CLIN Core ($1.63M/Node)", value=True, key="ng_c35_core")
 
+        q_res = e34.build_custom_quote(
+            customer_agency=agency_in,
+            node_count=int(nodes_in),
+            include_frozen_core=inc_core,
+        )
+
+        qm1, qm2, qm3, qm4 = st.columns(4)
+        qm1.metric("Single-Node 35-CLIN Catalog", f"${q_res['single_node_annual_usd']:,.2f} / yr", "CLIN 0001 - CLIN 0035")
+        qm2.metric(f"Extended Quote ({q_res['node_count']} Node[s])", f"${q_res['grand_total_annual_usd']:,.2f} / yr", "Firm-Fixed-Price (FFP)")
+        qm3.metric("Day-1 WAWF Mobilization Invoice", f"${q_res['day1_wawf_invoice_usd']:,.2f}", "50% OTA / 100% COTS <= $250K")
+        qm4.metric("CEO Day-1 Distribution (35.0%)", f"${q_res['ceo_day1_allocation_35pct_usd']:,.2f}", "Jeffery Humphrey (CAGE 1AHA8)")
+
+        st.markdown("#### 1. Official Corporate & Acquisition Vehicle Identifiers")
+        id_rows = [{"Corporate_Attribute": k, "Verified_Sovereign_Registration": v} for k, v in e34.CORPORATE_IDENTIFIERS.items()]
+        st.dataframe(id_rows, width="stretch", hide_index=True)
+
+        st.markdown("#### 2. Complete 35-CLIN Firm-Fixed-Price Schedule")
+        st.dataframe(q_res["line_items"], width="stretch", hide_index=True)
+
+        st.markdown("#### 3. Ready-to-Send Contracting Officer Proposal Email (Copy & Paste)")
+        st.code(q_res["contracting_officer_email_text"], language="text")
+
+        st.markdown("#### 4. Ready-to-Post LinkedIn Executive Broadcast (Copy & Paste)")
+        st.code(q_res["linkedin_executive_broadcast_text"], language="text")
+
+        exp35 = e34.generate_wp8_capability_and_quote_packet(artifacts_dir, customer_agency=agency_in, node_count=int(nodes_in))
+        st.download_button(
+            label=f"{ico_dl} Download WP-9 (CLIN 0035 v8.0) Official Federal Capability Statement & 35-CLIN Quote PDF",
+            data=pathlib.Path(exp35["pdf_path"]).read_bytes(),
+            file_name=pathlib.Path(exp35["pdf_path"]).name,
+            mime="application/pdf",
+            key="dl_c35_quote_pdf",
+        )
 
 if __name__ == "__main__":
     render_nextgen_dashboard()

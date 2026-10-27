@@ -1,0 +1,49 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+5 0 obj
+<< /Length 1028 >>
+stream
+BT
+/F1 10 Tf
+36 756 Td
+12 TL
+(HVF WP-8 \(CLIN 0034 v8.0\): ENTERPRISE HR, MUSTER, HIPAA & PROMOTION BOARD) Tj
+(WORM SHA-256 SEAL: b6e8933f62a131c3d0dcb791099d3c5a9d850ff6073c52d92d7665f94aa40370) '
+() '
+/F1 8 Tf
+10 TL
+(# HVF SOVEREIGN NEXT-GEN // WP-8 \(CLIN 0034 v8.0\): ENTERPRISE HR, OSHA MUSTER, HIPAA TRIAGE, DUAL-CUSTODY 60) '
+(- Controlling Authority: Jeffery Humphrey, Founder, CEO, & Principal Sovereign Architect \(CAGE 1AHA8 | UEI S) '
+(- Enclave Tier: PUBLIC | Host Baseline Merkle Root: cc1ee1c8d29b2ae5e856fc0fcb672a52e7e49d50369499febe14e18e) '
+(- Zero-Trust Separation of Duties \(NIST SP 800-53 AC-5\): ACTIVE \(HR Custodian + Independent Second Verifier ) '
+(- Physical Separation: 100% DECOUPLED FROM PERSONAL CREDIT/LOAN SHIELD \(CLIN 0033\)) '
+(- 60-Field Composite Dossier Seal: 62b050195022211847516d697291bdbcbecd4b72dfbc8272c6566f20cdeef587) '
+(- Top-Ranked Promotion Candidate: JEFFERY SOVEREIGN HUMPHREY \(PRI: 100.00 / 100\)) '
+(- WORM SQLite Ledger: 5 Tables / 10 Active Immutability Triggers) '
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000309 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1388
+%%EOF

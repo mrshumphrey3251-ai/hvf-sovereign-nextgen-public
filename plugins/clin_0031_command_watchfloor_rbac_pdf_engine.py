@@ -17,7 +17,7 @@ from nextgen_core.sovereign_plugin_contract import (
 from plugins.clin_0027_day1_license_wawf_generator import build_minimal_iso_pdf
 
 ENCLAVE_MODE = "PUBLIC"
-RBAC_SESSION_SALT = "PUBLIC_RBAC_SALT_REDACTED_DFARS_252_227_7018"
+RBAC_SESSION_SALT = "HVF_RBAC_MASTER_SALT_CAGE_1AHA8_UEI_S1M4ENLHTDH5_2026"
 
 
 class CommandWatchFloorRBACAndPDFEngine(SovereignExpansionModule):
@@ -172,3 +172,55 @@ class CommandWatchFloorRBACAndPDFEngine(SovereignExpansionModule):
             "pdf_path": str(pdf_file),
             "pdf_sha256": hashlib.sha256(pdf_bytes).hexdigest(),
         }
+
+
+def compile_single_page_pdf_14(title: str, lines: list[str], worm_sha256: str) -> bytes:
+    """
+    Universal deterministic %PDF-1.4 WORM compiler exported for WP-1..WP-9 and future modules.
+    """
+    def _esc(s: str) -> str:
+        clean = s.encode("ascii", errors="replace").decode("ascii")
+        return clean.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+
+    nl = chr(10)
+    stream_cmds = [
+        "BT",
+        "/F1 10 Tf",
+        "36 756 Td",
+        "12 TL",
+        f"({_esc(title[:96])}) Tj",
+        f"(WORM SHA-256 SEAL: {_esc(worm_sha256)}) '",
+        "() '",
+        "/F1 8 Tf",
+        "10 TL",
+    ]
+    for raw_line in lines[:62]:
+        stream_cmds.append(f"({_esc(str(raw_line)[:108])}) '")
+    stream_cmds.append("ET")
+    stream_bytes = (nl.join(stream_cmds) + nl).encode("ascii")
+
+    objs = [
+        b"1 0 obj" + nl.encode("ascii") + b"<< /Type /Catalog /Pages 2 0 R >>" + nl.encode("ascii") + b"endobj" + nl.encode("ascii"),
+        b"2 0 obj" + nl.encode("ascii") + b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>" + nl.encode("ascii") + b"endobj" + nl.encode("ascii"),
+        b"3 0 obj" + nl.encode("ascii") + b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>" + nl.encode("ascii") + b"endobj" + nl.encode("ascii"),
+        b"4 0 obj" + nl.encode("ascii") + b"<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>" + nl.encode("ascii") + b"endobj" + nl.encode("ascii"),
+        b"5 0 obj" + nl.encode("ascii") + f"<< /Length {len(stream_bytes)} >>".encode("ascii") + nl.encode("ascii") + b"stream" + nl.encode("ascii") + stream_bytes + b"endstream" + nl.encode("ascii") + b"endobj" + nl.encode("ascii"),
+    ]
+
+    out = bytearray(b"%PDF-1.4" + nl.encode("ascii"))
+    offsets = []
+    for o in objs:
+        offsets.append(len(out))
+        out.extend(o)
+
+    xref_pos = len(out)
+    xref_lines = [f"xref{nl}0 {len(objs) + 1}{nl}0000000000 65535 f "]
+    for off in offsets:
+        xref_lines.append(f"{off:010d} 00000 n ")
+    trailer = (
+        nl.join(xref_lines)
+        + nl
+        + f"trailer{nl}<< /Size {len(objs) + 1} /Root 1 0 R >>{nl}startxref{nl}{xref_pos}{nl}%%EOF{nl}"
+    )
+    out.extend(trailer.encode("ascii"))
+    return bytes(out)

@@ -17,12 +17,12 @@ def run_nextgen_cockpit_ui_tests() -> None:
     raw_txt = cockpit_file.read_text(encoding="utf-8")
     assert "??" not in raw_txt, "Zero encoding-artifact check failed"
     assert " ? " not in raw_txt, "Zero mangled em-dash check failed"
-    assert "CLIN 0033 v7.7" in raw_txt, "UI must display CLIN 0033 v7.7"
+    assert "CLIN 0033 v8.0" in raw_txt, "UI must display CLIN 0033 v8.0"
     assert "CLIN 0033 v6." not in raw_txt, "Stale v6 header must not appear in UI"
 
     reg, e27, e28, e29, e30, e31, e32, e33, e34 = build_registry_and_engines()
     manifests = reg.list_manifests()
-    assert len(manifests) == 8
+    assert len(manifests) == 9
     assert [m["clin_number"] for m in manifests] == [
         "CLIN 0027",
         "CLIN 0028",
@@ -32,6 +32,7 @@ def run_nextgen_cockpit_ui_tests() -> None:
         "CLIN 0032",
         "CLIN 0033",
         "CLIN 0034",
+        "CLIN 0035",
     ]
 
 

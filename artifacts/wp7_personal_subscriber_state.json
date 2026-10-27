@@ -1,0 +1,24 @@
+{
+  "subscribers": {
+    "SUB-001": {
+      "p01_first_name": "JEFFERY",
+      "p02_middle_name": "SOVEREIGN",
+      "p03_last_name": "HUMPHREY",
+      "p04_ssn": "999-00-1234",
+      "p05_dob": "1975-08-15",
+      "p06_driver_license": "OK-DL-994827164",
+      "p07_passport_num": "USA-P-558291044",
+      "p08_primary_phone": "405-555-0199",
+      "p09_personal_email": "HUMPHREYVIRTUALFARM@GMAIL.COM",
+      "p10_home_address": "100 SOVEREIGN COMMAND PKWY, OKLAHOMA CITY, OK 73102",
+      "p11_equifax_pin": "EQFX-LOCK-9948-1AHA8",
+      "p12_experian_pin": "EXPR-LOCK-7731-1AHA8",
+      "p13_transunion_pin": "TRUN-LOCK-5520-1AHA8",
+      "p14_chexsystems_lock": "CHEX-EWS-LOCK-8812-ACTIVE",
+      "p15_bank_aba_routing": "103000648",
+      "p16_bank_account_num": "994018273645",
+      "p17_home_deed_apn": "OK-OKC-APN-4029-8812-HVF",
+      "p18_mobile_sim_imei": "CARRIER-PORT-LOCK-ACTIVE // IMEI-359881094421"
+    }
+  }
+}

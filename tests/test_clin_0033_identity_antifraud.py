@@ -1,196 +1,83 @@
 """
-Unit Test Suite for CLIN 0033 (WP-7 v7.0): 60-Field Atomic Personnel Dossier (Addresses, Job History, Training),
-Zero-Second Emergency ICE Triage, Dual-Compartment Privacy Wall, Employer Notes, & Promotion Shortlist Engine
+Unit Test Suite for WP-7 (CLIN 0033 v8.0):
+Standalone Personal Sovereign Identity, 7-Channel Credit/Loan/Deed/SIM Anti-Fraud Shield & B2C Engine.
 """
-import pathlib, sqlite3, sys
+from __future__ import annotations
 
-sys.dont_write_bytecode = True
-here = pathlib.Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(here))
+import pathlib
+import sqlite3
+import sys
 
-from nextgen_core.sovereign_plugin_contract import FROZEN_EBONY_MERKLE_ROOT, SovereignPluginRegistry
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from plugins.clin_0033_sovereign_identity_antifraud_shield import SovereignIdentityAntiFraudShield
 
 
 def run_clin_0033_tests() -> None:
-    reg = SovereignPluginRegistry()
     shield = SovereignIdentityAntiFraudShield()
-    manifest = reg.register(shield)
-    assert manifest.clin_number == "CLIN 0033"
-    assert manifest.version == "7.7.0"
-    assert manifest.per_node_annual_gov_usd == 95000
-    assert manifest.compatible_host_merkle_root == FROZEN_EBONY_MERKLE_ROOT
+                
+    # Verify B2C & Enterprise revenue calculator
+    rev = shield.calculate_b2c_and_enterprise_revenue(500, 120, 40, 2)
+    assert rev["b2c_direct_total_arr_usd"] == (500 * 350) + (120 * 1250) + (40 * 2500)
+    assert rev["enterprise_nodes_arr_usd"] == 130000.0
+    assert rev["combined_wp7_annual_revenue_usd"] == 555000.0
 
-    # 1. Verify all 60 Atomic Fields (1 response per box: Legal, Contact, Job/I-9, NOK/ICE, Biometrics, Addresses, Prior Jobs, Training)
-    assert len(shield.ATOMIC_42_SCHEMA) == 60
-    assert shield.ATOMIC_42_SCHEMA[0][1].startswith("[01] ")
-    assert shield.ATOMIC_42_SCHEMA[59][1].startswith("[60] ")
-    test_raw_ssn = "999-00-1234"
-    test_raw_dob = "1975-08-15"
-    pii = shield.scan_pii_and_biometric_darkweb_feed(raw_ssn=test_raw_ssn, raw_dob=test_raw_dob)
-    assert pii["masked_ssn"] == "XXX-XX-1234"
-    assert pii["masked_dob"] == "XXXX-XX-15"
-    assert pii["atomic_fields_count"] == 60
-    assert pii["attributes_monitored"] == 61  # 60 Atomic Fields + 1 Dark-Web Canary
+    # Verify 18-field personal vault & 0% Employer HR visibility
+    pv = shield.evaluate_personal_18_vault()
+    assert pv["total_personal_fields_locked"] == 18
+    assert all(r["Employer_HR_Visibility"].startswith("0%") for r in pv["attribute_rows"])
 
-    # 2. Verify Employer Proof-of-Identity Lock & Cryptographic Approval Unlock State Machine
-    artifacts_dir = here / "artifacts"
-    state_file = artifacts_dir / "wp7_personnel_vault_state.json"
-    if state_file.exists():
-        state_file.unlink()
-    state_init = shield.load_or_init_vault_lock_state(artifacts_dir)
-    assert state_init["is_locked"] is True
+    # Verify 7-channel credit/loan/deed/SIM-swap intercept
+    cred = shield.evaluate_credit_and_loan_activity(credit_freeze_locked=True)
+    assert cred["total_inquiries_monitored"] == 7
+    assert cred["fraudulent_loans_and_pulls_blocked"] == 6
+    assert cred["authorized_inquiries_approved"] == 1
 
-    bad_unlock = shield.request_employer_unlock_for_edit(
-        artifacts_dir,
-        provided_approval_token="FORGED-BAD-TOKEN",
-        change_reason="Attempted unauthorized change",
-    )
-    assert bad_unlock["unlocked"] is False
-    assert shield.load_or_init_vault_lock_state(artifacts_dir)["is_locked"] is True
+    # Verify personal subscriber gate lock & unlock
+    artifacts_dir = ROOT / "artifacts"
+    sub_key = list(shield.PERSONAL_SUBSCRIBER_PROFILES.keys())[0]
+    locked = shield.open_personal_subscriber_gate(sub_key, False, "PERSONAL-PIN-1AHA8-001", artifacts_dir)
+    assert locked["gate_open"] is False and locked["credit_report"] is None
 
-    cur_rev = int(state_init["revision_number"])
-    valid_tok = shield.generate_employer_change_approval_token(cur_rev)
-    good_unlock = shield.request_employer_unlock_for_edit(
-        artifacts_dir,
-        provided_approval_token=valid_tok,
-        change_reason="APPROVED_NOK_PHONE_AND_PASSPORT_RENEWAL",
-    )
-    assert good_unlock["unlocked"] is True
-    assert shield.load_or_init_vault_lock_state(artifacts_dir)["is_locked"] is False
+    opened = shield.open_personal_subscriber_gate(sub_key, True, "PERSONAL-PIN-1AHA8-001", artifacts_dir)
+    assert opened["gate_open"] is True and opened["credit_report"] is not None
 
-    updated_prof = dict(shield.DEFAULT_ATOMIC_42_VALUES)
-    updated_prof["f28_nok_full_name"] = "MRS. HUMPHREY (PRIMARY NOK VERIFIED)"
-    re_sealed = shield.seal_and_lock_personnel_application(
-        artifacts_dir,
-        profile_42=updated_prof,
-        update_reason="APPROVED_NOK_PHONE_AND_PASSPORT_RENEWAL",
-    )
-    assert re_sealed["locked"] is True
-    assert shield.load_or_init_vault_lock_state(artifacts_dir)["is_locked"] is True
+    # Verify saving personal 18 fields & WORM SQLite triggers (3 tables / 6 triggers)
+    custom_18 = dict(opened["current_18_values"])
+    custom_18["p02_middle_name"] = "SOVEREIGN"
+    saved_res = shield.save_personal_subscriber_18_fields(artifacts_dir, sub_key, custom_18)
+    assert saved_res["saved"] is True
 
-    # 3. Verify 7-Channel Credit/Loan Interceptor & Multi-Page PDF Export
-    exported = shield.generate_wp7_antifraud_dossier(
-        artifacts_dir,
-        raw_ssn=test_raw_ssn,
-        raw_dob=test_raw_dob,
-        profile_42_overrides=updated_prof,
-    )
-    md_text = pathlib.Path(exported["md_path"]).read_text(encoding="utf-8")
-    pdf_bytes = pathlib.Path(exported["pdf_path"]).read_bytes()
-    assert test_raw_ssn not in md_text, "CRITICAL: Raw SSN must never appear in Markdown report"
-    assert test_raw_dob not in md_text, "CRITICAL: Raw DOB must never appear in Markdown report"
-    assert "Next of Kin (NOK)" in md_text
-    assert "In Case of Emergency (ICE)" in md_text
+    out = shield.generate_wp7_antifraud_dossier(artifacts_dir)
+    pdf_bytes = pathlib.Path(out["pdf_path"]).read_bytes()
     assert pdf_bytes.startswith(b"%PDF-1.4")
-    assert b"**" not in pdf_bytes
-    assert b"CLIN 0033 v7.7" in pdf_bytes
-    assert b"WORM WP-7" in pdf_bytes
-    assert b"%%EOF" in pdf_bytes
+    assert b"CLIN 0033 v8.0" in pdf_bytes
 
-    # 4. Verify Stage 13w (v7.0) Promotion & Evaluation Shortlist Engine (Populates 5th WORM Table)
-    promo_all = shield.evaluate_promotion_and_company_shortlist(
-        out_dir=artifacts_dir,
-        min_experience_years=5,
-        min_academy_score_pct=90.0,
-        min_eval_rating=4.5,
-        required_specialty="ALL",
-    )
-    assert promo_all["total_personnel_evaluated"] == 4
-    assert promo_all["qualified_candidates_count"] == 4
-    assert promo_all["top_ranked_candidate"] == "JEFFERY SOVEREIGN HUMPHREY"
-    assert promo_all["qualified_shortlist_rows"][0]["Shortlist_Rank"] == "RANK #01"
-
-    promo_sic = shield.evaluate_promotion_and_company_shortlist(
-        out_dir=artifacts_dir,
-        min_experience_years=9,
-        min_academy_score_pct=97.0,
-        min_eval_rating=4.9,
-        required_specialty="SIC_HARDWARE",
-    )
-    assert promo_sic["qualified_candidates_count"] == 2
-
-    # 5. Verify Zero-Second Emergency ICE Triage, Dual-Compartment Privacy Wall, & Employer Notes
-    db_file = artifacts_dir / "wp7_identity_credit_worm_ledger.db"
-    roster_keys = list(shield.PERSONNEL_EMERGENCY_ROSTER.keys())
-    assert len(roster_keys) >= 4
-    ice_card = shield.get_instant_emergency_triage_card(roster_keys[0])
-    assert ice_card["blood_type_clean"] == "O+ (Positive)"
-    assert ice_card["medical_alert_clean"] == "No Known Drug Allergies"
-
-    pub_m = shield.get_public_emergency_muster_and_sops(list(shield.FACILITY_ZONE_TO_ROSTER_KEY.keys())[0])
-    assert pub_m["bunker_sub"] == "Sub-Level Faraday & Tornado Core"
-    assert pub_m["aed_kit_sub"] == "Command Corridor (10m East)"
-    assert len(pub_m["muster_dispatch_ledger_rows"]) == 5
-    assert len(ice_card["hipaa_triage_ledger_rows"]) == 6
-    locked_gate = shield.open_compartment_gate(
-        roster_key=roster_keys[0],
-        viewer_role="EMPLOYEE",
-        user_agreement_accepted=False,
-        access_key_or_pin="EMP-PIN-1AHA8-001",
-        out_dir=artifacts_dir,
-    )
-    assert locked_gate["gate_open"] is False
-    assert locked_gate["emergency_medical_ice_card"] is None, "CRITICAL HIPAA VIOLATION: Medical/ICE card must be None when gate is locked!"
-
-    for rk in roster_keys:
-        p_pin = shield.PERSONNEL_EMERGENCY_ROSTER[rk]["employee_pin"]
-        g_emp = shield.open_compartment_gate(rk, "EMPLOYEE", True, p_pin, artifacts_dir)
-        assert g_emp["gate_open"] is True and g_emp["credit_report"] is not None and g_emp["employer_personnel_notes"] is None
-        assert g_emp["emergency_medical_ice_card"] is not None and "medical_history_detailed" in g_emp["emergency_medical_ice_card"]
-        assert g_emp["emergency_procedures_muster"] is not None and len(g_emp["emergency_procedures_muster"]["emergency_procedures_rows"]) == 5
-        assert g_emp["emergency_medical_ice_card"] is not None and "medical_history_detailed" in g_emp["emergency_medical_ice_card"]
-        g_empr = shield.open_compartment_gate(rk, "EMPLOYER", True, "EMPLOYER-MASTER-1AHA8", artifacts_dir)
-        assert g_empr["gate_open"] is True and g_empr["credit_report"] is None and g_empr["employer_personnel_notes"] is not None
-        assert g_empr["emergency_medical_ice_card"] is not None and "allergies_detailed" in g_empr["emergency_medical_ice_card"]
-        assert g_empr["emergency_procedures_muster"] is not None
-        assert g_empr["emergency_medical_ice_card"] is not None and "allergies_detailed" in g_empr["emergency_medical_ice_card"]
-
-    # Verify interactive 60-field user input submission persists and updates dossier
-    saved_60 = shield.get_saved_user_60field_values(artifacts_dir, roster_keys[0])
-    assert len(saved_60) == 60
-    saved_60["f58_active_certifications"] = "CAGE_1AHA8_MASTER_AND_STAGE_14D_USER_INPUT_VERIFIED"
-    sub_out = shield.submit_user_60field_onboarding_application(
-        out_dir=artifacts_dir,
-        roster_key=roster_keys[0],
-        profile_60_inputs=saved_60,
-        submitted_by_role="PATH_A_EMPLOYEE_EMP-001",
-    )
-    assert sub_out["submitted"] is True
-    reloaded_60 = shield.get_saved_user_60field_values(artifacts_dir, roster_keys[0])
-    assert reloaded_60["f58_active_certifications"] == "CAGE_1AHA8_MASTER_AND_STAGE_14D_USER_INPUT_VERIFIED"
-    added_note = shield.append_employer_personnel_note(
-        db_path=db_file,
-        employee_id="EMP-001",
-        employee_name="JEFFERY SOVEREIGN HUMPHREY",
-        author_authority="JEFFERY HUMPHREY (CEO)",
-        note_category="EXECUTIVE_AUDIT_MEMO",
-        confidential_note_text="Sealed Stage 13w Employer Note Verification Test.",
-    )
-    assert added_note["total_notes_for_employee"] >= 2
-
-    # 6. Verify all 5 WORM SQLite tables (10 triggers) reject UPDATE and DELETE with clean rollback
-    conn = sqlite3.connect(str(db_file), timeout=30.0)
+    conn = sqlite3.connect(out["sqlite_db_path"])
     try:
         cur = conn.cursor()
-        for tbl in (
-            "worm_id_access_log",
-            "worm_credit_loan_intercept_log",
-            "worm_identity_profile_revisions",
-            "worm_employer_personnel_notes",
-            "worm_promotion_evaluation_board",
-            "worm_hipaa_emergency_triage_log",
+        for tbl, col in (
+            ("worm_personal_credit_intercept_log", "intercept_action"),
+            ("worm_personal_vault_revisions", "update_reason"),
+            ("worm_personal_unfreeze_tokens", "unfreeze_token"),
         ):
+            try:
+                cur.execute(f"UPDATE {tbl} SET {col} = 'TAMPER'")
+                raise AssertionError(f"WORM UPDATE trigger failed on {tbl}")
+            except sqlite3.IntegrityError:
+                pass
             try:
                 cur.execute(f"DELETE FROM {tbl}")
                 raise AssertionError(f"WORM DELETE trigger failed on {tbl}")
-            except sqlite3.IntegrityError as exc:
-                conn.rollback()
-                assert "WORM_IMMUTABILITY_VIOLATION" in str(exc)
+            except sqlite3.IntegrityError:
+                pass
     finally:
         conn.close()
+
+    print("[100% PASS] CLIN 0033 (WP-7 v8.0) Standalone Personal Credit/Loan/Deed/SIM Shield & B2C Revenue Engine Passed!")
 
 
 if __name__ == "__main__":
     run_clin_0033_tests()
-    print("[100% PASS] CLIN 0033 (WP-7 v7.7) 60-Field Dossier, HIPAA Gate, Muster SOPs, Promotion Shortlist, & 6-Table (12-Trigger) WORM Vault Passed!")

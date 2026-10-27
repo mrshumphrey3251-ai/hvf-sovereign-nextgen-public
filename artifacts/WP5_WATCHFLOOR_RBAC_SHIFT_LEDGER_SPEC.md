@@ -8,8 +8,8 @@
 
 ## 1. Bitwise Watch-Floor Role-Based Access Control (RBAC) Verification Matrix
 * **Level-1 Telemetry Observer (`0x03`) -> Airlock Release (`0x80`):** Authorized = `False` (Blocked as expected)
-* **Level-3 Watch Officer (`0x1F`) -> Sign Shift Brief (`0x10`):** Authorized = `True` (Token: `a35d29186b9aa3313f65458d`)
-* **Level-5 Sovereign Commander (`0xFF`) -> Airlock Release (`0x80`):** Authorized = `True` (Token: `34b61abc45a93be263bd04cd`)
+* **Level-3 Watch Officer (`0x1F`) -> Sign Shift Brief (`0x10`):** Authorized = `True` (Token: `0782863bfaf6897941c9e398`)
+* **Level-5 Sovereign Commander (`0xFF`) -> Airlock Release (`0x80`):** Authorized = `True` (Token: `0f827c4e23e13324c0e68413`)
 * **Session Cryptographic Salt Binding:** `[REDACTED_RBAC_SESSION_SALT_DFARS_252_227_7018]`
 
 ---
