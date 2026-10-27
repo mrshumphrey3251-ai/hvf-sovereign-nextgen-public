@@ -1,5 +1,5 @@
 """
-HVF NEXT-GEN ISOLATION & FROZEN EBONY PROTECTION VERIFIER (STAGE 13H - COMPLETE WP-1..6 SUITE)
+HVF NEXT-GEN ISOLATION & FROZEN EBONY PROTECTION VERIFIER (STAGE 15B - COMPLETE WP-1..9 SUITE)
 Verifies:
   1. Frozen Project Ebony repos (C:\hvf_c2) have 0 modified/untracked files and intact Merkle Root.
   2. All 6 Post-Award Work Package Plug-Ins (CLIN 0027 / WP-1 through CLIN 0032 / WP-6) pass 100% of unit tests.
@@ -89,7 +89,8 @@ def main() -> None:
         here / "artifacts" / "WP5_WATCHFLOOR_RBAC_SHIFT_LEDGER_SPEC.pdf",
         here / "artifacts" / "WP6_DOD_RMF_ATO_AND_50SEAT_ACADEMY_SPEC.pdf",
         here / "artifacts" / "WP7_SOVEREIGN_IDENTITY_CREDIT_LOAN_SHIELD_SPEC.pdf",
-        here / "artifacts" / "WP8_HVF_FEDERAL_CAPABILITY_STATEMENT_AND_QUOTE.pdf",
+        here / "artifacts" / "WP8_ENTERPRISE_HR_MUSTER_HIPAA_PROMOTION_SPEC.pdf",
+        here / "artifacts" / "WP9_HVF_FEDERAL_CAPABILITY_STATEMENT_AND_QUOTE.pdf",
     ]
     for p in pdfs:
         assert p.exists() and p.read_bytes().startswith(b"%PDF-1.4")
@@ -104,7 +105,7 @@ def main() -> None:
     print(f"Git Index Bytecode Hygiene      : 0 Tracked .pyc Files (.gitignore Active)")
     for idx, mf in enumerate(manifests, 1):
         print(f"Verified Post-Award Plug-In #{idx}  : {mf.clin_number} // {mf.title[:48]}")
-    print(f"WORM %PDF-1.4 Artifacts Sealed  : 8 / 9 Verified ({', '.join(str(p.stat().st_size) + 'B' for p in pdfs)})")
+    print(f"WORM %PDF-1.4 Artifacts Sealed  : {len(pdfs)} / 9 Verified ({', '.join(str(p.stat().st_size) + 'B' for p in pdfs)})")
     print("====================================================================================")
 
 

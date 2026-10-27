@@ -236,8 +236,8 @@ class FederalCapabilityAndQuoteEngine(SovereignExpansionModule):
             )
 
         md_content = chr(10).join(md_lines) + chr(10)
-        md_path = out_dir / "WP8_HVF_FEDERAL_CAPABILITY_STATEMENT_AND_QUOTE.md"
-        pdf_path = out_dir / "WP8_HVF_FEDERAL_CAPABILITY_STATEMENT_AND_QUOTE.pdf"
+        md_path = out_dir / "WP9_HVF_FEDERAL_CAPABILITY_STATEMENT_AND_QUOTE.md"
+        pdf_path = out_dir / "WP9_HVF_FEDERAL_CAPABILITY_STATEMENT_AND_QUOTE.pdf"
         md_path.write_bytes(md_content.encode("ascii"))
 
         worm_seal = hashlib.sha256(md_content.encode("ascii")).hexdigest()
